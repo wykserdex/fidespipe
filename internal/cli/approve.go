@@ -4,7 +4,12 @@ import (
 	"crypto/rand"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
+	"time"
+
+	"github.com/wykserdex/wedra/internal/gate"
+	"github.com/wykserdex/wedra/internal/journal"
 )
 
 // isTTY — интерактивный терминал? Shell-инструменты агентов обычно без TTY.
@@ -32,19 +37,33 @@ func shortCode() string {
 func RunApprove(args []string) {
 	var pos []string
 	server := "http://127.0.0.1:8765"
+	runsDir := journal.DefaultRunsDir()
+	linkOnly := false
 	for _, a := range args {
-		if strings.HasPrefix(a, "--server=") {
+		switch {
+		case strings.HasPrefix(a, "--server="):
 			server = strings.TrimPrefix(a, "--server=")
-		} else if !strings.HasPrefix(a, "-") {
+		case strings.HasPrefix(a, "--runs-dir="):
+			runsDir = strings.TrimPrefix(a, "--runs-dir=")
+		case a == "--link":
+			linkOnly = true
+		case !strings.HasPrefix(a, "-"):
 			pos = append(pos, a)
 		}
 	}
 	if len(pos) < 2 {
-		fmt.Println("нужно: wedra approve <run_id> <step_id> [--server=http://127.0.0.1:8765]")
-		fmt.Println("одобрение — только человеком в интерактивном терминале")
+		fmt.Println("нужно: wedra approve <run_id> <step_id> [--server=http://127.0.0.1:8765] [--link]")
+		fmt.Println("одобрение — только человеком; --link печатает подписанную ссылку, решение принимается по ней")
 		os.Exit(2)
 	}
 	runID, stepID := pos[0], pos[1]
+	if linkOnly {
+		// Ссылка — не решение, а право решить. Печатать её можно и без
+		// терминала: на безголовом сервере это единственный путь, потому что
+		// сам гейт ждёт человека, а терминала у него нет.
+		printApproveLink(runID, stepID, server, runsDir)
+		return
+	}
 	if !isTTY() {
 		fmt.Println("отказ: approve работает только в интерактивном TTY (stdin не терминал)")
 		fmt.Println("попросите пользователя одобрить шаг", stepID, "в окне wedra gui")
@@ -62,4 +81,27 @@ func RunApprove(args []string) {
 	fmt.Printf("код принят. Отправьте решение человеком через GUI (%s) или API с сессией:\n", server)
 	fmt.Printf("  POST %s/api/runs/%s/gate  {\"action\":\"accept\"}\n", server, runID)
 	fmt.Println("  cookie сессии: откройте адрес GUI и введите одноразовый код из терминала wedra")
+}
+
+// printApproveLink — напечатать подписанную ссылку одобрения.
+//
+// Путь для БЕЗГОЛОВОГО сервера: оператор заходит по SSH, печатает ссылку и
+// открывает её с телефона. Терминал не нужен — печать ссылки не является
+// решением, решение принимает человек, открывший ссылку.
+//
+// Ключ подписи общий с сервером (<runs-dir>/approve.key), поэтому сервер
+// проверяет выпущенную здесь ссылку и доставляет решение своему гейту.
+func printApproveLink(runID, stepID, server, runsDir string) {
+	signer, err := gate.LoadSigner(filepath.Join(runsDir, "approve.key"))
+	if err != nil {
+		fmt.Println("approve: ключ подписи:", err)
+		os.Exit(2)
+	}
+	link, err := gate.SignLink(signer, server, runID, stepID, time.Hour)
+	if err != nil {
+		fmt.Println("approve:", err)
+		os.Exit(2)
+	}
+	fmt.Println("ссылка одобрения (открыть с любого устройства, час, работает один раз):")
+	fmt.Println(link)
 }

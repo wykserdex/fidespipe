@@ -30,7 +30,8 @@ type pendingGate struct {
 	runID   string
 	stepID  string
 	ui      *ChannelUI
-	step    *pipeline.Step
+	form    []pipeline.FormField
+	actions []string
 	link    string
 	expires time.Time
 }
@@ -50,6 +51,15 @@ type Approver struct {
 	signer  *Signer
 	baseURL string
 	ttl     time.Duration
+
+	// Resolver — где взять канал гейта, если токен выпущен НЕ этим
+	// экземпляром.
+	//
+	// Нужен для безголового сервера: ссылку может выпустить оператор с
+	// терминала (у него есть доступ к ключу и к журналу), а доставить решение
+	// должен сервер, у которого канал гейта. Без резолвера такой токен был бы
+	// «настоящим, но не доставляемым» — и это хуже, чем отсутствие ссылки.
+	Resolver func(runID, stepID string) *ChannelUI
 
 	mu      sync.Mutex
 	pending map[string]*pendingGate
@@ -80,24 +90,29 @@ func gateKey(runID, stepID string) string { return runID + "|" + stepID }
 //
 // Ссылка возвращается вызывающему: демон печатает её, и человек открывает её
 // где угодно — с телефона, из мессенджера, с другой машины.
-func (a *Approver) Register(runID, stepID string, ui *ChannelUI, step *pipeline.Step) (string, error) {
+func (a *Approver) Register(runID, stepID, base string, ui *ChannelUI, form []pipeline.FormField, actions []string) (string, error) {
 	if a == nil || a.signer == nil {
 		return "", errors.New("подписатель не задан")
 	}
 	if runID == "" || stepID == "" {
 		return "", errors.New("гейт без рана или шага")
 	}
+	base = strings.TrimRight(strings.TrimSpace(base), "/")
+	if base == "" {
+		return "", errors.New("адрес для ссылки не задан")
+	}
 	expires := time.Now().Add(a.ttl)
-	token, err := a.signer.Sign(Link{RunID: runID, StepID: stepID, Expires: expires})
+	token, err := a.signer.Sign(Link{RunID: runID, StepID: stepID, Base: base, Expires: expires})
 	if err != nil {
 		return "", err
 	}
-	link := a.baseURL + "/approve?t=" + url.QueryEscape(token)
+	link := base + "/approve?t=" + url.QueryEscape(token)
 
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	a.pending[gateKey(runID, stepID)] = &pendingGate{
-		runID: runID, stepID: stepID, ui: ui, step: step, link: link, expires: expires,
+		runID: runID, stepID: stepID, ui: ui, form: form, actions: actions,
+		link: link, expires: expires,
 	}
 	return link, nil
 }
@@ -147,8 +162,26 @@ func (a *Approver) Deliver(token, action string, edits map[string]interface{}) e
 	}
 	pg, ok := a.pending[key]
 	if !ok {
+		// Токен мог выпустить оператор с терминала — тогда канал гейта ищется
+		// через резолвер, а не через локальный реестр.
+		if a.Resolver == nil {
+			a.mu.Unlock()
+			return ErrApproveUnknownGate
+		}
+		ui := a.Resolver(l.RunID, l.StepID)
+		if ui == nil {
+			a.mu.Unlock()
+			return ErrApproveUnknownGate
+		}
+		pg = &pendingGate{runID: l.RunID, stepID: l.StepID, ui: ui}
 		a.mu.Unlock()
-		return ErrApproveUnknownGate
+		if !allowedAction(pg, action) {
+			return fmt.Errorf("%w: %q", ErrApproveBadAction, action)
+		}
+		if !ui.SendDecision(Decision{Action: action, Edits: edits}) {
+			return ErrApproveUnknownGate
+		}
+		return nil
 	}
 	a.burned[token] = true
 	a.mu.Unlock()
@@ -170,10 +203,10 @@ func allowedAction(pg *pendingGate, action string) bool {
 	if action == "" {
 		return false
 	}
-	if pg.step == nil || len(pg.step.Actions) == 0 {
+	if len(pg.actions) == 0 {
 		return action == "accept" || action == "reject"
 	}
-	for _, a := range pg.step.Actions {
+	for _, a := range pg.actions {
 		if a == action {
 			return true
 		}
@@ -224,8 +257,8 @@ func (a *Approver) handleApprove(w http.ResponseWriter, r *http.Request) {
 	}
 	action := r.FormValue("action")
 	edits := map[string]interface{}{}
-	if pg.step != nil {
-		for _, f := range pg.step.Form {
+	if len(pg.form) > 0 {
+		for _, f := range pg.form {
 			if !f.Editable {
 				continue
 			}
@@ -246,9 +279,9 @@ func (a *Approver) handleApprove(w http.ResponseWriter, r *http.Request) {
 func approveFormHTML(pg *pendingGate, token string) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, `<form method="post" action="/approve?t=%s">`, html.EscapeString(token))
-	if pg.step != nil && len(pg.step.Form) > 0 {
+	if len(pg.form) > 0 {
 		b.WriteString(`<p>Поля шага:</p><table>`)
-		for _, f := range pg.step.Form {
+		for _, f := range pg.form {
 			kind := "text"
 			switch f.Type {
 			case "number", "integer":
@@ -266,8 +299,8 @@ func approveFormHTML(pg *pendingGate, token string) string {
 		b.WriteString(`</table>`)
 	}
 	actions := []string{"accept", "reject"}
-	if pg.step != nil && len(pg.step.Actions) > 0 {
-		actions = append([]string{}, pg.step.Actions...)
+	if len(pg.actions) > 0 {
+		actions = append([]string{}, pg.actions...)
 		sort.Strings(actions)
 	}
 	for _, act := range actions {

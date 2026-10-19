@@ -8,8 +8,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -30,8 +32,14 @@ var (
 // «одобрите что угодно», а подпись только к сроку — «одобрите любой гейт до
 // этого момента». И то и другое — дыра.
 type Link struct {
-	RunID   string    `json:"r"`
-	StepID  string    `json:"s"`
+	RunID  string `json:"r"`
+	StepID string `json:"s"`
+	// Base — scheme://host, часть подписи.
+	//
+	// Не украшение: без него ссылку можно перенаправить на чужой домен, и
+	// токен утечёт туда. С хостом в подписи ссылка, у которой подменили адрес,
+	// просто не проверяется — и на настоящем сервере, и на чужом.
+	Base    string    `json:"b"`
 	Expires time.Time `json:"e"`
 }
 
@@ -160,4 +168,38 @@ func splitToken(token string) []string {
 		}
 	}
 	return nil
+}
+
+// SignLink — выпустить подписанную ссылку одобрения.
+//
+// Отдельная функция, потому что ссылку может выпустить не только сервер:
+// на безголовом сервере оператор заходит по SSH и печатает ссылку, по которой
+// потом решает с телефона. Ключ у него тот же — <runs-dir>/approve.key.
+//
+// base входит в подпись, поэтому подменённый адрес ссылки просто не
+// проверяется.
+func SignLink(signer *Signer, base, runID, stepID string, ttl time.Duration) (string, error) {
+	if signer == nil {
+		return "", errors.New("ключ подписи не задан")
+	}
+	if runID == "" || stepID == "" {
+		return "", errors.New("ссылка без рана или шага")
+	}
+	base = strings.TrimRight(strings.TrimSpace(base), "/")
+	if base == "" {
+		return "", errors.New("адрес для ссылки не задан")
+	}
+	if ttl <= 0 {
+		ttl = time.Hour
+	}
+	token, err := signer.Sign(Link{
+		RunID:   runID,
+		StepID:  stepID,
+		Base:    base,
+		Expires: time.Now().Add(ttl),
+	})
+	if err != nil {
+		return "", err
+	}
+	return base + "/approve?t=" + url.QueryEscape(token), nil
 }

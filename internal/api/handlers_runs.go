@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/wykserdex/wedra/internal/core"
 	"github.com/wykserdex/wedra/internal/execution"
@@ -338,10 +339,17 @@ func (s *Server) handleRunGate(w http.ResponseWriter, r *http.Request, id string
 		}
 		w.Header().Set("Content-Type", "application/json")
 		if pending {
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			out := map[string]interface{}{
 				"pending": true, "step": lastWait["step"],
 				"form": lastWait["form"], "actions": lastWait["actions"],
-			})
+			}
+			// Подписанная ссылка одобрения. Нужна для безголового сервера:
+			// человек, ждущий решения, не сидит за терминалом этой машины.
+			// Ссылка подписана, живёт час и работает один раз.
+			if link, err := s.approveLink(r, id, lastWait); err == nil {
+				out["approve_link"] = link
+			}
+			json.NewEncoder(w).Encode(out)
 		} else {
 			json.NewEncoder(w).Encode(map[string]interface{}{"pending": false})
 		}
@@ -506,4 +514,56 @@ func (s *Server) handlePlanPipeline(w http.ResponseWriter, r *http.Request) {
 			"edges": edges,
 		},
 	})
+}
+
+// approveLink — подписанная ссылка одобрения для ожидающего гейта.
+//
+// Адрес берётся из самого запроса (оператор уже смотрит на сервер), но он ВХОДИТ
+// В ПОДПИСЬ: иначе ссылку можно перенаправить на чужой домен, и токен утечёт
+// туда. С хостом в подписи подменённый адрес просто не проверяется.
+func (s *Server) approveLink(r *http.Request, runID string, wait map[string]interface{}) (string, error) {
+	if s.approve == nil {
+		return "", errors.New("раздача ссылок одобрения не настроена")
+	}
+	ui := s.gateFor(runID)
+	if ui == nil {
+		return "", errors.New("нет ожидающего гейта")
+	}
+	stepID, _ := wait["step"].(string)
+	if stepID == "" {
+		return "", errors.New("у гейта нет шага")
+	}
+	// Форма в журнале лежит как []map[string]interface{} (после JSON-обхода),
+	// и разбирать её обратно в структуру приходится вручную.
+	var form []pipeline.FormField
+	if raw, ok := wait["form"].([]interface{}); ok {
+		for _, item := range raw {
+			m, ok := item.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			ff := pipeline.FormField{}
+			ff.Field, _ = m["field"].(string)
+			ff.Type, _ = m["type"].(string)
+			ff.Format, _ = m["format"].(string)
+			if e, ok := m["editable"].(bool); ok {
+				ff.Editable = e
+			}
+			form = append(form, ff)
+		}
+	}
+	var actions []string
+	if raw, ok := wait["actions"].([]interface{}); ok {
+		for _, a := range raw {
+			if s, ok := a.(string); ok {
+				actions = append(actions, s)
+			}
+		}
+	}
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	base := scheme + "://" + r.Host
+	return s.approve.Register(runID, stepID, base, ui, form, actions)
 }

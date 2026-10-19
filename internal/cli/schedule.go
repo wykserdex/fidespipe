@@ -153,7 +153,7 @@ func RunDaemon(args []string) {
 			}
 			opts.GateUI = func(st *pipeline.Step) gate.GateUI {
 				ui := gate.NewChannelUI()
-				link, rerr := approver.Register(runID, st.ID, ui, st)
+				link, rerr := approver.Register(runID, st.ID, approveURL, ui, st.Form, st.Actions)
 				if rerr != nil {
 					fmt.Fprintf(os.Stderr, "daemon: ссылка одобрения не выдана: %v\n", rerr)
 				} else {

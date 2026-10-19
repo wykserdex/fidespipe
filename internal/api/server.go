@@ -64,6 +64,12 @@ type Server struct {
 	// v0.9: одноразовый код обмена (EnableSession) и живые сессии. Пустой
 	// PairingCode — сессия не требуется (--no-session, встраивание, тесты).
 	PairingCode string
+	// approve — раздача подписанных ссылок одобрения гейта.
+	//
+	// Нужна для БЕЗГОЛОВОГО сервера: человек, который ждёт одобрения, не
+	// сидит за терминалом этой машины. Ссылка подписана ключом из
+	// <runs-dir>/approve.key, живёт ограниченное время и работает один раз.
+	approve *gate.Approver
 
 	// TrustConfigPath — КАК ИМЕННО оператор задал доверие: путь к
 	// wedra-trust.yaml, который реально выбран (флаг, переменная, каталог
@@ -135,6 +141,19 @@ func NewServer(pluginsDir, pipelinesDir, runsDir string) *Server {
 		cancels:      map[string]context.CancelFunc{},
 		summaryCache: map[string]summaryCacheEntry{},
 		sessions:     map[string]sessionEntry{},
+	}
+	// Раздача ссылок одобрения. Ключ общий с демоном (<runs-dir>/approve.key),
+	// чтобы ссылка, выданная демоном, проверялась и сервером консоли, и наоборот.
+	//
+	// Отсутствие ключа — не поломка сервера: без него одобрить гейт можно
+	// обычным путём (сессия человека), и сервер продолжает работать.
+	if signer, err := gate.LoadSigner(filepath.Join(runsDir, "approve.key")); err == nil {
+		srv.approve = gate.NewApprover(signer, "", time.Hour)
+		// Резолвер: токен может выпустить оператор с терминала (безголовый
+		// сервер), а доставить решение обязан сервер — у него канал гейта.
+		srv.approve.Resolver = func(runID, stepID string) *gate.ChannelUI {
+			return srv.gateFor(runID)
+		}
 	}
 	// Политика по умолчанию: loopback на любом порту, http, без прокси. Порт
 	// неизвестен до Listen, поэтому cookie без суффикса и cookieName() допишет
@@ -394,6 +413,11 @@ var publicAPI = map[string]string{
 
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
+	// Ссылка одобрения — ВНЕ /api/*, поэтому сессия человека её не требует:
+	// подписанная ссылка и есть право. Всё остальное под /api/* закрыто.
+	if s.approve != nil {
+		mux.Handle("/approve", s.approve.Handler())
+	}
 	mux.HandleFunc("/api/health", s.handleHealth)
 	mux.HandleFunc("/api/session", s.handleSession)
 	mux.HandleFunc("/api/trust", s.handleTrust)

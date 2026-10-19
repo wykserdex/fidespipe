@@ -40,7 +40,7 @@ func tokenFromLink(t *testing.T, link string) string {
 func TestApproveDeliversDecision(t *testing.T) {
 	a := newApprover(t)
 	ui := NewChannelUI()
-	link, err := a.Register("run-1", "step-1", ui, &pipeline.Step{ID: "step-1"})
+	link, err := a.Register("run-1", "step-1", "http://127.0.0.1:8765", ui, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func TestApproveDeliversDecision(t *testing.T) {
 func TestApproveLinkIsSingleUse(t *testing.T) {
 	a := newApprover(t)
 	ui := NewChannelUI()
-	link, err := a.Register("run-1", "step-1", ui, &pipeline.Step{ID: "step-1"})
+	link, err := a.Register("run-1", "step-1", "http://127.0.0.1:8765", ui, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,7 +89,7 @@ func TestApproveRejectsForeignSignature(t *testing.T) {
 		t.Fatal(err)
 	}
 	ui := NewChannelUI()
-	if _, err := a.Register("run-1", "step-1", ui, &pipeline.Step{ID: "step-1"}); err != nil {
+	if _, err := a.Register("run-1", "step-1", "http://127.0.0.1:8765", ui, nil, nil); err != nil {
 		t.Fatal(err)
 	}
 	if err := a.Deliver(foreign, "accept", nil); !errors.Is(err, ErrLinkBadSignature) {
@@ -103,7 +103,7 @@ func TestApproveRejectsExpiredLink(t *testing.T) {
 	a := NewApprover(s, "http://x", time.Hour)
 	ui := NewChannelUI()
 	expired, _ := s.Sign(Link{RunID: "run-1", StepID: "step-1", Expires: time.Now().Add(-time.Minute)})
-	if _, err := a.Register("run-1", "step-1", ui, &pipeline.Step{ID: "step-1"}); err != nil {
+	if _, err := a.Register("run-1", "step-1", "http://127.0.0.1:8765", ui, nil, nil); err != nil {
 		t.Fatal(err)
 	}
 	if err := a.Deliver(expired, "accept", nil); !errors.Is(err, ErrLinkExpired) {
@@ -115,7 +115,7 @@ func TestApproveRejectsExpiredLink(t *testing.T) {
 func TestApproveUnknownGate(t *testing.T) {
 	a := newApprover(t)
 	ui := NewChannelUI()
-	link, _ := a.Register("run-1", "step-1", ui, &pipeline.Step{ID: "step-1"})
+	link, _ := a.Register("run-1", "step-1", "http://127.0.0.1:8765", ui, nil, nil)
 	a.Unregister("run-1", "step-1")
 	if err := a.Deliver(tokenFromLink(t, link), "accept", nil); !errors.Is(err, ErrApproveUnknownGate) {
 		t.Fatalf("ошибка = %v, ожидалась ErrApproveUnknownGate", err)
@@ -127,7 +127,7 @@ func TestApproveUnknownGate(t *testing.T) {
 func TestApproveRejectsActionOutsideList(t *testing.T) {
 	a := newApprover(t)
 	ui := NewChannelUI()
-	link, _ := a.Register("run-1", "step-1", ui, &pipeline.Step{ID: "step-1", Actions: []string{"accept"}})
+	link, _ := a.Register("run-1", "step-1", "http://127.0.0.1:8765", ui, nil, []string{"accept"})
 	err := a.Deliver(tokenFromLink(t, link), "reject", nil)
 	if !errors.Is(err, ErrApproveBadAction) {
 		t.Fatalf("ошибка = %v, ожидалась ErrApproveBadAction", err)
@@ -144,9 +144,9 @@ func TestApproveHTTPFlowGetThenPost(t *testing.T) {
 		Actions: []string{"accept", "reject"},
 		Form:    []pipeline.FormField{{Field: "comment", Editable: true, Type: "string"}},
 	}
-	link, _ := a.Register("run-1", "gate1", ui, step)
 	srv := httptest.NewServer(a.Handler())
 	defer srv.Close()
+	link, _ := a.Register("run-1", "gate1", srv.URL, ui, step.Form, step.Actions)
 
 	// GET — страница с формой.
 	resp, err := http.Get(srv.URL + "/approve?t=" + url.QueryEscape(tokenFromLink(t, link)))
