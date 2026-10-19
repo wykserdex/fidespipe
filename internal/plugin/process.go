@@ -267,7 +267,7 @@ func execPluginEnv(parent context.Context, m *Manifest, input []byte, timeout ti
 		// В песочнице плагину не нужны профиль пользователя и его каталоги:
 		// HOME/USERPROFILE/APPDATA вырезаются, секреты не передаются вовсе.
 		// HOME/TMPDIR указывают на приватный scratch этого запуска.
-		baseEnv = append(untrustedBaseEnv(), sandboxScratchEnv(scratch)...)
+		baseEnv = append(untrustedBaseEnv(m), sandboxScratchEnv(scratch)...)
 		// Egress-прокси поднимается только когда плагину достаётся сеть,
 		// которой он может дотянуться. Изолированная песочница до хоста не
 		// дотягивается вовсе (проверено: и loopback хоста, и шлюз
@@ -515,12 +515,21 @@ var untrustedSystemEnv = map[string]struct{}{
 
 // untrustedBaseEnv — окружение внешнего кода: только системные переменные из
 // узкого allowlist, никаких permissions.secrets (их валидатор и не пропустит).
-func untrustedBaseEnv() []string {
-	return baseEnvFor(nil, untrustedSystemEnv, false)
+func untrustedBaseEnv(m *Manifest) []string {
+	return baseEnvFor(m, untrustedSystemEnv, false)
 }
 
 func baseEnvFor(m *Manifest, allow map[string]struct{}, withSecrets bool) []string {
 	out := make([]string, 0, len(allow))
+	// Переменная донора: путь к поставленному исполняемому файлу.
+	//
+	// Имя переменной объявляет сам плагин (donor.bin_env), потому что у каждого
+	// оно своё — EXIFTOOL_BIN, GOSPIDER_BIN, JOOMSCAN_BIN — и ядро не может
+	// угадать. Путь абсолютный: у изолированного плагина PATH вырезан
+	// нарочно (чтобы песочница не протекала), и имя из PATH не нашлось бы.
+	if v := donorEnvFor(m); v != "" {
+		out = append(out, v)
+	}
 	for _, kv := range os.Environ() {
 		i := indexByte(kv, '=')
 		if i <= 0 || !validEnvName(kv[:i]) {

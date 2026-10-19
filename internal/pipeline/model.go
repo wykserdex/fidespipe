@@ -184,10 +184,52 @@ type Port struct {
 	Optional bool   `yaml:"optional" json:"optional"`
 }
 
+// Donor — типизированный рецепт донора.
+//
+// Раньше донора приходилось ВЫКОВЫРИВАТЬ из описания плагина регуляркой по
+// слову «pip install …». Это работало только для pip и только если автор
+// дописал команду в прозу. Три типа (Perl-CLI, Go-программа, готовый бинарь)
+// pip не покрывает вовсе, и для них в описаниях стояло «ставится отдельно» —
+// то есть плагин был нерабочим, и никто не мог сказать почему.
+//
+// Рецепт объявляется явно, и каждая строка в нём что-то проверяемое:
+//
+//	kind: go      — Go-модуль, ставится `go install module@version`
+//	kind: binary  — готовый бинарь: url + sha256, качать и проверять
+//	kind: script  — скрипт: url + sha256 + интерпретатор
+//
+// Хеш обязателен для binary и script: качать исполняемый код из сети без
+// проверки — это не установка донора, а закладка.
+type Donor struct {
+	// Kind — тип донора: go, binary, script.
+	Kind string `yaml:"kind" json:"kind"`
+	// Name — имя донора (как его зовёт плагин).
+	Name string `yaml:"name" json:"name"`
+	// Version — версия донора, если она есть.
+	Version string `yaml:"version,omitempty" json:"version,omitempty"`
+	// Module — Go-модуль для kind: go.
+	Module string `yaml:"module,omitempty" json:"module,omitempty"`
+	// URL — адрес для kind: binary и kind: script.
+	URL string `yaml:"url,omitempty" json:"url,omitempty"`
+	// SHA256 — хеш содержимого для kind: binary и kind: script.
+	SHA256 string `yaml:"sha256,omitempty" json:"sha256,omitempty"`
+	// Interpreter — интерпретатор для kind: script (perl, python3, sh).
+	Interpreter string `yaml:"interpreter,omitempty" json:"interpreter,omitempty"`
+	// Target — имя файла внутри архива для kind: binary, если он не совпадает
+	// с Name.
+	Target string `yaml:"target,omitempty" json:"target,omitempty"`
+	// BinEnv — имя переменной окружения, в которую ядро кладёт путь к донору.
+	// Плагины читают <X>_BIN, и без этого объявления ядро не знает, что
+	// подставить: имя переменной у каждого плагина своё.
+	BinEnv string `yaml:"bin_env,omitempty" json:"bin_env,omitempty"`
+}
+
 type Runtime struct {
 	Type     string   `yaml:"type" json:"type"`
 	Entry    string   `yaml:"entry" json:"entry"`
 	Requires []string `yaml:"requires" json:"requires"`
+	// Donor — типизированный рецепт донора. nil = донора нет.
+	Donor *Donor `yaml:"donor,omitempty" json:"donor,omitempty"`
 }
 
 type NetworkPermission struct {

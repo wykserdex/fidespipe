@@ -141,7 +141,7 @@ func TestUntrustedEnvExcludesUserProfile(t *testing.T) {
 	// Профиль пользователя и произвольные переменные не должны попадать
 	// в изолированный плагин.
 	t.Setenv("WEDRA_TRUST_PROBE", "secret-value")
-	env := untrustedBaseEnv()
+	env := untrustedBaseEnv(nil)
 	if len(env) == 0 {
 		t.Fatal("untrusted-окружение пустое — интерпретатор не запустится")
 	}
@@ -162,7 +162,7 @@ func TestUntrustedEnvNeverCarriesSecrets(t *testing.T) {
 		Sandbox:     pipeline.SandboxUntrusted,
 		Permissions: pipeline.Permissions{Secrets: []string{"WEDRA_TRUST_SECRET"}},
 	}
-	for _, kv := range untrustedBaseEnv() {
+	for _, kv := range untrustedBaseEnv(nil) {
 		if strings.HasPrefix(kv, "WEDRA_TRUST_SECRET=") {
 			t.Fatalf("секрет попал в untrusted-окружение: %s", kv)
 		}

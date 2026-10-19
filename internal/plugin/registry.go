@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/wykserdex/wedra/internal/common"
@@ -109,4 +110,30 @@ func (e *Engine) LoadManifest(ref string) (*pipeline.Manifest, error) {
 	e.Cache[ref] = &m
 	e.mu.Unlock()
 	return &m, nil
+}
+
+// donorEnvFor — переменная окружения с путём к донору плагина.
+//
+// Путь берётся из метки установки (.wedra): её пишет установщик, когда ставит
+// донора. Читать её в рантайме — единственный способ узнать, куда установщик
+// положил файл: путь зависит от корня установки, а он у ядра другой.
+//
+// Пусто, если донора нет, он не ставился или плагин объявил переменную с
+// недопустимым именем (тогда подмена переменных окружения была бы уязвимостью).
+func donorEnvFor(m *pipeline.Manifest) string {
+	if m == nil || m.Runtime.Donor == nil {
+		return ""
+	}
+	name := strings.TrimSpace(m.Runtime.Donor.BinEnv)
+	if name == "" || !validEnvName(name) {
+		return ""
+	}
+	if m.Dir == "" {
+		return ""
+	}
+	lock, err := registry.ReadLock(m.Dir)
+	if err != nil || strings.TrimSpace(lock.DonorPath) == "" {
+		return ""
+	}
+	return name + "=" + lock.DonorPath
 }

@@ -73,8 +73,11 @@ type Result struct {
 	// их имеет смысл только по фактическому содержимому на диске, а не по
 	// записи в реестре.
 	DepsInstalled []string // что ушло в pip (пусто = ставить было нечего)
-	DepsOutput    string   // вывод pip, обрезанный разумно
-	DepsError     string   // pip не отработал; плагин при этом остаётся установлен
+	// DonorPath — путь к поставленному донору (пусто = донора не было или он
+	// не поставился).
+	DonorPath  string
+	DepsOutput string // вывод pip, обрезанный разумно
+	DepsError  string // pip не отработал; плагин при этом остаётся установлен
 }
 
 // pipInstall — точка подмены для тестов.
@@ -169,7 +172,7 @@ func Run(w io.Writer, req Request) (Result, error) {
 	res.Dir = destDir
 	fmt.Fprintf(out, "  + %s (%s) → %s\n", req.Name, version, destDir)
 	if !req.NoDeps {
-		installDeps(out, destDir, &res)
+		installDeps(out, destDir, donorDirFor(req.Dest, req.Name), &res)
 	}
 	return res, nil
 }
@@ -194,7 +197,7 @@ const depsOutputLimit = 8 << 10
 // неправильность установки, и откат уничтожил бы рабочую копию. Но отказ
 // обязательно попадает в Result.DepsError и в лог: плагин, который «установился,
 // но не запускается», без слов об этом — худший из вариантов.
-func installDeps(out io.Writer, dir string, res *Result) {
+func installDeps(out io.Writer, dir, donorDir string, res *Result) {
 	m, err := plugin.NewEngine().LoadManifest(dir)
 	if err != nil {
 		// Каталог только что прошёл ValidatePluginDir, так что это почти
@@ -204,22 +207,53 @@ func installDeps(out io.Writer, dir string, res *Result) {
 		return
 	}
 	specs := append([]string(nil), m.Runtime.Requires...)
-	if len(specs) == 0 {
+	if len(specs) > 0 {
+		fmt.Fprintf(out, "  · ставлю зависимости: %s\n", strings.Join(specs, " "))
+		output, err := pipInstall(specs)
+		if len(output) > depsOutputLimit {
+			output = output[len(output)-depsOutputLimit:]
+		}
+		res.DepsOutput = output
+		if err != nil {
+			res.DepsError = err.Error()
+			fmt.Fprintf(out, "  ! зависимости не поставились: %s\n", err)
+			return
+		}
+		res.DepsInstalled = specs
+		fmt.Fprintf(out, "  ✓ зависимости поставлены\n")
+	}
+	// Донор — отдельная от pip история: три вида (go, binary, script) pip не
+	// покрывает, и раньше такие плагины просто говорили «ставится отдельно».
+	if m.Runtime.Donor == nil {
 		return
 	}
-	fmt.Fprintf(out, "  · ставлю зависимости: %s\n", strings.Join(specs, " "))
-	output, err := pipInstall(specs)
-	if len(output) > depsOutputLimit {
-		output = output[len(output)-depsOutputLimit:]
-	}
-	res.DepsOutput = output
+	fmt.Fprintf(out, "  · ставлю донора: %s (%s)\n", m.Runtime.Donor.Name, m.Runtime.Donor.Kind)
+	path, err := donorInstall(m.Runtime.Donor, donorDir)
 	if err != nil {
-		res.DepsError = err.Error()
-		fmt.Fprintf(out, "  ! зависимости не поставились: %s\n", err)
+		res.DepsError = "донор не поставился: " + err.Error()
+		fmt.Fprintf(out, "  ! донор не поставился: %s\n", err)
 		return
 	}
-	res.DepsInstalled = specs
-	fmt.Fprintf(out, "  ✓ зависимости поставлены\n")
+	res.DonorPath = path
+	fmt.Fprintf(out, "  ✓ донор поставлен: %s\n", path)
+	// Метка установки дописывается ПУТЁМ, когда донор уже стоит: на момент
+	// публикации каталога донора не было, и дописать его в lock «задним
+	// числом» в том же вызове было бы подменой файла на диске. Отдельной
+	// записью — честно: видно, что это следствие установки.
+	if err := writeDonorToLock(dir, path); err != nil {
+		res.DepsError = "донор поставлен, но путь к нему не записан в метку: " + err.Error()
+		fmt.Fprintf(out, "  ! путь к донору не записан: %s\n", err)
+	}
+}
+
+// writeDonorToLock — дописать путь к донору в метку установки.
+func writeDonorToLock(dir, donorPath string) error {
+	lock, err := registry.ReadLock(dir)
+	if err != nil {
+		return err
+	}
+	lock.DonorPath = donorPath
+	return registry.WriteLock(dir, lock)
 }
 
 // stageAndCommit — публикация каталога плагина. Порядок прежний и

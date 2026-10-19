@@ -2,52 +2,194 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Manifest v0.2",
   "type": "object",
-  "required": ["id", "version", "platform_api", "runtime", "output"],
+  "required": [
+    "id",
+    "version",
+    "platform_api",
+    "runtime",
+    "output"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
-    "version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$|^0\\.[0-9]+$"},
-    "platform_api": {"type": "string", "minLength": 1},
-    "description": {"type": "string"},
-    "author": {"type": "string"},
-    "sandbox": {"type": "string", "enum": ["trusted", "untrusted"], "description": "Может только ПОНИЗИТЬ доверие. untrusted делает плагин внешним кодом даже при совпавшем хэше в allow-list; trusted не даёт доверия — его выдаёт ядро по хэшу содержимого (см. internal/plugin/trust.go)"},
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$|^0\\.[0-9]+$"
+    },
+    "platform_api": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "sandbox": {
+      "type": "string",
+      "enum": [
+        "trusted",
+        "untrusted"
+      ],
+      "description": "Может только ПОНИЗИТЬ доверие. untrusted делает плагин внешним кодом даже при совпавшем хэше в allow-list; trusted не даёт доверия — его выдаёт ядро по хэшу содержимого (см. internal/plugin/trust.go)"
+    },
     "runtime": {
       "type": "object",
-      "required": ["type", "entry"],
+      "required": [
+        "type",
+        "entry"
+      ],
       "additionalProperties": false,
       "properties": {
-        "type": {"type": "string", "enum": ["python", "binary"]},
-        "entry": {"type": "string", "minLength": 1, "pattern": "^(?![A-Za-z]:|[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+"},
-        "requires": {"type": "array", "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*==[A-Za-z0-9][A-Za-z0-9_.+-]*$"}}
+        "type": {
+          "type": "string",
+          "enum": [
+            "python",
+            "binary"
+          ]
+        },
+        "entry": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![A-Za-z]:|[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*==[A-Za-z0-9][A-Za-z0-9_.+-]*$"
+          }
+        },
+        "donor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "name",
+            "bin_env"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "go",
+                "binary",
+                "script"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string"
+            },
+            "module": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https://"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "interpreter": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "bin_env": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_]*$"
+            }
+          }
+        }
       }
     },
     "input": {
       "type": "object",
-      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
       "additionalProperties": {
         "type": "object",
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "additionalProperties": false,
         "properties": {
-          "from": {"type": "string"},
-          "type": {"type": "string", "enum": ["string", "number", "boolean", "array", "object"]},
-          "format": {"type": "string", "enum": ["text", "email", "url", "ip", "file_ref"]},
-          "optional": {"type": "boolean"}
+          "from": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "text",
+              "email",
+              "url",
+              "ip",
+              "file_ref"
+            ]
+          },
+          "optional": {
+            "type": "boolean"
+          }
         }
       }
     },
     "output": {
       "type": "object",
       "minProperties": 1,
-      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
       "additionalProperties": {
         "type": "object",
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "additionalProperties": false,
         "properties": {
-          "type": {"type": "string", "enum": ["string", "number", "boolean", "array", "object"]},
-          "format": {"type": "string", "enum": ["text", "email", "url", "ip", "file_ref"]},
-          "optional": {"type": "boolean"}
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "text",
+              "email",
+              "url",
+              "ip",
+              "file_ref"
+            ]
+          },
+          "optional": {
+            "type": "boolean"
+          }
         }
       }
     },
@@ -61,15 +203,40 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "host": {"type": "string"},
-              "port": {"type": "integer", "minimum": 0, "maximum": 65535},
-              "any_host": {"type": "boolean"},
-              "note": {"type": "string"}
+              "host": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              },
+              "any_host": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              }
             }
           }
         },
-        "filesystem": {"type": "string", "enum": ["none", "read", "workspace", "write", "readwrite"]},
-        "secrets": {"type": "array", "items": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"}}
+        "filesystem": {
+          "type": "string",
+          "enum": [
+            "none",
+            "read",
+            "workspace",
+            "write",
+            "readwrite"
+          ]
+        },
+        "secrets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          }
+        }
       }
     }
   }

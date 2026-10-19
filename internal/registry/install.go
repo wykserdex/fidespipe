@@ -18,6 +18,12 @@ type Lock struct {
 	Path        string `json:"path"`
 	Version     string `json:"version"`
 	InstalledAt string `json:"installed_at"`
+	// DonorPath — абсолютный путь к поставленному донору (пусто = донора нет).
+	//
+	// Пишется ПОСЛЕ установки донора, отдельной записью: на момент публикации
+	// каталога донора ещё нет, и дописывать его в lock на ходу нельзя — файл
+	// метки уже лежит на диске, и переписывание после факта выглядит подменой.
+	DonorPath string `json:"donor_path,omitempty"`
 }
 
 const LockFile = ".wedra"
