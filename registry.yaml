@@ -290,7 +290,7 @@ plugins:
     source: https://github.com/wykserdex/wedra
     path: plugins/community/exiftool
     version: v0.33c
-    commit: ba824854f53311c1fd2d12f9f74d852b5f5577a4
+    commit: baa18a9209fad6ef650f50b254fd8c253697df37
     description: "ExifTool (Phil Harvey) — метаданные файлов (EXIF/IPTC/XMP, GPS) через -j. Системный ExifTool либо pyexiftool."
 
   fierce:
@@ -318,7 +318,7 @@ plugins:
     source: https://github.com/wykserdex/wedra
     path: plugins/community/ghauri
     version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    commit: baa18a9209fad6ef650f50b254fd8c253697df37
     description: "Ghauri (r0oth3x49) — детектор SQL-инъекций на Python. На PyPI отсутствует, ставится из git."
 
   ghunt:
@@ -339,7 +339,7 @@ plugins:
     source: https://github.com/wykserdex/wedra
     path: plugins/community/gospider
     version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    commit: baa18a9209fad6ef650f50b254fd8c253697df37
     description: "gospider (jaeles-project) — краулер с извлечением эндпоинтов из JS, robots.txt и sitemap. go install github.com/jaeles-project/gospider@latest."
 
   h8mail:
@@ -374,7 +374,7 @@ plugins:
     source: https://github.com/wykserdex/wedra
     path: plugins/community/joomscan
     version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    commit: baa18a9209fad6ef650f50b254fd8c253697df37
     description: "OWASP JoomScan — аудит Joomla: версия, известные уязвимости, компоненты. apt install joomscan."
 
   lief:
@@ -570,7 +570,7 @@ plugins:
     source: https://github.com/wykserdex/wedra
     path: plugins/community/webanalyze
     version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    commit: baa18a9209fad6ef650f50b254fd8c253697df37
     description: "webanalyze (rverton) — отпечаток технологий сайта, JSON-вывод. go install github.com/rverton/webanalyze/cmd/webanalyze@latest."
 
   wfuzz:

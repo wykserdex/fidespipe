@@ -103,7 +103,7 @@ var builtinTrusted = map[string][]string{
 		"sha256:68c852263bac11336afbbd53a11ffae2503cc78f648a77ed458f0f18263eb8d8",
 	},
 	"exiftool": {
-		"sha256:d68043af1abb7a41a0f0538755f25c9f8ff6ccb8a40bd555f557c05c76861163",
+		"sha256:5baec635a2794042736bdbd78a8cc0b8f98737183b75684e6f94deb20f0c789d",
 	},
 	"fierce": {
 		"sha256:29b0f629ba416b79ecfe233b2d4edb9492ed22b564a2cdd0c5a4b2c7b2d2d97b",
@@ -118,7 +118,7 @@ var builtinTrusted = map[string][]string{
 		"sha256:b14e787bfc18b7b738d49ea15da507ab816c115f9753786cf46bddbb1210745f",
 	},
 	"ghauri": {
-		"sha256:eebfb429b82c10e6377ff1efa929271ea2ad85be46ed6b0373221aaec0ea95d8",
+		"sha256:3bc448bd6340ca72fb28dece7976e0a8ed65f522d56f70159a96308d2d149264",
 	},
 	"ghunt": {
 		"sha256:6fe3da44d1878a5909acc4d028f54f9c1e099ff9bd44ee754304e1dc75c97059",
@@ -127,7 +127,7 @@ var builtinTrusted = map[string][]string{
 		"sha256:27cfcf472d8e50404bfd062dda0c28069c690aee0c51d609ec19a5e88ce7056c",
 	},
 	"gospider": {
-		"sha256:4f7b79ddc7c510c18121e4b200baa84964884f81830dd3369bd7071d2e266951",
+		"sha256:43771810db3640942c9a12a360448cec6f4c3fbf20263cc8ae144d326247fadc",
 	},
 	"h8mail": {
 		"sha256:5b47fff7ca8aa76e5aaa48ada25f1f51ea33c6bd47ec30ad6e5bdeb95e627e5d",
@@ -157,7 +157,7 @@ var builtinTrusted = map[string][]string{
 		"sha256:09e1b36946d23124c9e8fa3bd19c26d4ecbbc1087a0019da500c9357025683dc",
 	},
 	"joomscan": {
-		"sha256:66d1a01e1d1e8acc0efaa28410910aea4512a15ea29d7e27de2fd66ea891503a",
+		"sha256:f8e6b0ac87006ef5e25f2fd4169b94b261145b320cf2a25fad575148627c1db8",
 	},
 	"json_diff": {
 		"sha256:7c546414dca3d9a9f8a36382026f683366a9f9e68e4ea27e6cbd2bc72a4f92c4",
@@ -295,7 +295,7 @@ var builtinTrusted = map[string][]string{
 		"sha256:cb146d7231346fdd278aae6e86ec1c1988dbcca96f658c70b555bba051047c11",
 	},
 	"webanalyze": {
-		"sha256:704f237ff584cb426bfbdb6026f90bff217e87f690d4970b3084a9d04223e1b9",
+		"sha256:cc6a645a8916cc40513c0fe7682d83aa5460a9d34ee91f1b29f12763e6c94ba9",
 	},
 	"wfuzz": {
 		"sha256:91534ff389ef69b0879b8412f02f93292235b4d7017a0367eb0a2e27ce80d063",
