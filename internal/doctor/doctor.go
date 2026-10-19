@@ -165,12 +165,38 @@ func Run(pluginsDir string) Report {
 			p.Install = installCommand(p.MissingRequires)
 		}
 
-		// Донор: «pip install X» из описания манифеста, fallback — README/.py.
-		donor, donorOk := donorFromDescription(m.Description)
-		if !donorOk {
-			donor, donorOk = donorFromFiles(m.Dir)
+		// Донор. СПЕРВА объявленный в манифесте (runtime.donor) — он и есть
+		// источник правды: рецепт с версией и хешем. Только если рецепта нет,
+		// донора выковыривают из описания, а потом из README/.py.
+		//
+		// Порядок не косметический: раньше объявленный донор не висел вовсе, и
+		// плагин с честным рецептом выглядел так же, как плагин с веной в
+		// описании. Оба требовали «поставь инструмент руками».
+		donor, donorOk := "", false
+		declaredDonor := m.Donor != nil
+		if declaredDonor {
+			donor, donorOk = m.Donor.Name, true
+		} else {
+			donor, donorOk = donorFromDescription(m.Description)
+			if !donorOk {
+				donor, donorOk = donorFromFiles(m.Dir)
+			}
 		}
-		if donorOk {
+		if declaredDonor {
+			// Объявленный донор ставится вместе с плагином, поэтому отсутствие
+			// его в PATH — не проблема плагина, а «плагин ещё не установлен».
+			p.Donor = donor
+			p.DonorKind = DonorKindDeclared
+			p.DonorCandidates = donorCandidates(donor, m.Dir)
+			if foundPath, foundName := donorInPath(p.DonorCandidates); foundPath {
+				p.DonorFound = true
+				p.DonorFoundName = foundName
+			}
+			if p.Status == StatusReady {
+				p.Install = "установите плагин — донор " + donor + " поедет вместе с ним"
+			}
+		}
+		if donorOk && !declaredDonor {
 			p.Donor = donor
 			p.DonorCandidates = donorCandidates(donor, m.Dir)
 			foundPath, foundName := donorInPath(p.DonorCandidates)

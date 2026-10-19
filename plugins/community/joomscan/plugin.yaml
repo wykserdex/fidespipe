@@ -7,14 +7,23 @@ description: >
   явно заданная цель, текстовый репорт reports/<host>/<host>_report_*.txt
   разбирается в версию, находки и компоненты (каталог reports/ плагин создаёт
   сам: mkdir в report.pl не рекурсивный). JoomScan — инструмент на Perl,
-  ставится отдельно: apt install joomscan (Kali) или
-  git clone https://github.com/OWASP/joomscan.
+  JoomScan — инструмент на Perl: донор объявлен в манифесте и ставится вместе
+  с плагином (OWASP/joomscan, закреплённый коммит, проверка sha256). Нужен
+  интерпретатор perl.
 author: "community · wedra showcase (web security)"
 
 runtime:
   type: python
   entry: main.py
-  requires: []          # только stdlib; joomscan — Perl-скрипт, ставится отдельно
+  requires: []          # только stdlib; донор объявлен ниже
+  donor:
+    kind: binary
+    name: joomscan
+    version: "2ea8cc7"
+    url: https://github.com/OWASP/joomscan/archive/2ea8cc7792b3893b80a52e4ad7cc32a1a9dbf7fc.tar.gz
+    sha256: 725c01811f558b71242457e90facbad5914a5cfb72681cd93346477a382580ab
+    target: joomscan.pl
+    bin_env: JOOMSCAN_BIN
 
 input:
   url:

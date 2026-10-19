@@ -142,20 +142,28 @@ func installBinaryDonor(d *pipeline.Donor, dir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	found := ""
+	// Поиск по имени файла, а совпадений должно быть РОВНО одно: два файла с
+	// одним именем в разных каталогах архива означают, что рецепт неоднозначен,
+	// и гадать нельзя.
+	var founds []string
 	for _, cand := range extracted {
 		if filepath.Base(cand) == target {
-			found = cand
-			break
+			founds = append(founds, cand)
 		}
 	}
-	if found == "" {
+	switch len(founds) {
+	case 0:
 		return "", fmt.Errorf("в архиве %s нет файла %q", filepath.Base(archivePath), target)
+	case 1:
+	default:
+		return "", fmt.Errorf("в архиве %s файл %q встречается %d раз — рецепт неоднозначен",
+			filepath.Base(archivePath), target, len(founds))
 	}
-	final := filepath.Join(dir, d.Name)
-	if err := moveFile(found, final); err != nil {
-		return "", err
-	}
+	// Файл ОСТАЁТСЯ ТАМ, ГДЕ ЛЕЖИТ В АРХИВЕ. Это не деталь: exiftool ищет
+	// свою библиотеку относительно себя («$1/lib»), joomscan — модули рядом с
+	// собой. Если вытащить один файл и выбросить остальное, донор будет
+	// нерабочим, и выглядеть это будет как «установилось».
+	final := founds[0]
 	if err := os.Chmod(final, 0o755); err != nil {
 		return "", fmt.Errorf("права на донора: %w", err)
 	}

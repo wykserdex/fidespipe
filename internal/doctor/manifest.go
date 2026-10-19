@@ -19,6 +19,8 @@ type manifest struct {
 	Dir         string
 	Description string
 	Requires    []string
+	// Donor — объявленный в манифесте рецепт донора (nil = не объявлен).
+	Donor *pipeline.Donor
 }
 
 // scanManifests читает манифесты напрямую из каталога.
@@ -65,6 +67,7 @@ func scanManifests(dir string) []manifest {
 				Dir:         cd,
 				Description: m.Description,
 				Requires:    m.Runtime.Requires,
+				Donor:       m.Runtime.Donor,
 			})
 		}
 	}

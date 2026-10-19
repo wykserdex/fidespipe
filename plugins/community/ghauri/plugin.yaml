@@ -7,13 +7,20 @@ description: >
   GET/POST-параметры) по явно заданному пользователем URL и разбирает его
   отчёт: вывод процесса (stderr) и лог ~/.ghauri/<host>/log. Флаги перечисления
   и эксплуатации (--dbs/--tables/--dump/--sql-shell) плагин не передаёт никогда.
-  Ghauri ставится отдельно: pip install "git+https://github.com/r0oth3x49/ghauri.git".
+  Ghauri — Go-программа: донор объявлен в манифесте и ставится вместе с
+  плагином (go install github.com/r0oth3x49/ghauri/cmd/ghauri@v1.0.5).
 author: "community · wedra showcase (vuln)"
 
 runtime:
   type: python
   entry: main.py
-  requires: []          # только stdlib; ghauri — отдельно, из репозитория (на PyPI пакета нет)
+  requires: []          # только stdlib; донор объявлен ниже (на PyPI пакета нет)
+  donor:
+    kind: go
+    name: ghauri
+    version: v1.0.5
+    module: github.com/r0oth3x49/ghauri/cmd/ghauri
+    bin_env: GHAURI_BIN
 
 input:
   url:

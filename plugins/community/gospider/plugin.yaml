@@ -6,15 +6,21 @@ description: >
   JavaScript (linkfinder), robots.txt и sitemap.xml. Обёртка над CLI gospider
   v1.1.6: гоняет краулер по одной явно заданной цели, читает JSON-вывод
   (--json) из папки -o и отдаёт плоский список url / javascript / linkfinder /
-  form / subdomain. Ставится отдельно: go install
-  github.com/jaeles-project/gospider@latest (на PyPI «gospider» — это другой,
-  заброшенный питоновский инструмент, не он).
+  form / subdomain. Донор объявлен в манифесте и ставится вместе с плагином:
+  go install github.com/jaeles-project/gospider@v1.1.6 (на PyPI «gospider» —
+  это другой пакет, путать нельзя; версия закреплена, а не latest).
 author: "community · wedra showcase (OSINT)"
 
 runtime:
   type: python
   entry: main.py
-  requires: []          # только stdlib; бинарь gospider — отдельно (go install)
+  requires: []          # только stdlib; донор объявлен ниже (go install)
+  donor:
+    kind: go
+    name: gospider
+    version: v1.1.6
+    module: github.com/jaeles-project/gospider
+    bin_env: GOSPIDER_BIN
 
 input:
   url:

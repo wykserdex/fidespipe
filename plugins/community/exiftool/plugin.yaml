@@ -4,15 +4,22 @@ platform_api: "^0.1"
 description: >
   ExifTool (Phil Harvey) — чтение метаданных файлов: EXIF/IPTC/XMP, модель
   устройства, GPS, даты съёмки. Обёртка над CLI exiftool (`-j` печатает JSON в
-  stdout). Инструмент ставится отдельно: системный ExifTool (Perl на Linux,
-  exiftool.exe на Windows) либо, если бинарь не в PATH, pip-пакет pyexiftool
-  (обёртка, перл-бинарь всё равно нужен — консольного скрипта у него нет).
+  stdout). Донор объявлен в манифесте и ставится вместе с плагином: официальный
+  Image-ExifTool 13.59 с проверкой sha256. Нужен интерпретатор perl.
 author: "community · wedra showcase (OSINT)"
 
 runtime:
   type: python
   entry: main.py
-  requires: []          # только stdlib; ExifTool — отдельно
+  requires: []          # только stdlib; донор объявлен ниже
+  donor:
+    kind: binary
+    name: exiftool
+    version: "13.59"
+    url: https://sourceforge.net/projects/exiftool/files/Image-ExifTool-13.59.tar.gz/download
+    sha256: 668ea3acececb7235fbd0f4900e72d5f12c9b07e5c778fd36cb1e9b5828fd65a
+    target: exiftool
+    bin_env: EXIFTOOL_BIN
 
 input:
   file:

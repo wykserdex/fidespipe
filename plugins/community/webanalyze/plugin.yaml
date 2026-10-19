@@ -5,14 +5,21 @@ description: >
   WebAnalyze (rverton/webanalyze) — порт Wappalyzer: отпечаток технологий сайта
   (CMS, фреймворки, CDN, аналитика, веб-серверы) по заголовкам, HTML и
   cookie. Это Go-программа, а не pip-пакет: `pip install webanalyze` на PyPI
-  нет (404), ставится `go install github.com/rverton/webanalyze/cmd/webanalyze@latest`.
+  нет (404). Донор объявлен в манифесте и ставится вместе с плагином:
+  go install github.com/rverton/webanalyze/cmd/webanalyze@v0.4.6.
   Обёртка гоняет `-host <host> -output json -silent` и разбирает JSON из stdout.
 author: "community · wedra showcase (OSINT)"
 
 runtime:
   type: python
   entry: main.py
-  requires: []          # только stdlib; webanalyze — отдельная Go-программа
+  requires: []          # только stdlib; донор объявлен ниже (Go-программа)
+  donor:
+    kind: go
+    name: webanalyze
+    version: v0.4.6
+    module: github.com/rverton/webanalyze/cmd/webanalyze
+    bin_env: WEBANALYZE_BIN
 
 input:
   url:

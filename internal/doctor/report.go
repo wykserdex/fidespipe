@@ -17,9 +17,13 @@ import (
 // донора читается вместе с полем DonorKind, а сокращать его молча — значит
 // менять объём правки шире переноса.
 const (
-	DonorKindExternal        = "external"
-	DonorKindSameAsRequires  = "same_as_requires"
-	DonorKindNotInstalled    = "not_installed"
+	DonorKindExternal       = "external"
+	DonorKindSameAsRequires = "same_as_requires"
+	DonorKindNotInstalled   = "not_installed"
+	// DonorKindDeclared — донор ОБЪЯВЛЕН в манифесте типизированным рецептом
+	// (runtime.donor). Такой донор ставится вместе с плагином, и совет
+	// «поставь инструмент руками» тут неуместен.
+	DonorKindDeclared        = "declared"
 	DonorKindScriptNotInPath = "installed_script_not_in_path"
 )
 
