@@ -52,6 +52,13 @@ func runParallelSegments(eng Engine, pf *pipeline.PipelineFile, steps []*pipelin
 			return actions, ErrCancelled
 		}
 		if seg.parallel {
+			// Группа пропускается, только если ВСЕ её шаги уже выполнены:
+			// пропуск группы с невыполненным шагом продолжил бы цепочку с
+			// неполными данными.
+			if segmentDone(seg, opts.SkipSteps) {
+				opts.logf("  ‖ группа %q уже выполнена в прошлом ране — пропущена", seg.group)
+				continue
+			}
 			acts, err := runParallelGroup(eng, pf, seg, ctx, j, opts)
 			if err != nil {
 				return actions, err
@@ -60,6 +67,10 @@ func runParallelSegments(eng Engine, pf *pipeline.PipelineFile, steps []*pipelin
 			continue
 		}
 		st := seg.steps[0]
+		if opts.SkipSteps[st.ID] {
+			opts.logf("  → %-12s (уже выполнен в прошлом ране — пропущен)", st.ID)
+			continue
+		}
 		action, err := runStepFlow(eng, pf, st, ctx, j, opts)
 		if err != nil {
 			return actions, err
@@ -164,3 +175,20 @@ func cloneCtx(ctx *runctx.Ctx) (*runctx.Ctx, error) {
 
 // runStepFlow — обёртка над runStep с управляющим потоком v0.20:
 // when-условие (skip) и foreach на уровне шага (per-item мини-цикл).
+
+// segmentDone — все ли шаги сегмента уже выполнены в прошлом ране.
+//
+// Для группы это значит «пропустить группу целиком». Если выполнены не все —
+// группа выполняется заново: пропуск её с невыполненным шагом продолжил бы
+// цепочку с неполными данными.
+func segmentDone(seg stepSegment, skip map[string]bool) bool {
+	if len(skip) == 0 || len(seg.steps) == 0 {
+		return false
+	}
+	for _, st := range seg.steps {
+		if !skip[st.ID] {
+			return false
+		}
+	}
+	return true
+}

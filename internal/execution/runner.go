@@ -45,6 +45,14 @@ type RunOptions struct {
 	// (плагинов без явного доверия ядра). Fail-closed, включается флагом
 	// --deny-untrusted-plugins.
 	DenyUntrusted bool
+	// SkipSteps — шаги, уже выполненные в прошлом ране: их не надо выполнять
+	// снова. Заполняется только при resume ЛИНЕЙНОЙ цепочки, где единица
+	// отсчёта — шаг, а не элемент foreach (см. resumeStepCursor).
+	//
+	// Заполняется не по журналу целиком, а по журналу ПЛЮС наличие выхода в
+	// восстановленном контексте: снапшот мог отстать (процесс убили, а не
+	// упал), и пропуск шага без его выхода скормил бы дальше неполные данные.
+	SkipSteps map[string]bool
 	// AllowUntrusted — согласие запускать плагины с sandbox: untrusted.
 	// Они уходят в изолятор (bwrap/sandbox-exec); если изолятора нет,
 	// запуск падает, а не выполняется без песочницы.
@@ -449,7 +457,37 @@ func runWithStore(pf *pipeline.PipelineFile, eng Engine, opts RunOptions, store 
 		}
 		startItemIdx, priorStats, err := resumeCursor(j.Dir)
 		if err != nil {
-			return stats, fmt.Errorf("--resume %s: не читается journal: %w", opts.Resume, err)
+			return stats, fmt.Errorf("--resume %s: не читается журнал: %w", opts.Resume, err)
+		}
+		// Линейная цепочка: единица отсчёта resume — ШАГ, а не элемент.
+		//
+		// Линейная цепочка устроена как foreach с ОДНИМ элементом на всю
+		// цепочку, поэтому курсор по элементу для неё всегда ноль, и resume
+		// начинался с нуля. Шаги же видны в журнале как step_end.
+		//
+		// Пропускается только тот шаг, чей выход РЕАЛЬНО лежит в
+		// восстановленном контексте. Журнал говорит, что шаг отработал, но
+		// снапшот контекста мог отстать — процесс убили, а не упали, и тогда
+		// пропуск скормил бы дальше данные без выхода этого шага. Такой шаг
+		// выполняется заново: лишний раз выполнить шаг лучше, чем продолжить
+		// с неполным состоянием.
+		if pf.Pipeline.Foreach == "" {
+			done, derr := resumeStepCursor(j.Dir)
+			if derr != nil {
+				return stats, fmt.Errorf("--resume %s: не читается журнал: %w", opts.Resume, derr)
+			}
+			stepsData, _ := ctx.Data["steps"].(map[string]interface{})
+			skip := map[string]bool{}
+			for id := range done {
+				if _, ok := stepsData[id]; ok {
+					skip[id] = true
+				}
+			}
+			if len(skip) > 0 {
+				opts.SkipSteps = skip
+				stats.OK += len(skip)
+				opts.logf("  → resume по шагам: уже выполнено, пропущено: %d", len(skip))
+			}
 		}
 		// P2 F-04: resume берёт курсор из журнала (item_end), а состояние — из
 		// context.json. Если снапшот когда-то терялся, disk-состояние отстаёт от
