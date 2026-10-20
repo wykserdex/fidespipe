@@ -55,8 +55,8 @@ func sandboxArgs(m *pipeline.Manifest, argv []string, scratch string) (string, [
 		ErrSandboxUnsupported, runtime.GOOS)
 }
 
-// prepareSandbox — на платформах без изолятора делать нечего.
+// PrepareSandbox — на платформах без изолятора делать нечего.
 //
 // Изолятора нет, и плагин без песочницы не запустится вовсе (fail-closed), —
 // готовить нечего.
-func prepareSandbox(m *pipeline.Manifest) error { return nil }
+func PrepareSandbox(dir string) error { return nil }

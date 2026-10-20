@@ -330,8 +330,8 @@ func waitTapReady(pid int, timeout time.Duration) error {
 	return fmt.Errorf("интерфейс %s не появился в /proc/%d/net/dev за %s", slirpTapName, pid, timeout)
 }
 
-// prepareSandbox — на Linux делать нечего.
+// PrepareSandbox — на Linux делать нечего.
 //
 // bubblewrap собирает песочницу на каждый запуск, и никаких прав на диске
 // выдавать не нужно: изоляция задаётся mount-пространством процесса.
-func prepareSandbox(m *pipeline.Manifest) error { return nil }
+func PrepareSandbox(dir string) error { return nil }
