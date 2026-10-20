@@ -8,14 +8,14 @@ import (
 	"os/signal"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/execution"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/execution"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // RunDemo — автономная демонстрация: одна цепочка, ноль prerequisites.
 //
-// Зачем: до 0.33a у WEDRA не было ни одной встроенной полезной функции, поэтому
+// Зачем: до 0.33a у Fidespipe не было ни одной встроенной полезной функции, поэтому
 // первая осмысленная цепочка требовала клона репозитория и Python в PATH. Quick
 // Start честно это отражал, но «скачай бинарник и посмотри» начиналось с
 // `git clone`. Здесь же нужны только сам бинарник и его каталог для журнала.
@@ -39,7 +39,7 @@ func RunDemo(args []string) {
 	}
 	autoDir := runsDir == ""
 	if autoDir {
-		dir, err := os.MkdirTemp("", "wedra-demo-")
+		dir, err := os.MkdirTemp("", "fidespipe-demo-")
 		if err != nil {
 			fmt.Println("не удалось создать каталог для демо:", err)
 			os.Exit(2)
@@ -57,7 +57,7 @@ func RunDemo(args []string) {
 		}
 		os.Exit(1)
 	}
-	fmt.Println("WEDRA · демо. Ни git, ни Python, ни сети — всё встроенное.")
+	fmt.Println("Fidespipe · демо. Ни git, ни Python, ни сети — всё встроенное.")
 	fmt.Println("Текст → метрики → человек подтверждает решение.")
 	fmt.Println()
 
@@ -79,7 +79,7 @@ func RunDemo(args []string) {
 	})
 	if err != nil {
 		if errors.Is(err, execution.ErrCancelled) {
-			fmt.Println("ран отменён; продолжить:", "wedra runs resume", runIDFromDir(stats.RunDir), runsDir)
+			fmt.Println("ран отменён; продолжить:", "fidespipe runs resume", runIDFromDir(stats.RunDir), runsDir)
 			os.Exit(130)
 		}
 		fmt.Println("ран упал:", err)
@@ -92,12 +92,12 @@ func RunDemo(args []string) {
 	fmt.Println()
 	runID := runIDFromDir(stats.RunDir)
 	fmt.Println("Что дальше — тоже без сети и без Python:")
-	fmt.Printf("  wedra runs show %s %s   # журнал каждого шага\n", runID, runsDir)
-	fmt.Println("  wedra plugin create ./my_plugin       # свой плагин по контракту")
-	fmt.Println("  wedra pipeline validate <file.yaml>   # проверка до запуска")
+	fmt.Printf("  fidespipe runs show %s %s   # журнал каждого шага\n", runID, runsDir)
+	fmt.Println("  fidespipe plugin create ./my_plugin       # свой плагин по контракту")
+	fmt.Println("  fidespipe pipeline validate <file.yaml>   # проверка до запуска")
 	if autoDir {
 		fmt.Println()
-		fmt.Println("  Каталог с журналом временный. Своё место: wedra demo --runs-dir ./var/runs")
+		fmt.Println("  Каталог с журналом временный. Своё место: fidespipe demo --runs-dir ./var/runs")
 	}
 }
 

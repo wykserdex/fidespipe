@@ -57,7 +57,7 @@ def main():
                    "content_type": "text/html; charset=utf-8",
                    "bytes": 1256, "elapsed_ms": 42, "ok": True})
 
-    req = urllib.request.Request(url, headers={"User-Agent": "wedra/http_probe"})
+    req = urllib.request.Request(url, headers={"User-Agent": "fidespipe/http_probe"})
     start = time.monotonic()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:

@@ -35,7 +35,7 @@ current protocol source of truth is `protocol/VERSION`.
 - **v0.20 (app): управляющий поток на уровне шага (PROTOCOL §12)** —
   `when:`, `foreach:` на шаге, `parallel_group`
 - **v0.8a (app): фикс DnD редактора (mouse-события вместо нативного HTML5); протокол без изменений**.
-- **v0.8 (app): desktop-exe (cmd/wedragui, WebView2, чистый Go); протокол без изменений**.
+- **v0.8 (app): desktop-exe (cmd/fidespipegui, WebView2, чистый Go); протокол без изменений**.
 - **v0.7 (app): GUI вшит в бинарник (go:embed) — release-артефакты автономны; протокол без изменений**.
 - **v0.6 (app): редактор управляет pipeline.network (политика allow/deny); протокол без изменений**.
 - **v0.5 (app): редактор управляет pipeline.secrets (env-ключи плагинов); протокол без изменений**.
@@ -46,7 +46,7 @@ current protocol source of truth is `protocol/VERSION`.
 - **v0.28 (app): редактор управляет `foreach`/`parallel_group`/`after_foreach` (шаг) и pipeline-`foreach`; протокол без изменений**.
 - **v0.27 (app): редактор управляет `when` (10 операторов ядра); протокол без изменений**.
 - **v0.26a (app): редактор сохраняет `format_version` исходного файла (новое doc → 0.2); протокол без изменений**.
-- **v0.26 (app): имя** — продукт/бинарник WEDRA (`wedra`), модуль `wedra`.
+- **v0.26 (app): имя** — продукт/бинарник Fidespipe (`fidespipe`), модуль `fidespipe`.
 - **v0.24 (app): браузерный гейт** — событие `gate_wait` (step, form с
   текущими значениями, actions) до блокировки на гейте; `gate_retry` —
   мусорное решение (≤5, как в терминале); `gate_decision` получил

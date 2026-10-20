@@ -2,7 +2,7 @@ id: json_flatten
 version: 0.1.1
 platform_api: "^0.1"
 description: "JSON-объект → плоский map; коллизии разделителя отклоняются"
-author: "community · wedra showcase"
+author: "community · fidespipe showcase"
 
 runtime:
   type: python

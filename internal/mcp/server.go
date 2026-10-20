@@ -9,11 +9,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 const (
@@ -47,7 +47,7 @@ var supportedProtocolVersions = []string{defaultProtocolVersion, "2024-11-05"}
 
 // Server — MCP-сервер: JSON-RPC stdio + 8 инструментов поверх core/pipeline/execution.
 // Решения гейтов через MCP невозможны никогда; get_run в waiting_human
-// просит пользователя одобрить в окне wedra.
+// просит пользователя одобрить в окне fidespipe.
 type Server struct {
 	pluginsDirs []string
 	workDir     string
@@ -132,7 +132,7 @@ type runState struct {
 	cancelRequested bool
 }
 
-// Options — флаги wedra mcp --plugins ... --workdir ...
+// Options — флаги fidespipe mcp --plugins ... --workdir ...
 type Options struct {
 	PluginsDirs []string
 	WorkDir     string
@@ -150,7 +150,7 @@ type Options struct {
 	Trust plugin.TrustPolicy
 	// GateElicitation — вести гейты через elicitation/create, если клиент
 	// объявил эту возможность (ревизия 2025-06-18). По умолчанию выключено:
-	// wedra не может проверить, что за клиентом сидит человек, а назвать
+	// fidespipe не может проверить, что за клиентом сидит человек, а назвать
 	// решение автономного хоста решением человека — соврать в журнале.
 	GateElicitation bool
 	// AllowUngatedRuns — операторский обход требования одобрения: ран с

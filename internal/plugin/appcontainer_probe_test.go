@@ -94,7 +94,7 @@ func acCreateProfile(name string) (*windows.SID, uintptr, error) {
 	var sid *windows.SID
 	r1, _, err := procCreateAppContainerProfile.Call(
 		uintptr(unsafe.Pointer(windows.StringToUTF16Ptr(name))),
-		uintptr(unsafe.Pointer(windows.StringToUTF16Ptr("WEDRA probe"))),
+		uintptr(unsafe.Pointer(windows.StringToUTF16Ptr("Fidespipe probe"))),
 		uintptr(unsafe.Pointer(windows.StringToUTF16Ptr("изоляция внешнего кода, проба"))),
 		0, 0,
 		uintptr(unsafe.Pointer(&sid)),
@@ -386,7 +386,7 @@ func TestAppContainerProbe(t *testing.T) {
 		}
 	}
 
-	profileName := fmt.Sprintf("wedra.probe.%d", time.Now().UnixNano())
+	profileName := fmt.Sprintf("fidespipe.probe.%d", time.Now().UnixNano())
 	fmt.Printf("[probe] создаём профиль контейнера\n")
 	sid, _, err := acCreateProfile(profileName)
 	fmt.Printf("[probe] профиль создан\n")

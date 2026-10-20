@@ -84,7 +84,7 @@ python fixtures/make_elf.py
 
 ## Тесты
 
-`wedra plugin test plugins/community/pyelftools` — 23 кейса, и они разделены
+`fidespipe plugin test plugins/community/pyelftools` — 23 кейса, и они разделены
 намеренно:
 
 - **реальный инструмент** (кейсы без `PYELFTOOLS_BIN`) запускают настоящий

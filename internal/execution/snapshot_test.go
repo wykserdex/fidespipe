@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // blockSnapshots — кладёт каталог на место context.json.tmp в каталоге рана:

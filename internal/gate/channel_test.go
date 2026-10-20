@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 func gateTestStep(t *testing.T) *pipeline.Step {

@@ -8,7 +8,7 @@ description: >
   path/status/size. Рекурсия (-r) не включается, stdin закрыт, вывод CLI
   выключен — инструмент не может задать вопрос и зависнуть. Пин:
   pip install dirsearch==0.5.0
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

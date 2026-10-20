@@ -6,14 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 func RunPipelineValidate(args []string) {
 	file, flags := splitArgs(args)
 	if file == "" {
-		fmt.Println("нужен файл пайплайна: wedra pipeline validate <file.yaml> [--json]")
+		fmt.Println("нужен файл пайплайна: fidespipe pipeline validate <file.yaml> [--json]")
 		os.Exit(2)
 	}
 	asJSON := flags["--json"]
@@ -92,7 +92,7 @@ func printJSON(v interface{}) {
 func RunPipelinePlan(args []string) {
 	file, flags := splitArgs(args)
 	if file == "" {
-		fmt.Println("нужен файл пайплайна: wedra pipeline plan <file.yaml> [--json]")
+		fmt.Println("нужен файл пайплайна: fidespipe pipeline plan <file.yaml> [--json]")
 		os.Exit(2)
 	}
 	raw, err := os.ReadFile(file)

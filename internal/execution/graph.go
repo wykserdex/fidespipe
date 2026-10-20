@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 type ExecutionGraph struct {

@@ -5,7 +5,7 @@
 critical|high|medium|low|informational), wall_timeout (опц., 1800).
 
 Вызов: <PROWLER_BIN|prowler|python3 -m prowler> <provider> -M json-ocsf
-          -o <tmp>/report -F wedra -b -z [--severity <severity>]
+          -o <tmp>/report -F fidespipe -b -z [--severity <severity>]
        (cwd = временная папка).
 
 Флаги сверены с исходниками колеса prowler 5.44.0 (prowler/lib/cli/parser.py):
@@ -51,7 +51,7 @@ import tempfile
 DEFAULT_PROVIDER = "aws"
 DEFAULT_WALL = 1800
 REPORT_DIR = "report"
-REPORT_BASENAME = "wedra"
+REPORT_BASENAME = "fidespipe"
 REPORT_SUFFIX = ".ocsf.json"
 
 SEVERITIES = ("critical", "high", "medium", "low", "informational")

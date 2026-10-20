@@ -106,8 +106,8 @@ import sys
 
 
 def bail(code, message):
-    sys.stdout.write(json.dumps({"wedra_error": code,
-                                 "wedra_message": message}))
+    sys.stdout.write(json.dumps({"fidespipe_error": code,
+                                 "fidespipe_message": message}))
     sys.exit(1)
 
 
@@ -444,9 +444,9 @@ def main():
     # pefile_not_installed) разбираем отдельно: у него есть смысловой код, и
     # «формат не тот» и «файла нет» — разные вещи для оператора.
     if proc.returncode != 0:
-        if isinstance(report, dict) and report.get("wedra_error") in DONOR_ERRORS:
-            return fail(str(report["wedra_error"]),
-                        str(report.get("wedra_message") or target))
+        if isinstance(report, dict) and report.get("fidespipe_error") in DONOR_ERRORS:
+            return fail(str(report["fidespipe_error"]),
+                        str(report.get("fidespipe_message") or target))
         tail = stderr.strip().splitlines()
         last = tail[-1] if tail else ("exit %d" % proc.returncode)
         return fail("tool_failed",

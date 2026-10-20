@@ -33,7 +33,7 @@
 
 ```bash
 # 1. Свежая копия и backup-ветка: перезапись истории необратима
-git clone https://github.com/wykserdex/wedra wedra-purge && cd wedra-purge
+git clone https://github.com/wykserdex/fidespipe fidespipe-purge && cd fidespipe-purge
 git branch backup-before-purge
 
 # 2. Вырезать пути из ВСЕХ коммитов (не только из HEAD)
@@ -50,7 +50,7 @@ git log --all --oneline -- AGENTS.md archive/ attic/   # пусто
 git log --all -p | grep -inE 'ghp_|sk-[A-Za-z0-9]{20,}|password' | head
 
 # 4. Опубликовать: force-push + перенос тегов (теги — это те же коммиты)
-git remote add origin https://github.com/wykserdex/wedra
+git remote add origin https://github.com/wykserdex/fidespipe
 git push --force --all
 git push --force --tags
 

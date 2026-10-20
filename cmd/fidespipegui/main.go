@@ -1,22 +1,23 @@
-// Command wedragui — WEDRA desktop (v0.8): двойной клик = окно с GUI.
+// Command fidespipegui — Fidespipe desktop (v0.8): двойной клик = окно с GUI.
 //
-// Внутри: тот же встроенный сервер, что у `wedra gui` (go:embed, v0.7) —
+// Внутри: тот же встроенный сервер, что у `fidespipe gui` (go:embed, v0.7) —
 // консоль (раны, live-журнал, DAG) + редактор (/editor/). На Windows GUI
 // живёт в собственном окне (WebView2, чистый Go, без CGO); если рантайм
 // WebView2 не найден — честно падаем в браузер (URL в консоли и в логе).
 //
 // Каталоги — рядом с exe (CWD при двойном клике = папка exe):
 //
-//	plugins/    — плагины (wedra plugin install / tool)
+//	plugins/    — плагины (fidespipe plugin install / tool)
 //	examples/   — YAML-пайплайны (консоль их видит в списке)
 //	var/runs/   — журналы ранов
 //
-// Лог: %APPDATA%/WEDRA/wedragui.log (Windows) / $XDG_CONFIG_HOME/WEDRA/.
+// Лог: %APPDATA%/Fidespipe/fidespipegui.log (Windows) / $XDG_CONFIG_HOME/Fidespipe/.
 // Выход: закрыть окно (на фолбэк-пути — закрыть консоль / Ctrl+C).
 package main
 
 import (
 	"fmt"
+	"github.com/wykserdex/fidespipe/internal/compat"
 	"io"
 	"net"
 	"os"
@@ -28,17 +29,17 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/api"
-	"github.com/wykserdex/wedra/internal/buildinfo"
-	"github.com/wykserdex/wedra/internal/guidirs"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/api"
+	"github.com/wykserdex/fidespipe/internal/buildinfo"
+	"github.com/wykserdex/fidespipe/internal/guidirs"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 func resolveDesktopTrustConfig(override string) string {
 	if override != "" {
 		return override
 	}
-	if env := strings.TrimSpace(os.Getenv("WEDRA_TRUST_CONFIG")); env != "" {
+	if env := strings.TrimSpace(os.Getenv("FIDESPIPE_TRUST_CONFIG")); env != "" {
 		return env
 	}
 	if exe, err := os.Executable(); err == nil {
@@ -51,6 +52,7 @@ func resolveDesktopTrustConfig(override string) string {
 }
 
 func main() {
+	compat.Init()
 	dirs, args, err := guidirs.Parse(os.Args[1:], guidirs.Default())
 	if err != nil {
 		fmt.Println("каталоги:", err)
@@ -131,13 +133,13 @@ func main() {
 		}
 	}
 
-	logf("WEDRA desktop v%s — GUI: %s", ver, url)
+	logf("Fidespipe desktop v%s — GUI: %s", ver, url)
 	logf("каталоги: %s (plugins=%s, pipelines=%s, runs=%s)", workingDir(), dirs.Plugins, dirs.Pipelines, dirs.Runs)
 	logf("лог: %s", logPath)
 	// Код — только в консоль и в окно. В лог-файл он не пишется: лог обычно
 	// переживает сессию, а код живёт 10 минут и обменивается на cookie.
 	fmt.Printf("  код входа (одноразовый): %s\n", code)
-	fmt.Println("  Закрыть окно (или Ctrl+C) — остановить WEDRA.")
+	fmt.Println("  Закрыть окно (или Ctrl+C) — остановить Fidespipe.")
 
 	httpErr := make(chan error, 1)
 	go func() { httpErr <- srv.HTTPServer(ln.Addr().String()).Serve(ln) }()
@@ -155,18 +157,18 @@ func main() {
 	}
 }
 
-// openLog — лог в каталоге настроек: %APPDATA%/WEDRA (Windows),
-// $XDG_CONFIG_HOME/WEDRA (unix). Фолбэк — рядом с exe.
+// openLog — лог в каталоге настроек: %APPDATA%/Fidespipe (Windows),
+// $XDG_CONFIG_HOME/Fidespipe (unix). Фолбэк — рядом с exe.
 func openLog() (string, *os.File) {
 	dir, err := os.UserConfigDir()
 	if err != nil || dir == "" {
 		dir, _ = os.Getwd()
 	}
-	dir = filepath.Join(dir, "WEDRA")
+	dir = filepath.Join(dir, "Fidespipe")
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", nil
 	}
-	p := filepath.Join(dir, "wedragui.log")
+	p := filepath.Join(dir, "fidespipegui.log")
 	f, err := os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return p, nil

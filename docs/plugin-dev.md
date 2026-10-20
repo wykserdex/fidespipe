@@ -6,13 +6,13 @@
 
 ## 0. Бинарник (1 мин)
 
-Release-архив → `wedra-<os>-<arch>[.exe]` → `chmod +x`. Проверка: `./wedra --help`.
-Все команды ниже — `wedra` (один бинарник) или `wedra.exe` под Windows.
+Release-архив → `fidespipe-<os>-<arch>[.exe]` → `chmod +x`. Проверка: `./fidespipe --help`.
+Все команды ниже — `fidespipe` (один бинарник) или `fidespipe.exe` под Windows.
 
 ## 1. Скелет (2 мин)
 
 ```bash
-wedra plugin create plugins/мой_плагин --author ТЫ --description "Что делает" --example array
+fidespipe plugin create plugins/мой_плагин --author ТЫ --description "Что делает" --example array
 #   --author/--description: чтобы не было TODO в манифесте
 #   --example string (по умолчанию) | array — форма входа
 ```
@@ -20,8 +20,8 @@ wedra plugin create plugins/мой_плагин --author ТЫ --description "Ч�
 Гарантия генератора: скелет сразу валиден и зелёный:
 
 ```bash
-wedra plugin validate plugins/мой_плагин   # OK
-wedra plugin test plugins/мой_плагин       # все тесты passed
+fidespipe plugin validate plugins/мой_плагин   # OK
+fidespipe plugin test plugins/мой_плагин       # все тесты passed
 ```
 
 ## 2. Контракт за 90 секунд (это весь «SDK»)
@@ -97,7 +97,7 @@ wedra plugin test plugins/мой_плагин       # все тесты passed
 ## 4. Контракт-тесты — твой цикл разработки
 
 ```bash
-wedra plugin test plugins/мой_плагин   # гоняет тот же subprocess-протокол, что и ядро
+fidespipe plugin test plugins/мой_плагин   # гоняет тот же subprocess-протокол, что и ядро
 ```
 
 В `plugin.test.yaml`: кейсы `input → expect`. Матчеры: литерал (глубокое равенство),
@@ -143,7 +143,7 @@ tests:
   останавливается с объяснением.
 - **сеть плагина не расширяется**: сервис не добавляет прокси-переменных и не
   правит `permissions`. Loopback и так доступен каталогу, который оператор сам
-  назвал в `wedra plugin test`; сервер слушает только `127.0.0.1` и наружу не
+  назвал в `fidespipe plugin test`; сервер слушает только `127.0.0.1` и наружу не
   публикуется.
 - **файл без `services` работает ровно как раньше**, включая тексты со скобками
   `{{...}}` внутри — подстановка включается только когда сервис объявлен.
@@ -167,8 +167,8 @@ pipeline:
 ```
 
 ```bash
-wedra validate examples/my_first.yaml   # ловит типы/форматы/разводку ДО запуска
-wedra run examples/my_first.yaml        # --yes = авто-accept гейтов (CI)
+fidespipe validate examples/my_first.yaml   # ловит типы/форматы/разводку ДО запуска
+fidespipe run examples/my_first.yaml        # --yes = авто-accept гейтов (CI)
 ```
 
 Один плагин дважды в цепочке — нормально: второй вызов с другим `bind:`
@@ -188,20 +188,20 @@ wedra run examples/my_first.yaml        # --yes = авто-accept гейтов (
 
 Путь плагина в публичный реестр (`registry.yaml` в корне репо):
 
-1. **Зелёные контракт-тесты** — гейт. `wedra plugin test <dir>` — все
+1. **Зелёные контракт-тесты** — гейт. `fidespipe plugin test <dir>` — все
    PASS (минимум 3 кейса: happy path, доменная ошибка, битый JSON exit 2;
    реальных ключей в тестах нет — mock-режим, см. LLM-плагины).
 2. **Манифест честный**: `id` совпадает с именем в реестре, `permissions`
    заполнены по §2, `author` — ты (ник/имя).
 3. **Сдача — любой способ** (по трению):
    - zip папки автору → он делает PR (каталог + запись в registry.yaml);
-   - fork + PR в `wykserdex/wedra`: `plugins/community/<name>/` + 4 строки
+   - fork + PR в `wykserdex/fidespipe`: `plugins/community/<name>/` + 4 строки
      записи (`source`, `path`, `version` = тег релиза, `description`);
    - свой репо с тегом → запись в реестре указывает `source` на твой репо
      (полное владение плагином — у тебя).
-4. **CI** прогоняет `wedra registry validate`: манифест, id, все
+4. **CI** прогоняет `fidespipe registry validate`: манифест, id, все
    конформные тесты. Красный = в реестре не окажешься.
 
-После попадания: любой `wedra plugin install <твой_плагин>` — и плагин
+После попадания: любой `fidespipe plugin install <твой_плагин>` — и плагин
 у него в `plugins/`, а пресеты тянут его автоматически. Полный цикл приёма (что проверяем и как попадаем в реестр) — в
 [CONTRIBUTING.md](../CONTRIBUTING.md#registry-admission).

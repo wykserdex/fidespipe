@@ -13,7 +13,7 @@ package cli
 import (
 	"os"
 
-	"github.com/wykserdex/wedra/internal/sandboxexec"
+	"github.com/wykserdex/fidespipe/internal/sandboxexec"
 )
 
 // handleSandboxExec — точка входа скрытой подкоманды.

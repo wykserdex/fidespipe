@@ -7,12 +7,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/core"
+	"github.com/wykserdex/fidespipe/internal/core"
 )
 
 func RunPluginValidate(args []string) {
 	if len(args) < 1 {
-		fmt.Println("нужен путь к плагину: wedra plugin validate <dir>")
+		fmt.Println("нужен путь к плагину: fidespipe plugin validate <dir>")
 		os.Exit(2)
 	}
 	errs := core.ValidatePluginDir(args[0])
@@ -59,8 +59,8 @@ func RunPluginTest(args []string) {
 		case a == "--json":
 			asJSON = true
 		case a == "--help" || a == "-h":
-			fmt.Println("wedra plugin test <dir> [--spec file.yaml]")
-			fmt.Println("wedra plugin test --conformance [--json] [--fixtures=dir]")
+			fmt.Println("fidespipe plugin test <dir> [--spec file.yaml]")
+			fmt.Println("fidespipe plugin test --conformance [--json] [--fixtures=dir]")
 			return
 		case strings.HasPrefix(a, "-"):
 			fmt.Printf("неизвестный флаг plugin test %q\n", a)
@@ -73,7 +73,7 @@ func RunPluginTest(args []string) {
 		}
 	}
 	if !conformance && dir == "" {
-		fmt.Println("нужен путь к плагину: wedra plugin test <dir>")
+		fmt.Println("нужен путь к плагину: fidespipe plugin test <dir>")
 		os.Exit(2)
 	}
 	if conformance {
@@ -112,12 +112,12 @@ func RunPluginTest(args []string) {
 
 // printPluginCreateUsage — справка именно по `plugin create`.
 //
-// Раньше `wedra plugin create --help` печатал глобальную справку: root ловил
+// Раньше `fidespipe plugin create --help` печатал глобальную справку: root ловил
 // `--help` где угодно в аргументах, и подкоманда до своей справки не доходила.
-// Человек видел список команд WEDRA вместо того, как создать плагин, и
+// Человек видел список команд Fidespipe вместо того, как создать плагин, и
 // справка выглядела сломанной.
 func printPluginCreateUsage() {
-	fmt.Println(`wedra plugin create <dir> [--author=ИМЯ] [--description=ТЕКСТ]
+	fmt.Println(`fidespipe plugin create <dir> [--author=ИМЯ] [--description=ТЕКСТ]
                       [--example=JSON] [--template=ИМЯ] [--pattern=РЕГУЛЯРКА]
                       [--replacement=ТЕКСТ] [--list-templates]
 
@@ -134,7 +134,7 @@ func printPluginCreateUsage() {
 Путь каталога обязателен и должен быть новым.`)
 }
 
-// RunPluginCreate — wedra plugin create <dir> [...]
+// RunPluginCreate — fidespipe plugin create <dir> [...]
 func RunPluginCreate(args []string) {
 	if helpRequested(args) {
 		printPluginCreateUsage()
@@ -180,7 +180,7 @@ func RunPluginCreate(args []string) {
 		fmt.Printf("  ✓ %d стартовых теста зелёные\n", passed)
 	}
 	if tplName == "skeleton" {
-		fmt.Printf("\nДальше: правьте %s/main.py, затем wedra plugin test %s\n", dir, dir)
+		fmt.Printf("\nДальше: правьте %s/main.py, затем fidespipe plugin test %s\n", dir, dir)
 		return
 	}
 	// Шаблон даёт рабочий плагин, поэтому «дальше» — это уже не написание
@@ -193,9 +193,9 @@ func templateNextStep(tplName, dir string) string {
 	switch tplName {
 	case "regex-replace":
 		return "поправьте PATTERN и REPLACEMENT в " + dir + "/main.py, " +
-			"затем подставьте точный результат в plugin.test.yaml и прогоните wedra plugin test " + dir
+			"затем подставьте точный результат в plugin.test.yaml и прогоните fidespipe plugin test " + dir
 	case "line-filter":
-		return "поправьте PATTERN в " + dir + "/main.py, затем прогоните wedra plugin test " + dir
+		return "поправьте PATTERN в " + dir + "/main.py, затем прогоните fidespipe plugin test " + dir
 	default:
 		return "расширяйте вывод в " + dir + "/main.py и в том же порядке в манифесте и plugin.test.yaml"
 	}
@@ -203,7 +203,7 @@ func templateNextStep(tplName, dir string) string {
 
 func RunPluginInspect(args []string) {
 	if len(args) < 1 {
-		fmt.Println("нужен путь к плагину: wedra plugin inspect <dir>")
+		fmt.Println("нужен путь к плагину: fidespipe plugin inspect <dir>")
 		os.Exit(2)
 	}
 	eng := core.NewEngine()
@@ -243,7 +243,7 @@ func RunPluginList(args []string) {
 
 func RunPluginSearch(args []string) {
 	if len(args) < 1 {
-		fmt.Println("нужен запрос: wedra plugin search <query>")
+		fmt.Println("нужен запрос: fidespipe plugin search <query>")
 		os.Exit(2)
 	}
 	query := strings.ToLower(strings.Join(args, " "))

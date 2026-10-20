@@ -1,6 +1,6 @@
 package core
 
-import ctxpkg "github.com/wykserdex/wedra/internal/runctx"
+import ctxpkg "github.com/wykserdex/fidespipe/internal/runctx"
 
 type Ctx = ctxpkg.Ctx
 

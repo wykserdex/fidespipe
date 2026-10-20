@@ -1,12 +1,12 @@
-# Образ WEDRA для серверного развёртывания.
+# Образ Fidespipe для серверного развёртывания.
 #
 # Собирается из исходников, а не из релизного бинаря: релиз собирается
 # динамически (CGO по умолчанию), и такой бинарь требует glibc той версии, на
 # которой собран. Здесь CGO выключен явно, и получается статический бинарь,
 # который работает в любом базовом образе.
 #
-#   docker build -t wedra:local .
-#   docker build -t wedra:local --target gui .     # с консолью
+#   docker build -t fidespipe:local .
+#   docker build -t fidespipe:local --target gui .     # с консолью
 #
 # Что внутри и почему:
 #
@@ -19,7 +19,7 @@
 #   ca-certificates — HTTPS к реестру и к вебхукам оповещений.
 #
 # Каталоги вынесены в тома: /data (плагины, пайплайны, журнал ранов) и
-# /etc/wedra (файл доверия). Файл доверия НЕ должен быть в образе: он задаёт,
+# /etc/fidespipe (файл доверия). Файл доверия НЕ должен быть в образе: он задаёт,
 # каким коду можно запускаться, и решать это оператору хоста, а не сборщику
 # образа.
 
@@ -39,10 +39,10 @@ COPY . .
 # чисто-Go реализация ничего не ломает, а libc в образе не нужна.
 ARG VERSION=dev
 RUN CGO_ENABLED=0 go build \
-      -ldflags="-s -w -X github.com/wykserdex/wedra/internal/buildinfo.Version=${VERSION}" \
-      -o /out/wedra ./cmd/wedra && \
+      -ldflags="-s -w -X github.com/wykserdex/fidespipe/internal/buildinfo.Version=${VERSION}" \
+      -o /out/fidespipe ./cmd/fidespipe && \
     CGO_ENABLED=0 go build \
-      -ldflags="-s -w -X github.com/wykserdex/wedra/internal/buildinfo.Version=${VERSION}" \
+      -ldflags="-s -w -X github.com/wykserdex/fidespipe/internal/buildinfo.Version=${VERSION}" \
       -o /out/tool ./cmd/tool
 
 # --- базовый образ ----------------------------------------------------------
@@ -69,33 +69,33 @@ RUN apt-get update && \
 # Непривилегированный пользователь: контейнер не должен работать от root.
 # И uid фиксированный, иначе в volume попадают файлы с чужими правами при
 # следующем запуске.
-RUN groupadd --system --gid 10001 wedra && \
-    useradd --system --uid 10001 --gid wedra --home-dir /data --shell /usr/sbin/nologin wedra
+RUN groupadd --system --gid 10001 fidespipe && \
+    useradd --system --uid 10001 --gid fidespipe --home-dir /data --shell /usr/sbin/nologin fidespipe
 
-COPY --from=build /out/wedra /usr/local/bin/wedra
+COPY --from=build /out/fidespipe /usr/local/bin/fidespipe
 COPY --from=build /out/tool /usr/local/bin/tool
 
 # Каталоги данных и доверия. Права выданы владельцу: том монтируется поверх, и
 # права внутри тома задаёт оператор.
-RUN mkdir -p /data/plugins /data/examples /data/var/runs /etc/wedra && \
-    chown -R wedra:wedra /data /etc/wedra && \
-    chmod 700 /etc/wedra
+RUN mkdir -p /data/plugins /data/examples /data/var/runs /etc/fidespipe && \
+    chown -R fidespipe:fidespipe /data /etc/fidespipe && \
+    chmod 700 /etc/fidespipe
 
 # Реально поддерживаемая переменная: путь к файлу доверия. Каталоги плагинов,
 # пайплайнов и ранов переменными окружения НЕ задаются — таких переменных в
 # проекте нет, они передаются флагами (--plugins/--pipelines/--runs-dir), и
 # подставлять их в образ флагами же, чтобы настройка не расходилась с
 # настоящей.
-ENV WEDRA_TRUST_CONFIG=/etc/wedra/wedra-trust.yaml
+ENV FIDESPIPE_TRUST_CONFIG=/etc/fidespipe/fidespipe-trust.yaml
 
-USER wedra
+USER fidespipe
 WORKDIR /data
-VOLUME ["/data", "/etc/wedra"]
+VOLUME ["/data", "/etc/fidespipe"]
 
 # По умолчанию — планировщик. Адрес раздачи ссылок одобрения: по умолчанию
 # локальный, и для доступа с другой машины его надо переопределить
-# (WEDRA_APPROVE_URL), иначе ссылка уйдёт туда, куда человек не достанется.
-ENTRYPOINT ["/usr/local/bin/wedra"]
+# (FIDESPIPE_APPROVE_URL), иначе ссылка уйдёт туда, куда человек не достанется.
+ENTRYPOINT ["/usr/local/bin/fidespipe"]
 CMD ["daemon", \
      "--plugins=/data/plugins", \
      "--pipelines=/data/examples", \
@@ -105,9 +105,9 @@ CMD ["daemon", \
 # Тот же бинарь и те же тома, но входной точкой консоль, и она слушает порт.
 FROM runtime AS gui
 
-USER wedra
+USER fidespipe
 EXPOSE 8765
-ENTRYPOINT ["/usr/local/bin/wedra"]
+ENTRYPOINT ["/usr/local/bin/fidespipe"]
 CMD ["gui", \
      "--plugins=/data/plugins", \
      "--pipelines=/data/examples", \

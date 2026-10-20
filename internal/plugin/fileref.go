@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 type FileRefManifest = pipeline.Manifest

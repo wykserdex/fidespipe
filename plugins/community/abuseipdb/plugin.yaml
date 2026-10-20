@@ -7,7 +7,7 @@ description: >
   сеть делает дочерний процесс, ключ читается из env ABUSEIPDB_API_KEY.
   Донор ставится из git-master (vsecades/AbuseIpDb, 3.0.0) — см. README:
   PyPI-релиз 1.3.0 на py3 не ставится.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

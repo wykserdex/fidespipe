@@ -13,7 +13,7 @@ description: >
   git clone https://github.com/duo-labs/cloudmapper && pip install -r
   requirements.txt (в репозитории нет setup.py, pip-пакета cloudmapper нет —
   точку входа задавайте через CLOUDMAPPER_BIN).
-author: "community · wedra showcase (cloud audit)"
+author: "community · fidespipe showcase (cloud audit)"
 
 runtime:
   type: python

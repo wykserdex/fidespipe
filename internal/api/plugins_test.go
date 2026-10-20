@@ -17,7 +17,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // writePluginDir кладёт каталог с манифестом. Пустой plugin.yaml достаточно:

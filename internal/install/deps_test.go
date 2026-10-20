@@ -19,7 +19,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 const manifestWithDeps = `id: safe

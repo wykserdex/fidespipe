@@ -3,7 +3,7 @@ package api
 // Доверие фикстурным плагинам в тестах API.
 //
 // Тесты API поднимают плагины в t.TempDir(). После инверсии (H1) такой плагин —
-// внешний код: его нет ни во встроенном allow-list, ни в wedra-trust.yaml.
+// внешний код: его нет ни во встроенном allow-list, ни в fidespipe-trust.yaml.
 // Без явной выдачи доверия ран падал бы на отказе по политике, и тест проверял
 // бы не то, что думал (например, TestAPIRunCancel ждал отмены работающего
 // плагина, а получал мгновенный fail).
@@ -16,8 +16,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // trustDirIn — внести в allow-list сервера плагины из каталога dir

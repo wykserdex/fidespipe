@@ -7,7 +7,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 // When — условие выполнения шага (v0.20).

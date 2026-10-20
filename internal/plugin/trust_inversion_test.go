@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // writePluginDir — каталог плагина с заданным main.py и манифестом.
@@ -141,7 +141,7 @@ func TestManifestCannotRaiseTrust(t *testing.T) {
 	}{
 		{"sandbox: untrusted", func(x *pipeline.Manifest) { x.Sandbox = pipeline.SandboxUntrusted }},
 		{"sandbox: trusted", func(x *pipeline.Manifest) { x.Sandbox = pipeline.SandboxTrusted }},
-		{"автор", func(x *pipeline.Manifest) { x.Author = "WEDRA Security Team" }},
+		{"автор", func(x *pipeline.Manifest) { x.Author = "Fidespipe Security Team" }},
 		{"platform_api", func(x *pipeline.Manifest) { x.PlatformAPI = "0.2" }},
 		{"версия 999", func(x *pipeline.Manifest) { x.Version = "999.0.0" }},
 		{"секреты", func(x *pipeline.Manifest) { x.Permissions.Secrets = []string{"HOME"} }},

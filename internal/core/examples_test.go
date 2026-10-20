@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Примеры из examples/ — документация, которую копируют. Дрейф между ними и

@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <windows.h>
 
-__declspec(dllexport) int wedra_fixture_answer(void)
+__declspec(dllexport) int fidespipe_fixture_answer(void)
 {
     static int counter;            /* уходит в .bss */
     char buf[32];

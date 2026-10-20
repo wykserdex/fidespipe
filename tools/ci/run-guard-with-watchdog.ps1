@@ -54,7 +54,7 @@ function Write-Both {
 
 function Ensure-Win32Helpers {
     if (-not $script:IsWin) { return }
-    if ('Wedra.Win32Guard' -as [type]) { return }
+    if ('Fidespipe.Win32Guard' -as [type]) { return }
     # Add-Type зовёт компилятор C# и сам по себе предела не имеет, а стоит он
     # ДО старта воркера. Зависни он — шаг не напечатает ни одной строки и не
     # оставит ни одного файла в артефакте, то есть ровно то, что мы наблюдали.
@@ -63,7 +63,7 @@ function Ensure-Win32Helpers {
     # видимым — маркер до входа в Add-Type попадает в stdout и в лог.
     if (-not $script:Win32TypeDef) {
         # -TypeDefinition, а не -MemberDefinition: using-директивы легальны только
-        # на верхнем уровне исходника. Тип тот же — Wedra.Win32Guard.
+        # на верхнем уровне исходника. Тип тот же — Fidespipe.Win32Guard.
         $script:Win32TypeDef = @'
             using System;
             using System.Collections.Generic;
@@ -71,7 +71,7 @@ function Ensure-Win32Helpers {
             using System.IO;
             using System.Runtime.InteropServices;
 
-            namespace Wedra { public static class Win32Guard {
+            namespace Fidespipe { public static class Win32Guard {
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             public struct PROCESSENTRY32W {
@@ -217,7 +217,7 @@ function Get-CensusText {
     if ($script:IsWin) {
         try {
             Ensure-Win32Helpers
-            return ([Wedra.Win32Guard]::SnapshotProcesses() |
+            return ([Fidespipe.Win32Guard]::SnapshotProcesses() |
                 Sort-Object Pid |
                 ForEach-Object { "pid={0} ppid={1} {2}" -f $_.Pid, $_.Ppid, $_.Name })
         } catch {
@@ -271,7 +271,7 @@ if ($script:IsWin) {
     $psi.FileName = $env:ComSpec
     $psi.Arguments = '/c ""{0}" -NoProfile -ExecutionPolicy Bypass -File "{1}" -LogDir "{2}" -BudgetSec {3} -PerPackageSec {4} -GoTimeoutSec {5}{6} > "{7}" 2> "{8}""' -f `
         $hostExe, $GuardPath, $LogDir, $WorkerBudgetSec, $PerPackageSec, $GoTimeoutSec, $killArg, $out, $err
-    $worker = [Wedra.Win32Guard]::StartDetachedFromStdPipes($psi)
+    $worker = [Fidespipe.Win32Guard]::StartDetachedFromStdPipes($psi)
 } else {
     # Ветка только для прогона сторожки вне Windows (проверка логики).
     $psi.FileName = '/bin/sh'

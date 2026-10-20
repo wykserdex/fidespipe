@@ -11,14 +11,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/wykserdex/wedra/internal/api"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/mcp"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/api"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/mcp"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
-// RunMCP — wedra mcp --plugins=<dir>... [--workdir=<dir>] [--runs-dir=<dir>]
+// RunMCP — fidespipe mcp --plugins=<dir>... [--workdir=<dir>] [--runs-dir=<dir>]
 // [--gui-listen=127.0.0.1:0] [--no-gui] [--no-open] [--print-link].
 //
 // Stdio JSON-RPC. Изоляция (Фаза 4.2): proto = исходный stdout, os.Stdout →
@@ -80,7 +80,7 @@ func RunMCP(args []string) {
 		case strings.HasPrefix(a, "--trust-config="):
 			trustCfg = strings.TrimPrefix(a, "--trust-config=")
 		case a == "--help" || a == "-h":
-			fmt.Fprintln(os.Stderr, "wedra mcp --plugins=<dir> [--plugins=<dir>...] [--workdir=<dir>] [--runs-dir=<dir>]")
+			fmt.Fprintln(os.Stderr, "fidespipe mcp --plugins=<dir> [--plugins=<dir>...] [--workdir=<dir>] [--runs-dir=<dir>]")
 			fmt.Fprintln(os.Stderr, "          [--gui-listen=127.0.0.1:0] [--no-gui] [--no-open] [--print-link]")
 			fmt.Fprintln(os.Stderr, "          [--allow-agent-exec] [--allow-untrusted-plugins] [--deny-untrusted-plugins]")
 			fmt.Fprintln(os.Stderr, "          [--allow-unapproved-runs] [--gate-elicitation]")
@@ -94,7 +94,7 @@ func RunMCP(args []string) {
 			fmt.Fprintln(os.Stderr, "--allow-unapproved-runs снимает это требование; каждый обход пишется в <runs-dir>/gate-bypass.jsonl.")
 			fmt.Fprintln(os.Stderr, "")
 			fmt.Fprintln(os.Stderr, "--gate-elicitation ведёт гейты через диалог MCP-клиента (elicitation/create, протокол 2025-06-18),")
-			fmt.Fprintln(os.Stderr, "если клиент объявил эту возможность. По умолчанию выключено: wedra не может проверить, что за")
+			fmt.Fprintln(os.Stderr, "если клиент объявил эту возможность. По умолчанию выключено: fidespipe не может проверить, что за")
 			fmt.Fprintln(os.Stderr, "клиентом сидит человек, поэтому решение человека называет таковым только оператор, включивший флаг.")
 			return
 		default:
@@ -140,7 +140,7 @@ func RunMCP(args []string) {
 	if allowUngatedRuns {
 		// Обход виден в логе сразу при старте, а не только в момент обхода:
 		// оператор должен видеть, что сервер запущен с ослабленным требованием.
-		fmt.Fprintln(os.Stderr, "wedra mcp: ВНИМАНИЕ --allow-unapproved-runs: ран с опасным шагом (сеть/диск/секреты) пойдёт без human_gate. Каждый обход пишется в", filepath.Join(runsdir, "gate-bypass.jsonl"))
+		fmt.Fprintln(os.Stderr, "fidespipe mcp: ВНИМАНИЕ --allow-unapproved-runs: ран с опасным шагом (сеть/диск/секреты) пойдёт без human_gate. Каждый обход пишется в", filepath.Join(runsdir, "gate-bypass.jsonl"))
 	}
 	if !noGUI {
 		h, err := startHumanConsole(guiListen, plugins, absWork, runsdir, !noOpen, printLink)
@@ -184,7 +184,7 @@ func startHumanConsole(listen string, plugins []string, workdir, runsDir string,
 	if !filepath.IsAbs(runsDir) {
 		runsDir = filepath.Join(workdir, runsDir)
 	}
-	// Тот же запрет, что у `wedra gui`: консоль гейтов на внешнем адресе —
+	// Тот же запрет, что у `fidespipe gui`: консоль гейтов на внешнем адресе —
 	// это чужой доступ к решениям человека, и по умолчанию он не включается.
 	if err := api.ValidateListen(api.ListenOptions{Addr: listen}); err != nil {
 		return nil, err
@@ -206,7 +206,7 @@ func startHumanConsole(listen string, plugins []string, workdir, runsDir string,
 	}
 	go func() { _ = srv.HTTPServer(ln.Addr().String()).Serve(ln) }()
 	base := "http://" + ln.Addr().String()
-	fmt.Fprintf(os.Stderr, "wedra mcp: консоль гейтов %s (вход — по одноразовому коду, только в браузер человека)\n", base)
+	fmt.Fprintf(os.Stderr, "fidespipe mcp: консоль гейтов %s (вход — по одноразовому коду, только в браузер человека)\n", base)
 	return &humanConsole{srv: srv, base: base, code: code, open: open, print: printLink}, nil
 }
 
@@ -232,12 +232,12 @@ func (h *humanConsole) GateWaiting(id string) {
 	h.mu.Unlock()
 
 	if h.print {
-		fmt.Fprintln(os.Stderr, "wedra mcp: гейт ждёт человека. Откройте в браузере:", link)
+		fmt.Fprintln(os.Stderr, "fidespipe mcp: гейт ждёт человека. Откройте в браузере:", link)
 		fmt.Fprintln(os.Stderr, "            или введите код на странице GUI:", code)
 	}
 	if !h.open {
 		if !h.print {
-			fmt.Fprintln(os.Stderr, "wedra mcp: гейт ждёт человека (--no-open без --print-link: ссылку никто не увидит)")
+			fmt.Fprintln(os.Stderr, "fidespipe mcp: гейт ждёт человека (--no-open без --print-link: ссылку никто не увидит)")
 		}
 		return
 	}

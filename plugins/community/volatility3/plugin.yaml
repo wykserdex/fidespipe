@@ -7,7 +7,7 @@ description: >
   JSON-рендерер (-r json) и отдаёт плоские строки репорта. По умолчанию
   banners.Banners, например windows.pslist или windows.cmdline. Ставится
   отдельно: pip install volatility3.
-author: "community · wedra showcase (forensics)"
+author: "community · fidespipe showcase (forensics)"
 
 runtime:
   type: python

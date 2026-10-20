@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 // oversizedJournal — n событий step_end, обёрнутые в run_start/run_end.
@@ -208,7 +208,7 @@ func TestRunListCapsNumberOfRuns(t *testing.T) {
 	if len(list) != maxRunsListed {
 		t.Fatalf("ранов в ответе %d, want %d", len(list), maxRunsListed)
 	}
-	if resp.Header.Get("X-Wedra-Runs-Truncated") != "true" {
+	if resp.Header.Get("X-Fidespipe-Runs-Truncated") != "true" {
 		t.Fatalf("нет заголовка обрезания: %v", resp.Header)
 	}
 	if list[0]["id"] != fmt.Sprintf("run-%04d", total-1) {

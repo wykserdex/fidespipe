@@ -13,10 +13,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/web"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/web"
 )
 
 // Version — версия бинарника. var (не const): release-воркфлоу переопределяет
@@ -77,7 +77,7 @@ type Server struct {
 	approve *gate.Approver
 
 	// TrustConfigPath — КАК ИМЕННО оператор задал доверие: путь к
-	// wedra-trust.yaml, который реально выбран (флаг, переменная, каталог
+	// fidespipe-trust.yaml, который реально выбран (флаг, переменная, каталог
 	// бинаря) или пустая строка, если выбран встроенный allow-list.
 	//
 	// Это не деталь реализации: без него редактор плагинов может только
@@ -450,7 +450,7 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("/api/serialize/pipeline", s.handleSerializePipeline)
 	// static frontend — v0.7: GUI вшит в бинарник (go:embed, package web).
 	// Frontend с диска отдаётся ТОЛЬКО когда каталог назван явно (StaticDir,
-	// флаг `wedra gui --static=<dir>`): иначе отдаваемое содержимое зависело бы
+	// флаг `fidespipe gui --static=<dir>`): иначе отдаваемое содержимое зависело бы
 	// от места запуска, а не от того, что собрано в бинарник.
 	if s.StaticDir != "" {
 		mux.Handle("/", http.FileServer(http.Dir(s.StaticDir)))

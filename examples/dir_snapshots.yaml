@@ -15,7 +15,7 @@ format_version: "0.2"
 #
 # Если напишете путь "как из корня" — ядро скажет об этом ДО запуска плагина.
 #
-# Запуск:  ./wedra run examples/dir_snapshots.yaml
+# Запуск:  ./fidespipe run examples/dir_snapshots.yaml
 
 pipeline:
   name: dir_snapshots

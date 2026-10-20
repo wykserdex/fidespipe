@@ -106,7 +106,7 @@ func windowsScreenshot() ([]byte, error) {
 	if !isWindows() {
 		return nil, fmt.Errorf("снимок только для Windows")
 	}
-	tmp := filepath.Join(os.TempDir(), fmt.Sprintf("wedra-census-shot-%d.png", time.Now().UnixNano()))
+	tmp := filepath.Join(os.TempDir(), fmt.Sprintf("fidespipe-census-shot-%d.png", time.Now().UnixNano()))
 	defer os.Remove(tmp)
 	ps := `Add-Type -AssemblyName System.Windows.Forms,System.Drawing;` +
 		`$b=[System.Windows.Forms.SystemInformation]::VirtualScreen;` +

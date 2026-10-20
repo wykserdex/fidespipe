@@ -8,7 +8,7 @@ description: >
   публичный API threatfox-api.abuse.ch; надёжного pip-пакета нет, ключ в коде
   не вшит (необязательный env THREATFOX_AUTH_KEY — abuse.ch требует Auth-Key
   для Community API).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

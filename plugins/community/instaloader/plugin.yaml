@@ -13,7 +13,7 @@ description: >
   файлы выключены (соответствуют флагам --no-pictures, --no-videos,
   --no-video-thumbnails, --no-metadata-json).
   Инструмент ставится отдельно: pip install instaloader.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

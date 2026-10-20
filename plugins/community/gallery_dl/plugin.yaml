@@ -8,7 +8,7 @@ description: >
   отчёта берутся только сообщения Message.Url и Message.Directory: список
   позиций с нормализованными полями и заголовок галереи.
   Инструмент ставится отдельно: pip install gallery-dl.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

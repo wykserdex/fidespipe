@@ -4,10 +4,10 @@ package api
 //
 // Модель входа (было: `?k=<128-битный секрет>` в ссылке из терминала):
 //
-//	1. `wedra gui` печатает ОДНОРАЗОВЫЙ КОД (12 символов, окно 10 минут) и ссылку
+//	1. `fidespipe gui` печатает ОДНОРАЗОВЫЙ КОД (12 символов, окно 10 минут) и ссылку
 //	   без секрета. Сам секрет сессии в терминале не появляется.
 //	2. Человек открывает GUI одним из двух способов:
-//	     • `wedra gui --open` / wedragui / гейт в `wedra mcp` открывают окно с
+//	     • `fidespipe gui --open` / fidespipegui / гейт в `fidespipe mcp` открывают окно с
 //	       `?c=<код>` — сервер обменивает код на cookie и редиректит на тот же
 //	       адрес без кода;
 //	     • человек открывает адрес сам и вводит код в поле на странице
@@ -34,14 +34,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/gate"
 )
 
 const (
 	// sessionCookiePrefix — префикс имени cookie. Порт дописывается:
 	// cookie в браузере портом не различаются, и без порта в имени два
 	// экземпляра на localhost затирали сессию друг друга.
-	sessionCookiePrefix = "wedra_session"
+	sessionCookiePrefix = "fidespipe_session"
 
 	// pairingCodeLen — длина одноразового кода (12 символов base32 = 60 бит).
 	pairingCodeLen = 12
@@ -142,7 +142,7 @@ func (s *Server) sessionHash(r *http.Request) string {
 	if err != nil || c.Value == "" {
 		return ""
 	}
-	h := sha256.Sum256([]byte("wedra-session:" + c.Value))
+	h := sha256.Sum256([]byte("fidespipe-session:" + c.Value))
 	return hex.EncodeToString(h[:6])
 }
 
@@ -183,7 +183,7 @@ func (s *Server) requireSession(w http.ResponseWriter, r *http.Request) bool {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
-	w.Write([]byte(`{"error":"нужна сессия человека: откройте адрес GUI и введите одноразовый код из терминала wedra","code":"E_SESSION_REQUIRED"}` + "\n"))
+	w.Write([]byte(`{"error":"нужна сессия человека: откройте адрес GUI и введите одноразовый код из терминала fidespipe","code":"E_SESSION_REQUIRED"}` + "\n"))
 	return false
 }
 
@@ -281,7 +281,7 @@ func (s *Server) handleSession(w http.ResponseWriter, r *http.Request) {
 		if authed {
 			out["expires_in"] = int(s.policy.ttl / time.Second)
 		} else {
-			out["how"] = "одноразовый код из терминала wedra → POST /api/session {\"code\":\"XXXX-XXXX-XXXX\"}"
+			out["how"] = "одноразовый код из терминала fidespipe → POST /api/session {\"code\":\"XXXX-XXXX-XXXX\"}"
 		}
 		writeJSON(w, 200, out)
 	case "POST":
@@ -339,7 +339,7 @@ func (s *Server) sessionHandshake(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
-// ── v0.9: встраивание (wedra mcp) ────────────────────────────────────────
+// ── v0.9: встраивание (fidespipe mcp) ────────────────────────────────────────
 // MCP-сервер исполняет раны сам, а решения гейтов и отмена приходят от
 // человека через этот HTTP-сервер (с сессией). Регистрация внешнего рана
 // делает его гейт/отмену доступными по /api/runs/<id>/gate|cancel.

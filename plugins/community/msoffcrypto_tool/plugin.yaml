@@ -13,7 +13,7 @@ description: >
   внутренний идентификатор машины. Наружу не отдаются office.info (соль,
   проверочные хеши пароля, ключевой материал) и office.secret_key.
   Пин: pip install msoffcrypto-tool==6.0.0
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

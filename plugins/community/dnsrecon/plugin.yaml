@@ -6,7 +6,7 @@ description: >
   CNAME, зона-трансфер (AXFR), опционально брутфорс поддоменов по словарю.
   Обёртка над CLI dnsrecon: гоняет перечисление и читает машинный JSON-репорт
   (-j). dnsrecon ставится отдельно: pip install dnsrecon.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

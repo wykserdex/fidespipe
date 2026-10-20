@@ -5,7 +5,7 @@
 AWS-профиля), wall_timeout (опц., общий лимит, 1800).
 
 Вызов: <SCOUTSUITE_BIN|scout|python3 -m ScoutSuite> <provider>
-          --report-dir <tmp>/scout-report --report-name wedra
+          --report-dir <tmp>/scout-report --report-name fidespipe
           --result-format json --no-browser [--profile <account>]
        (cwd = временная папка).
 
@@ -47,7 +47,7 @@ import tempfile
 DEFAULT_PROVIDER = "aws"
 DEFAULT_WALL = 1800
 REPORT_DIR = "scout-report"
-REPORT_NAME = "wedra"
+REPORT_NAME = "fidespipe"
 RESULT_GLOB = os.path.join(REPORT_DIR, "scoutsuite-results",
                            "scoutsuite_results_*.js")
 

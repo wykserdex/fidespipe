@@ -252,7 +252,7 @@ const PLUGINS = [
 
 const listeners = { doc: {} };
 const win = {
-  wedraSession: async () => true,
+  fidespipeSession: async () => true,
   location: { href: 'http://x/editor/', search: '', origin: 'http://x' },
   addEventListener: (t, f) => { (listeners[t] = listeners[t] || []).push(f); },
   removeEventListener: (t, f) => { if (listeners[t]) listeners[t] = listeners[t].filter(x => x !== f); },
@@ -271,7 +271,7 @@ const docList = {};
 const ctx = vm.createContext({
   window: win, document: doc, console, setTimeout: () => 0, clearTimeout: () => {},
   fetch: win.fetch, location: win.location, confirm: win.confirm, alert: win.alert,
-  wedraSession: win.wedraSession, Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Error,
+  fidespipeSession: win.fidespipeSession, Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Error,
 });
 
 const src = fs.readFileSync(SRC, 'utf8');

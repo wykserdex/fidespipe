@@ -30,8 +30,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // presetPaths — все пресеты реестра: тест обязан знать не «один удобный

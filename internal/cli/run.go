@@ -9,10 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/execution"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/execution"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 func runIDFromDir(runDir string) string {
@@ -26,7 +26,7 @@ func runIDFromDir(runDir string) string {
 //
 // Конфиг доверия решает, чей код получит права пользователя, поэтому искать
 // его в рабочем каталоге нельзя: этот каталог задаёт не оператор, а тот, кто
-// положил сюда пайплайн. Клон репозитория с приложенным wedra-trust.yaml
+// положил сюда пайплайн. Клон репозитория с приложенным fidespipe-trust.yaml
 // проходил все проверки N3 (файл принадлежит пользователю, права 0644) и молча
 // расширял allow-list — при том, что доверие оператора выдавалось командой,
 // запущенной внутри чужого дерева.
@@ -34,8 +34,8 @@ func runIDFromDir(runDir string) string {
 // Порядок поиска, от сильного к слабому:
 //
 //  1. --trust-config=<путь> — оператор назвал файл сам;
-//  2. $WEDRA_TRUST_CONFIG — то же для CI и скриптов, где флаг не передать;
-//  3. каталог бинаря: %ProgramFiles%\wedra\wedra-trust.yaml и т.п. Лежит там,
+//  2. $FIDESPIPE_TRUST_CONFIG — то же для CI и скриптов, где флаг не передать;
+//  3. каталог бинаря: %ProgramFiles%\fidespipe\fidespipe-trust.yaml и т.п. Лежит там,
 //     куда писать может только установщик, а не код из клона.
 //
 // Рабочий каталог в списке нет намеренно. Если файл там лежит, но не был
@@ -49,13 +49,13 @@ func trustConfigPath(override string) string {
 	if override != "" {
 		return override
 	}
-	if env := strings.TrimSpace(os.Getenv("WEDRA_TRUST_CONFIG")); env != "" {
+	if env := strings.TrimSpace(os.Getenv("FIDESPIPE_TRUST_CONFIG")); env != "" {
 		return env
 	}
 	candidate, ok := executableTrustConfigPath()
 	if ok {
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
+		if path, found := plugin.TrustConfigFileExists(filepath.Dir(candidate)); found {
+			return path
 		}
 	}
 	warnIgnoredWorkingDirTrustConfig()
@@ -101,7 +101,7 @@ func warnIgnoredWorkingDirTrustConfig() {
 			"  Рабочий каталог может принадлежать не вам (клон репозитория, распакованный архив),\n"+
 			"  а конфиг доверия решает, чей код получит ваши права.\n"+
 			"  Подключить его явно: --trust-config=%s\n"+
-			"  Постоянно: задайте WEDRA_TRUST_CONFIG=%s\n",
+			"  Постоянно: задайте FIDESPIPE_TRUST_CONFIG=%s\n",
 		plugin.TrustConfigFile, abs, abs)
 }
 
@@ -227,7 +227,7 @@ func RunPipelineRun(args []string) {
 	stats, err := core.Run(pf, eng, core.RunOptions{Yes: yes, RunsDir: runsDir, Resume: resume, Store: store, DBPath: dbPath, Ctx: runCtx, NoAutoApprove: noAuto, DenyUntrusted: denyUntrusted, AllowUntrusted: allowUntrusted, Trusted: trusted})
 	if err != nil {
 		if errors.Is(err, execution.ErrCancelled) {
-			fmt.Println("ран отменён; продолжить: wedra runs resume", runIDFromDir(stats.RunDir))
+			fmt.Println("ран отменён; продолжить: fidespipe runs resume", runIDFromDir(stats.RunDir))
 			os.Exit(130)
 		}
 		fmt.Println("ран упал:", err)

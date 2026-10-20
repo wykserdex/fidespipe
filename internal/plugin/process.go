@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 type Manifest = pipeline.Manifest
@@ -420,7 +420,7 @@ func execPluginEnv(parent context.Context, m *Manifest, input []byte, timeout ti
 			if res.Stderr == "" {
 				res.Stderr = warn
 			} else {
-				res.Stderr = common.Truncate(res.Stderr, 4000) + "\n[wedra] " + warn
+				res.Stderr = common.Truncate(res.Stderr, 4000) + "\n[fidespipe] " + warn
 			}
 		default:
 			res.Platform, res.ErrCode, res.ErrMsg = true, "spawn_failed", runErr.Error()

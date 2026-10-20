@@ -9,13 +9,13 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/api"
-	"github.com/wykserdex/wedra/internal/buildinfo"
-	"github.com/wykserdex/wedra/internal/guidirs"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/api"
+	"github.com/wykserdex/fidespipe/internal/buildinfo"
+	"github.com/wykserdex/fidespipe/internal/guidirs"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
-// RunGUI — wedra gui [--listen 127.0.0.1:8765] [--open] [--allow-remote]
+// RunGUI — fidespipe gui [--listen 127.0.0.1:8765] [--open] [--allow-remote]
 //
 //	[--public-host=имя[:порт]] [--trusted-proxy] [--origin-scheme=http|https] [--no-session]
 //
@@ -87,7 +87,7 @@ func RunGUI(args []string) {
 		case a == "--help" || a == "-h":
 			printHelp = true
 		default:
-			fmt.Printf("gui: неизвестный аргумент %q (см. wedra gui --help)\n", a)
+			fmt.Printf("gui: неизвестный аргумент %q (см. fidespipe gui --help)\n", a)
 			os.Exit(2)
 		}
 	}
@@ -208,7 +208,7 @@ func RunGUI(args []string) {
 
 // guiUsage — справка по флагам: не-loopback и прокси требуют явного решения.
 func guiUsage() {
-	fmt.Println(`wedra gui [--listen 127.0.0.1:8765] [--port N] [--open] [--no-session]
+	fmt.Println(`fidespipe gui [--listen 127.0.0.1:8765] [--port N] [--open] [--no-session]
              [--allow-remote] [--public-host=имя[:порт]]... [--trusted-proxy] [--origin-scheme=http|https]
              [--plugins=<dir>] [--pipelines=<dir>] [--runs-dir=<dir>] [--static=<dir>]
 
@@ -229,7 +229,7 @@ X-Forwarded-Host не читается никогда.
 отдаваемый фронтенд не влияет.`)
 }
 
-// PrintGUIUsage — справка gui для `wedra gui --help`.
+// PrintGUIUsage — справка gui для `fidespipe gui --help`.
 func PrintGUIUsage() { guiUsage() }
 
 // browserHost — как открыть GUI в браузере, когда слушаем все интерфейсы:

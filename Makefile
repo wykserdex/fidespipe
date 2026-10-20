@@ -19,26 +19,26 @@ conformance:
 
 build:
 	go build -o tool ./cmd/tool
-	go build -o wedra ./cmd/wedra
+	go build -o fidespipe ./cmd/fidespipe
 
 plugins: build
 	for d in plugins/official/* plugins/community/*; do \
 		if [ -f "$$d/plugin.yaml" ]; then \
 			echo "== $$d =="; \
-			./wedra plugin validate "$$d"; \
-			./wedra plugin test "$$d"; \
+			./fidespipe plugin validate "$$d"; \
+			./fidespipe plugin test "$$d"; \
 		fi; \
 	done
 
 pipelines: build
 	for f in examples/*.yaml; do \
-		./wedra pipeline validate "$$f"; \
-		./wedra pipeline lint "$$f"; \
-		./wedra pipeline plan "$$f"; \
+		./fidespipe pipeline validate "$$f"; \
+		./fidespipe pipeline lint "$$f"; \
+		./fidespipe pipeline plan "$$f"; \
 	done
 
 registry: build
-	./wedra registry validate --registry=registry.yaml --local-source=.
+	./fidespipe registry validate --registry=registry.yaml --local-source=.
 
 clean:
-	rm -f tool wedra tool.exe wedra.exe
+	rm -f tool fidespipe tool.exe fidespipe.exe

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/doctor"
+	"github.com/wykserdex/fidespipe/internal/doctor"
 )
 
 // doctor: ответ на вопрос «я скачал бинарь, ничего не настроил, что мне

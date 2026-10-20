@@ -3,17 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/wykserdex/fidespipe/internal/compat"
 	"os"
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/buildinfo"
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/buildinfo"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "wedra tool v%s — инструмент плагинов (контракт: PROTOCOL.md)\n", buildinfo.Resolve())
+	fmt.Fprintf(os.Stderr, "fidespipe tool v%s — инструмент плагинов (контракт: PROTOCOL.md)\n", buildinfo.Resolve())
 	fmt.Fprintln(os.Stderr, `
   tool run <pipeline.yaml> [--yes] [--runs <dir>] [--resume <run_id>]   запуск цепочки
                                                      --yes: auto-accept human_gate (CI/демо)
@@ -53,6 +54,7 @@ func loadPipeline(path string) (*core.PipelineFile, error) {
 }
 
 func main() {
+	compat.Init()
 	if len(os.Args) < 2 {
 		usage()
 	}
@@ -289,7 +291,7 @@ func pluginCreateCmd(args []string) {
 	fmt.Printf("\nДальше: правьте %s/main.py, затем tool plugin test %s\n", dir, dir)
 }
 
-// v0.17: list/search — те же команды, что в cmd/wedra (CI проверяет tool)
+// v0.17: list/search — те же команды, что в cmd/fidespipe (CI проверяет tool)
 func toolPluginList() {
 	plugins := core.ScanPlugins()
 	if len(plugins) == 0 {

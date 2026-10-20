@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Максимальный размер донора. Ограничение не паранойя, а защита от

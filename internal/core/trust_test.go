@@ -1,6 +1,6 @@
 package core
 
-// v0.17: trust — declare-now (network: deny + WEDRA_NETWORK) и кросс-проверка secrets.
+// v0.17: trust — declare-now (network: deny + FIDESPIPE_NETWORK) и кросс-проверка secrets.
 
 import (
 	"strings"
@@ -46,7 +46,7 @@ func TestRunNetworkDenyDeclared(t *testing.T) {
 	}
 }
 
-// ── WEDRA_NETWORK=deny доходит до subprocess (контракт для честных плагинов) ──
+// ── FIDESPIPE_NETWORK=deny доходит до subprocess (контракт для честных плагинов) ──
 
 func TestRunNetworkDenyEnv(t *testing.T) {
 	requirePython(t)
@@ -68,7 +68,7 @@ func TestRunNetworkDenyEnv(t *testing.T) {
 	snap := readContextSnapshot(t, stats.RunDir)
 	steps := snap["steps"].(map[string]interface{})
 	if got := steps["probe"].(map[string]interface{})["value"]; got != "deny" {
-		t.Fatalf("WEDRA_NETWORK=deny не дошёл до subprocess: %v", got)
+		t.Fatalf("FIDESPIPE_NETWORK=deny не дошёл до subprocess: %v", got)
 	}
 }
 
@@ -97,7 +97,7 @@ func TestRunNetworkUnsetEnvIsDeny(t *testing.T) {
 	snap := readContextSnapshot(t, stats.RunDir)
 	steps := snap["steps"].(map[string]interface{})
 	if got := steps["probe"].(map[string]interface{})["value"]; got != "deny" {
-		t.Fatalf("пустое поле network должно давать WEDRA_NETWORK=deny, получено %q", got)
+		t.Fatalf("пустое поле network должно давать FIDESPIPE_NETWORK=deny, получено %q", got)
 	}
 }
 

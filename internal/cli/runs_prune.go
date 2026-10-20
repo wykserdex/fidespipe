@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
-// RunRunsPrune — wedra runs prune [--keep-last=N] [--keep-days=N] [--dry-run]
+// RunRunsPrune — fidespipe runs prune [--keep-last=N] [--keep-days=N] [--dry-run]
 //
 // Убирает старые прогоны с диска. Без флагов политики ничего не удаляется:
 // команда без спроса не трогает данные.

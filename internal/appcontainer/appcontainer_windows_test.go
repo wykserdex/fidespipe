@@ -134,11 +134,11 @@ func TestPrepareIsIdempotent(t *testing.T) {
 // TestProfileNameIsStableAndSafe — имя профиля обязано быть устойчивым и
 // безопасным: от него зависит, переживёт ли выданная ACE переустановку плагина.
 func TestProfileNameIsStableAndSafe(t *testing.T) {
-	if got := ProfileName("otklik"); got != "wedra.otklik" {
-		t.Errorf("ProfileName(otklik) = %q, ожидалось wedra.otklik", got)
+	if got := ProfileName("otklik"); got != "fidespipe.otklik" {
+		t.Errorf("ProfileName(otklik) = %q, ожидалось fidespipe.otklik", got)
 	}
-	if got := ProfileName("a/b c"); got != "wedra.a_b_c" {
-		t.Errorf("ProfileName(a/b c) = %q, ожидалось wedra.a_b_c (разделители путей в имя профиля не идут)", got)
+	if got := ProfileName("a/b c"); got != "fidespipe.a_b_c" {
+		t.Errorf("ProfileName(a/b c) = %q, ожидалось fidespipe.a_b_c (разделители путей в имя профиля не идут)", got)
 	}
 	// Очень длинный id обязан уместиться в ограничение ядра.
 	if got := ProfileName(strings.Repeat("x", 300)); len(got) > 64 {
@@ -150,9 +150,9 @@ func TestProfileNameIsStableAndSafe(t *testing.T) {
 // запуск «как получится».
 func TestValidateFailsClosed(t *testing.T) {
 	for name, p := range map[string]Plan{
-		"пустая команда": {Name: "wedra.x", Scratch: "s"},
+		"пустая команда": {Name: "fidespipe.x", Scratch: "s"},
 		"нет имени":      {Argv: []string{"x"}, Scratch: "s"},
-		"нет scratch":    {Name: "wedra.x", Argv: []string{"x"}},
+		"нет scratch":    {Name: "fidespipe.x", Argv: []string{"x"}},
 	} {
 		if err := p.Validate(); err == nil {
 			t.Errorf("%s: Validate вернул nil, ожидался отказ", name)

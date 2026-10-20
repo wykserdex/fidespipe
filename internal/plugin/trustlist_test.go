@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // Запись allow-list обязана иметь вид id@sha256:<64 hex>. Каждая проверка
@@ -113,7 +113,7 @@ func TestLoadTrustConfigRejectsBroken(t *testing.T) {
 // Встроенный список и конфиг оператора СУММИРУЮТСЯ, а не заменяют друг друга.
 //
 // Это и есть та совместимость, ради которой всё затевалось: если бы конфиг
-// заменял встроенный список, любая запись community-плагина в wedra-trust.yaml
+// заменял встроенный список, любая запись community-плагина в fidespipe-trust.yaml
 // тихо выкинула бы из доверия все 23 официальных, и на хостах без изолятора
 // (Windows, macOS) они перестали бы работать.
 func TestEffectiveAllowListIsUnion(t *testing.T) {

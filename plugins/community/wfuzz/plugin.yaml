@@ -6,7 +6,7 @@ description: >
   слова из wordlist вместо маркера FUZZ в заданную пользователем цель и возвращает
   совпавшие ответы (код, строки, слова, символы, payload). Репорт берётся из JSON-принтера
   wfuzz (-f <файл>,json). Wfuzz ставится отдельно: pip install wfuzz.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

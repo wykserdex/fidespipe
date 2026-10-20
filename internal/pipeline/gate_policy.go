@@ -3,7 +3,7 @@ package pipeline
 import (
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/common"
+	"github.com/wykserdex/fidespipe/internal/common"
 )
 
 // Требование одобрения человека перед опасным шагом.

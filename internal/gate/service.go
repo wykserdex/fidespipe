@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 type GateOptions struct {
@@ -57,7 +57,7 @@ const (
 	SourceAutoYes   = "auto_yes"
 	SourceAgentAuto = "agent_auto"
 	// SourceElicitation — решение получено через elicitation/create: диалог
-	// показал хост MCP-клиента, а не консоль wedra и не терминал. Отдельный
+	// показал хост MCP-клиента, а не консоль fidespipe и не терминал. Отдельный
 	// источник нужен, чтобы в журнале было видно, какой интерфейс решил гейт:
 	// «человек в GUI» и «человек в диалоге клиента» — разные каналы доверия.
 	SourceElicitation = "mcp_elicitation"

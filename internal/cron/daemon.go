@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // ScheduleState — куда сохраняем next_run/last_run для GUI и для catchUp.
@@ -195,7 +195,7 @@ func indexOf(b, sub []byte) int {
 }
 
 // Daemon — минимальный демон: тикает каждую минуту, запускает pipeline run
-// В wedra это будет вызываться из internal/cli/daemon.go или internal/api/server.go
+// В fidespipe это будет вызываться из internal/cli/daemon.go или internal/api/server.go
 type Daemon struct {
 	PipelinesDir string
 	RunsDir      string
@@ -342,7 +342,7 @@ func (d *Daemon) Tick(ctx context.Context) error {
 // alertPayload — тело POST в webhook.
 //
 // Плоское и без внутренних структур по двум причинам: получатель на той стороне
-// не обязан знать про WEDRA, и лишняя вложенность в теле оповещения ничем не
+// не обязан знать про Fidespipe, и лишняя вложенность в теле оповещения ничем не
 // окупается. Время в UTC и RFC3339 — иначе разбирать придётся в догадках о
 // часовом поясе отправителя.
 type alertPayload struct {

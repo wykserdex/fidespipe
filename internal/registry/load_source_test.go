@@ -24,10 +24,10 @@ func fileRepoURL(dir string) string {
 func TestLoadRejectsOptionLikeRegistrySource(t *testing.T) {
 	t.Setenv("PATH", t.TempDir())
 	for _, source := range []string{
-		"--upload-pack=touch /tmp/wedra-pwned",
+		"--upload-pack=touch /tmp/fidespipe-pwned",
 		"--config=core.sshCommand=id",
 		"-c",
-		"-u/tmp/wedra-pwned",
+		"-u/tmp/fidespipe-pwned",
 		"--upload-pack=calc.exe",
 	} {
 		_, err := Load(source)
@@ -77,7 +77,7 @@ func TestValidateSourceAcceptsLocalAndURLSources(t *testing.T) {
 }
 
 func TestLoadAcceptsLocalPathWithSpaces(t *testing.T) {
-	dir := filepath.Join(t.TempDir(), "Program Files", "wedra registry")
+	dir := filepath.Join(t.TempDir(), "Program Files", "fidespipe registry")
 	writeFile(t, filepath.Join(dir, RegistryFile), `
 version: "0.1"
 presets:

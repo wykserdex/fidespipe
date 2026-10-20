@@ -3,7 +3,7 @@ package mcp
 import (
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 func TestCheckPipelineSafety(t *testing.T) {

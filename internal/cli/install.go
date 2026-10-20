@@ -15,10 +15,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/install"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/install"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // ── plugin install ─────────────────────────────────────────────────────────
@@ -30,7 +30,7 @@ import (
 func RunPluginInstall(args []string) {
 	req, err := install.ParseArgs(args)
 	if err != nil {
-		fmt.Println("нужно имя плагина: wedra plugin install <name>[@version] [--registry=<url|path>] [--dest=plugins]")
+		fmt.Println("нужно имя плагина: fidespipe plugin install <name>[@version] [--registry=<url|path>] [--dest=plugins]")
 		os.Exit(2)
 	}
 	if err := doPluginInstall(req.Name, req.Version, req.RegistrySrc, req.Dest); err != nil {
@@ -260,7 +260,7 @@ func RunPipelineInstall(args []string) {
 		}
 	}
 	if preset == "" {
-		fmt.Println("нужен пресет: wedra pipeline install <name|file.yaml|url> [--registry=<url|path>]")
+		fmt.Println("нужен пресет: fidespipe pipeline install <name|file.yaml|url> [--registry=<url|path>]")
 		os.Exit(2)
 	}
 

@@ -6,7 +6,7 @@ description: >
   уязвимости из своего набора PoC. Обёртка над CLI pocsuite: неинтерактивный
   прогон (-u, --verify), машинный вывод — JSON Lines (-o). PoC Suite3
   ставится отдельно: pip install pocsuite3.
-author: "community · wedra showcase (web security)"
+author: "community · fidespipe showcase (web security)"
 
 runtime:
   type: python

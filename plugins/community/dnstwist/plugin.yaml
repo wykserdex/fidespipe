@@ -6,7 +6,7 @@ description: >
   фишинг-домены). Обёртка над CLI dnstwist: берёт машинный вывод
   -f json и разбирает перестановки вместе с NS-записями. Ставится отдельно:
   pip install dnstwist.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

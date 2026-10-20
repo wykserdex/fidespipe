@@ -51,26 +51,26 @@ let st = {
 
 // ── сессия человека ────────────────────────────────────────────────────────
 // Всё под /api/* (кроме /api/health и /api/session) требует cookie. Cookie
-// выдаётся обменом ОДНОРАЗОВОГО кода из терминала, где запущен wedra. Пока
+// выдаётся обменом ОДНОРАЗОВОГО кода из терминала, где запущен fidespipe. Пока
 // cookie нет, показываем поле ввода кода вместо пустого редактора — тот же
 // путь, что в консоли (web/static/app.js) и в редакторе (editor/app.js).
 function sessionOverlay() {
-  if (document.getElementById('wedra-session-box')) return;
+  if (document.getElementById('fidespipe-session-box')) return;
   const box = document.createElement('div');
-  box.id = 'wedra-session-box';
-  // стили — в index.html (#wedra-session-box): разметка не тащит цвета в JS
+  box.id = 'fidespipe-session-box';
+  // стили — в index.html (#fidespipe-session-box): разметка не тащит цвета в JS
   box.innerHTML =
     '<div class="sbox">' +
-    '<h2>Вход в WEDRA</h2>' +
-    '<p>Код входа одноразовый и напечатан в терминале, где запущен wedra. Он нужен один раз: ' +
+    '<h2>Вход в Fidespipe</h2>' +
+    '<p>Код входа одноразовый и напечатан в терминале, где запущен fidespipe. Он нужен один раз: ' +
     'обменяется на cookie, и страница перезагрузится сама.</p>' +
-    '<input id="wedra-code" placeholder="XXXX-XXXX-XXXX" autocomplete="off"/>' +
-    '<div id="wedra-code-err" class="serr"></div>' +
-    '<button id="wedra-code-go">Войти</button>' +
+    '<input id="fidespipe-code" placeholder="XXXX-XXXX-XXXX" autocomplete="off"/>' +
+    '<div id="fidespipe-code-err" class="serr"></div>' +
+    '<button id="fidespipe-code-go">Войти</button>' +
     '</div>';
   document.body.appendChild(box);
-  const input = box.querySelector('#wedra-code');
-  const err = box.querySelector('#wedra-code-err');
+  const input = box.querySelector('#fidespipe-code');
+  const err = box.querySelector('#fidespipe-code-err');
   const submit = async () => {
     const code = input.value.trim();
     if (!code) return;
@@ -83,14 +83,14 @@ function sessionOverlay() {
     err.textContent = d.error || 'код не подошёл';
     input.select();
   };
-  box.querySelector('#wedra-code-go').onclick = submit;
+  box.querySelector('#fidespipe-code-go').onclick = submit;
   input.onkeydown = e => { if (e.key === 'Enter') submit(); };
   input.focus();
 }
 
-// wedraSession — можно ли работать. Сессия выключена (--no-session) или уже
+// fidespipeSession — можно ли работать. Сессия выключена (--no-session) или уже
 // есть — сразу true; иначе показываем поле кода и ждём перезагрузки.
-async function wedraSession() {
+async function fidespipeSession() {
   let s = null;
   try { s = await (await fetch('/api/session')).json(); } catch (e) { return true; }
   if (!s || !s.required || s.authenticated) return true;
@@ -126,7 +126,7 @@ async function api(path, opts = {}) {
   else body = await r.text();
   if (r.status === 401) {
     sessionOverlay();
-    throw apiFail('нет сессии: нужен одноразовый код из терминала wedra', 401, body);
+    throw apiFail('нет сессии: нужен одноразовый код из терминала fidespipe', 401, body);
   }
   if (!r.ok) throw apiFail(messageOf(body, r.status), r.status, body);
   return body;
@@ -201,7 +201,7 @@ const isDirty = d => !!d && Object.keys(d.dirty).length > 0;
 // localStorage с версией ключа, иначе смена формата сделала бы старое
 // значение нечитаемым молча. Значение проверяется по списку плагинов —
 // сохранённый id мог исчезнуть с диска.
-const LAST_PLUGIN_KEY = 'wedra.lastPlugin.v1';
+const LAST_PLUGIN_KEY = 'fidespipe.lastPlugin.v1';
 
 function rememberPlugin(id) {
   if (!id) return;
@@ -318,7 +318,7 @@ function renderTrustHint(d) {
   const noIso = /windows|macos|нет\b/i.test(iso) || st.no_isolator;
   const where = st.trust && st.trust.config_path
     ? 'Файл: <code>' + esc(st.trust.config_path) + '</code>'
-    : 'Файл доверия не выбран: задайте <code>--trust-config=&lt;путь&gt;</code> или <code>WEDRA_TRUST_CONFIG</code>. Рабочий каталог не читается намеренно.';
+    : 'Файл доверия не выбран: задайте <code>--trust-config=&lt;путь&gt;</code> или <code>FIDESPIPE_TRUST_CONFIG</code>. Рабочий каталог не читается намеренно.';
   box.innerHTML =
     '<h4>Плагину не доверено</h4>' +
     (noIso
@@ -784,7 +784,7 @@ FILES.forEach(f => {
 
 // ── старт ──────────────────────────────────────────────────────────────────
 (async function init() {
-  if (!await wedraSession()) return;
+  if (!await fidespipeSession()) return;
   // Сведения о доверии нужны подсказке «как запустить свой плагин». Это НЕ
   // обязательный шаг: консоль обязана открыться и без него, поэтому ошибка
   // молча превращается в нейтральный текст, а не в пустую страницу.

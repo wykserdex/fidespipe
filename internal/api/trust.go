@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // handleTrust — как в этой установке устроено доверие и куда положить файл.
@@ -35,8 +35,8 @@ func (s *Server) handleTrust(w http.ResponseWriter, r *http.Request) {
 		"file":        plugin.TrustConfigFile,
 		"search_order": []string{
 			"--trust-config=<путь>",
-			"WEDRA_TRUST_CONFIG=<путь>",
-			"каталог бинаря: wedra-trust.yaml рядом с wedra",
+			"FIDESPIPE_TRUST_CONFIG=<путь>",
+			"каталог бинаря: fidespipe-trust.yaml рядом с fidespipe",
 		},
 		// Рабочий каталог назван отдельным пунктом не для красоты: если файл
 		// лежит там и НЕ выбран, CLI печатает предупреждение, а страница
@@ -44,16 +44,16 @@ func (s *Server) handleTrust(w http.ResponseWriter, r *http.Request) {
 		// «оператор решил, что доверяет, а на деле нет».
 		"cwd_not_read": true,
 	}
-	// Windows UX: AppContainer нет, доверять можно только через wedra-trust.yaml
+	// Windows UX: AppContainer нет, доверять можно только через fidespipe-trust.yaml
 	if isWindows() {
-		out["windows_note"] = "На Windows изолятор (bwrap) недоступен — внешний код запускается только если его хэш в wedra-trust.yaml. Положите файл рядом с wedra.exe или задайте --trust-config."
-		out["example_path"] = "%ProgramData%\\wedra\\wedra-trust.yaml или C:\\wedra\\wedra-trust.yaml"
+		out["windows_note"] = "На Windows изолятор (bwrap) недоступен — внешний код запускается только если его хэш в fidespipe-trust.yaml. Положите файл рядом с fidespipe.exe или задайте --trust-config."
+		out["example_path"] = "%ProgramData%\\fidespipe\\fidespipe-trust.yaml или C:\\fidespipe\\fidespipe-trust.yaml"
 	}
 	if path == "" {
 		out["configured"] = false
-		how := "задайте --trust-config=<путь> или переменную WEDRA_TRUST_CONFIG"
+		how := "задайте --trust-config=<путь> или переменную FIDESPIPE_TRUST_CONFIG"
 		if isWindows() {
-			how += " (пример: --trust-config=\"C:\\wedra\\wedra-trust.yaml\")"
+			how += " (пример: --trust-config=\"C:\\fidespipe\\fidespipe-trust.yaml\")"
 		}
 		out["how_to_configure"] = how
 	} else {

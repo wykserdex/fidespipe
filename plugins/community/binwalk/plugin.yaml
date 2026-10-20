@@ -7,7 +7,7 @@ description: >
   с JSON-отчётом (--log), опционально извлечение в каталог плагина
   (--extract --directory). Требуется binwalk v3 — у v2 нет JSON-вывода.
   Ставится отдельно: pip install binwalk.
-author: "community · wedra showcase (reverse engineering)"
+author: "community · fidespipe showcase (reverse engineering)"
 
 runtime:
   type: python

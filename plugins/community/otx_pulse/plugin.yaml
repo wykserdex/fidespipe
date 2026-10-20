@@ -7,7 +7,7 @@ description: >
   сеть делает дочерний процесс со сниппетом на stdlib-urllib, GET
   https://otx.alienvault.com/api/v1/indicators/<type>/<indicator>/general.
   Публичные пульсы отдаются без ключа, поэтому secrets пуст.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

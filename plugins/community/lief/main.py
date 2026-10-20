@@ -34,7 +34,7 @@ fixtures/sample.dll и на ELF-фикстуре соседнего плагин
     пределом: иначе он съел бы stderr плагина, у которого ядро ставит 1 МБ.
 
 Протокол донора в сниппете: exit 0 и JSON в stdout — успех; exit 1 и
-{"wedra_error": "<код>", "wedra_message": "..."} в stdout — доменная ошибка
+{"fidespipe_error": "<код>", "fidespipe_message": "..."} в stdout — доменная ошибка
 (unsupported_format, bad_file, lief_not_installed, version_unknown).
 
 Выход (stdout JSON): {file, format, machine, entrypoint, imagebase, is_pie,
@@ -80,12 +80,12 @@ import json, sys
 
 # LIEF печатает COFF-символы в stdout/stderr при некоторых PE, поэтому репорт
 # ищется как ПОСЛЕДНИЙ объект в stdout, а не как весь stdout.
-REPORT_MARK = "@@wedra-lief@@"
+REPORT_MARK = "@@fidespipe-lief@@"
 
 
 def bail(code, message):
-    sys.stdout.write(json.dumps({"wedra_error": code,
-                                 "wedra_message": message}))
+    sys.stdout.write(json.dumps({"fidespipe_error": code,
+                                 "fidespipe_message": message}))
     sys.exit(1)
 
 
@@ -203,11 +203,11 @@ sys.stdout.write(REPORT_MARK + json.dumps(report))
 DONOR_ERRORS = ("unsupported_format", "bad_file", "lief_not_installed",
                 "version_unknown")
 
-REPORT_MARK = "@@wedra-lief@@"
+REPORT_MARK = "@@fidespipe-lief@@"
 
 
 def donor_error(report):
-    if isinstance(report, dict) and report.get("wedra_error") in DONOR_ERRORS:
+    if isinstance(report, dict) and report.get("fidespipe_error") in DONOR_ERRORS:
         return report
     return None
 
@@ -384,8 +384,8 @@ def main():
             report, _ = extract_report(stdout)
             marker = donor_error(report)
             if marker:
-                return fail(str(marker["wedra_error"]),
-                            str(marker.get("wedra_message")
+                return fail(str(marker["fidespipe_error"]),
+                            str(marker.get("fidespipe_message")
                                 or f"файл не разобран: {target}"))
             tail = (proc.stderr or stdout or "").strip().splitlines()
             last = tail[-1] if tail else f"exit {proc.returncode}"
@@ -400,8 +400,8 @@ def main():
 
     marker = donor_error(report)
     if marker:
-        return fail(str(marker["wedra_error"]),
-                    str(marker.get("wedra_message")
+        return fail(str(marker["fidespipe_error"]),
+                    str(marker.get("fidespipe_message")
                         or f"файл не разобран: {target}"))
 
     sections = [{"name": str(s.get("name") or ""),

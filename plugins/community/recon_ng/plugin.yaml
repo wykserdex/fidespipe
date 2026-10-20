@@ -10,7 +10,7 @@ description: >
   сработает — пакета нет на PyPI (проверено: индекс отдаёт 404). Ставится из
   исходников: git clone https://github.com/lanmaster53/recon-ng.git, затем
   pip install -r REQUIREMENTS, запуск `./recon-ng`.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

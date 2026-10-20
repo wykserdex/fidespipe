@@ -6,7 +6,7 @@ description: >
   Обёртка над CLI wafw00f: одна проверка URL с JSON-выводом (-o report.json),
   на выходе — имя найденного файрвола, вендор и факт обнаружения. Ключей не
   требует. Ставится отдельно: pip install wafw00f.
-author: "community · wedra showcase (web security)"
+author: "community · fidespipe showcase (web security)"
 
 runtime:
   type: python

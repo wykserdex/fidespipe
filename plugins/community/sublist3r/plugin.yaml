@@ -6,7 +6,7 @@ description: >
   Netcraft, DNSdumpster и опциональный brute-force. Обёртка над CLI sublist3r:
   отдаёт домен инструменту и разбирает список найденных поддоменов. Ставится
   отдельно: pip install Sublist3r.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

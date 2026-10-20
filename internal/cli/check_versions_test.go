@@ -1,6 +1,6 @@
 package cli
 
-// Шаг `versions` в `wedra check`: дрейф версий возвращается, если за него
+// Шаг `versions` в `fidespipe check`: дрейф версий возвращается, если за него
 // никто не спрашивает. Проверка обязана быть в наборе шагов, быть быстрой,
 // быть видна в --help и падать на расхождении.
 
@@ -19,7 +19,7 @@ func stepByName(t *testing.T, name string) checkStep {
 			return s
 		}
 	}
-	t.Fatalf("в wedra check нет шага %q — дрейф версий снова никем не проверяется", name)
+	t.Fatalf("в fidespipe check нет шага %q — дрейф версий снова никем не проверяется", name)
 	return checkStep{}
 }
 

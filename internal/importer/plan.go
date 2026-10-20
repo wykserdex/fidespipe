@@ -147,7 +147,7 @@ func Plan(p *Project) ImportPlan {
 	}
 	if p.Version == "" {
 		plan.Warnings = append(plan.Warnings,
-			"версия проекта не объявлена — манифест WEDRA требует version, придётся поставить свою")
+			"версия проекта не объявлена — манифест Fidespipe требует version, придётся поставить свою")
 	}
 	if p.DescriptionFile == "" {
 		plan.Warnings = append(plan.Warnings,
@@ -269,7 +269,7 @@ func entryPointsOf(p *Project, plan *ImportPlan) []EntryPoint {
 		// Все цели не разобраны, блокеры по ним уже добавлены.
 	case len(cliLike) == len(usable):
 		plan.Blockers = append(plan.Blockers, fmt.Sprintf(
-			"все точки входа похожи на CLI (%s): контракт плагина WEDRA — JSON на входе и JSON на выходе, а не командная строка; нужна обёртка",
+			"все точки входа похожи на CLI (%s): контракт плагина Fidespipe — JSON на входе и JSON на выходе, а не командная строка; нужна обёртка",
 			strings.Join(targetList(cliLike), ", ")))
 	case len(cliLike) > 0:
 		plan.Warnings = append(plan.Warnings, fmt.Sprintf(

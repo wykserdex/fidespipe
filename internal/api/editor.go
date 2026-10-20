@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 
 	"gopkg.in/yaml.v3"
 )
@@ -100,7 +100,7 @@ type editorDoc struct {
 	// permissions.secrets манифестов — валидатор, warnings)
 	Secrets []string `json:"secrets"`
 	// v0.6: сетевая политика — "" (allow, дефолт: плагин видит
-	// WEDRA_NETWORK=allow и сам декларирует сеть в манифесте) или "deny"
+	// FIDESPIPE_NETWORK=allow и сам декларирует сеть в манифесте) или "deny"
 	// (шаг с заявленной сетью — ошибка валидатора и раннера)
 	Network     string   `json:"network"`
 	Gates       string   `json:"gates"`
@@ -509,7 +509,7 @@ func (s *Server) handleSerializePipeline(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "yaml: "+err.Error(), 500)
 		return
 	}
-	text := "# создан в редакторе WEDRA (v0.26); pos: — позиции узлов (ядро игнорирует)\n" + string(raw)
+	text := "# создан в редакторе Fidespipe (v0.26); pos: — позиции узлов (ядро игнорирует)\n" + string(raw)
 	// честность: сгенерированный YAML обязан читаться ядром и проходить валидацию
 	check, err := pipeline.LoadPipelineFileFromBytes([]byte(text))
 	if err != nil {

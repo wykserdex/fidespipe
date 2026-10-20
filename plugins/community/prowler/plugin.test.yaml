@@ -1,6 +1,6 @@
 # Контракт-тесты prowler (mock CLI prowler, без сети, без пакета и без ключей AWS).
 tests:
-  - name: скан aws → находки из wedra.ocsf.json
+  - name: скан aws → находки из fidespipe.ocsf.json
     env: { PROWLER_BIN: "mock_prowler.py" }
     input: { provider: "aws" }
     expect:

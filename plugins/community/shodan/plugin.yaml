@@ -8,7 +8,7 @@ description: >
   сниппет сам импортирует shodan, берёт ключ из env SHODAN_API_KEY и печатает
   нормализованный JSON. Ключ читает сниппет, не плагин. Ставится отдельно:
   pip install shodan. Путь к донору переопределяется env SHODAN_BIN.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

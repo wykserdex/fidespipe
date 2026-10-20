@@ -1,6 +1,6 @@
 package cli
 
-// `wedra check` — единая точка входа для проверки проекта.
+// `fidespipe check` — единая точка входа для проверки проекта.
 //
 // Зачем она, если есть Makefile: Makefile написан на юниксовой оболочке
 // (`test -z`, `for … do`, `rm -f`), то есть на Windows не работает вовсе, и
@@ -23,11 +23,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/changelog"
-	"github.com/wykserdex/wedra/internal/errdoc"
-	"github.com/wykserdex/wedra/internal/schemacheck"
-	"github.com/wykserdex/wedra/internal/supply"
-	"github.com/wykserdex/wedra/internal/verdoc"
+	"github.com/wykserdex/fidespipe/internal/changelog"
+	"github.com/wykserdex/fidespipe/internal/errdoc"
+	"github.com/wykserdex/fidespipe/internal/schemacheck"
+	"github.com/wykserdex/fidespipe/internal/supply"
+	"github.com/wykserdex/fidespipe/internal/verdoc"
 )
 
 type checkStep struct {
@@ -121,9 +121,9 @@ func checkSteps() []checkStep {
 					return "", err
 				}
 				var notes []string
-				for _, target := range []string{"./cmd/wedra", "./cmd/wedragui", "./cmd/tool"} {
+				for _, target := range []string{"./cmd/fidespipe", "./cmd/fidespipegui", "./cmd/tool"} {
 					out, err := runCapture(o.repo, "go", "build", "-o",
-						filepath.Join(bin, "wedra-check-bin-"+filepath.Base(target)+exeExt()), target)
+						filepath.Join(bin, "fidespipe-check-bin-"+filepath.Base(target)+exeExt()), target)
 					if err != nil {
 						return strings.Join(notes, "\n"), fmt.Errorf("сборка %s: %w\n%s", target, err, out)
 					}
@@ -188,7 +188,7 @@ func checkSteps() []checkStep {
 			run: func(o checkOpts) (string, error) { return checkPlugins(o) }},
 		{name: "registry", desc: "validate registry.yaml с локальным источником", fast: true,
 			run: func(o checkOpts) (string, error) {
-				bin, err := ensureWedra(o)
+				bin, err := ensureFidespipe(o)
 				if err != nil {
 					return "", err
 				}
@@ -205,14 +205,14 @@ func exeExt() string {
 }
 
 func checkBinary(repo string) string {
-	return filepath.Join(repo, "var", "check", "wedra-check-bin-wedra"+exeExt())
+	return filepath.Join(repo, "var", "check", "fidespipe-check-bin-fidespipe"+exeExt())
 }
 
-// ensureWedra даёт путь к бинарю wedra, достраивая его при необходимости.
+// ensureFidespipe даёт путь к бинарю fidespipe, достраивая его при необходимости.
 // Раньше шаги registry/pipelines/plugins брали бинарь из шага build и падали с
 // невнятным «path not found», если его запускали отдельно (`--only=registry`,
 // `--fast`). Порядок шагов перестал быть частью контракта.
-func ensureWedra(o checkOpts) (string, error) {
+func ensureFidespipe(o checkOpts) (string, error) {
 	bin := checkBinary(o.repo)
 	if err := os.MkdirAll(filepath.Dir(bin), 0o755); err != nil {
 		return "", err
@@ -230,9 +230,9 @@ func ensureWedra(o checkOpts) (string, error) {
 	if fresh {
 		return bin, nil
 	}
-	out, err := runCapture(o.repo, "go", "build", "-o", bin, "./cmd/wedra")
+	out, err := runCapture(o.repo, "go", "build", "-o", bin, "./cmd/fidespipe")
 	if err != nil {
-		return "", fmt.Errorf("сборка wedra: %w\n%s", err, out)
+		return "", fmt.Errorf("сборка fidespipe: %w\n%s", err, out)
 	}
 	return bin, nil
 }
@@ -279,7 +279,7 @@ func runCapture(dir, name string, args ...string) (string, error) {
 }
 
 func checkPipelines(o checkOpts) (string, error) {
-	bin, err := ensureWedra(o)
+	bin, err := ensureFidespipe(o)
 	if err != nil {
 		return "", err
 	}
@@ -307,7 +307,7 @@ func checkPipelines(o checkOpts) (string, error) {
 }
 
 func checkPlugins(o checkOpts) (string, error) {
-	bin, err := ensureWedra(o)
+	bin, err := ensureFidespipe(o)
 	if err != nil {
 		return "", err
 	}
@@ -426,7 +426,7 @@ func RunCheck(args []string) int {
 
 	steps := checkSteps()
 	if list {
-		fmt.Fprintf(os.Stderr, "wedra check — шаги (в том же порядке, что в CI):\n")
+		fmt.Fprintf(os.Stderr, "fidespipe check — шаги (в том же порядке, что в CI):\n")
 		for _, s := range steps {
 			tag := "медленный"
 			if s.fast {
@@ -459,7 +459,7 @@ func RunCheck(args []string) int {
 		steps = kept
 	}
 
-	fmt.Printf("wedra check: %s\n", o.repo)
+	fmt.Printf("fidespipe check: %s\n", o.repo)
 	if o.census {
 		fmt.Printf("режим census: поштучно по пакетам, предел %d с на пакет, -timeout %d с\n",
 			o.perPackageSec, o.goTimeoutSec)
@@ -558,7 +558,7 @@ func printDetail(out string, verbose bool) {
 	}
 }
 
-// findRepoRoot идёт вверх до каталога с go.mod: `wedra check` должен
+// findRepoRoot идёт вверх до каталога с go.mod: `fidespipe check` должен
 // работать из любого подкаталога, как и CI, который всегда в корне.
 func findRepoRoot(dir string) string {
 	for {
@@ -574,7 +574,7 @@ func findRepoRoot(dir string) string {
 }
 
 func printCheckHelp() {
-	fmt.Fprint(os.Stderr, `wedra check — единая точка проверки проекта.
+	fmt.Fprint(os.Stderr, `fidespipe check — единая точка проверки проекта.
 
 Шаги идут в том же порядке, что в CI, и печатаются одной сводкой:
   fmt          gofmt -l по исходникам
@@ -584,7 +584,7 @@ func printCheckHelp() {
   errcodes     коды ошибок в Go ↔ protocol/v0.2/ERRORS.md
   schemas      schemas/ против примеров и манифестов
   supply       actions по SHA + подпись и проверка подписи в release.yml
-  build        сборка cmd/wedra, cmd/wedragui, cmd/tool
+  build        сборка cmd/fidespipe, cmd/fidespipegui, cmd/tool
   test         go test ./... (с --census — поштучно по пакетам)
   conformance  конформ фикстур плагинов
   pipelines    validate + lint + plan для examples/*.yaml
@@ -609,10 +609,10 @@ func printCheckHelp() {
 git fetch --unshallow, а не отключением шага.
 
 Примеры:
-  wedra check --fast          перед коммитом
-  wedra check                 полный прогон, как в CI
-  wedra check --race          то же с -race, ровно как в CI
-  wedra check --census        охота за зависанием Windows-джоба
+  fidespipe check --fast          перед коммитом
+  fidespipe check                 полный прогон, как в CI
+  fidespipe check --race          то же с -race, ровно как в CI
+  fidespipe check --census        охота за зависанием Windows-джоба
 `)
 }
 

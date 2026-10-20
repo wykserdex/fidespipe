@@ -3,9 +3,9 @@ package execution
 import (
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // builtinEngine — настоящий движок, а не permissiveEngine. Тест ровно про то,

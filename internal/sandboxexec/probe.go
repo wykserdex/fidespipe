@@ -29,19 +29,19 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/appcontainer"
+	"github.com/wykserdex/fidespipe/internal/appcontainer"
 )
 
 // ProbeNetwork — запускает самопроверку в контейнере с capability.
 //
 // helper — путь к исполняемому файлу, умеющему запускать самопроверку
-// (это тот же бинарь WEDRA). Возвращает: работает ли сеть, что именно
+// (это тот же бинарь Fidespipe). Возвращает: работает ли сеть, что именно
 // ответила проба, и ошибку запуска, если она была.
 func ProbeNetwork(ctx context.Context, helper string) (bool, string, error) {
 	if helper == "" {
 		return false, "", fmt.Errorf("не указан помощник для пробы сети")
 	}
-	scratch, err := os.MkdirTemp("", "wedra-netprobe-")
+	scratch, err := os.MkdirTemp("", "fidespipe-netprobe-")
 	if err != nil {
 		return false, "", fmt.Errorf("каталог для пробы сети: %w", err)
 	}
@@ -49,8 +49,8 @@ func ProbeNetwork(ctx context.Context, helper string) (bool, string, error) {
 	result := filepath.Join(scratch, "result.txt")
 
 	_, runErr := appcontainer.Run(ctx, appcontainer.Plan{
-		// Имя профиля без префикса "wedra." — ProfileName его уже добавляет,
-		// и с лишним получалось "wedra.wedra.netprobe" в журнале AppModel.
+		// Имя профиля без префикса "fidespipe." — ProfileName его уже добавляет,
+		// и с лишним получалось "fidespipe.fidespipe.netprobe" в журнале AppModel.
 		Name:         appcontainer.ProfileName("netprobe"),
 		Argv:         []string{helper, SelfCommandName, result},
 		Read:         appcontainer.Readable{filepath.Dir(helper)},

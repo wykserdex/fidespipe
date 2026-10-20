@@ -24,9 +24,9 @@ func newRepo(t *testing.T, version string) *repoFixture {
 	dir := t.TempDir()
 	r := &repoFixture{dir: dir, version: version}
 	r.write(t, "VERSION", version+"\n")
-	r.write(t, "go.mod", "module wedra\n\ngo 1.26\n")
+	r.write(t, "go.mod", "module fidespipe\n\ngo 1.26\n")
 	r.write(t, "README.md", strings.Join([]string{
-		"# WEDRA",
+		"# Fidespipe",
 		"",
 		"Требования: Go 1.26+ нужен только для сборки из исходников.",
 		"",
@@ -43,7 +43,7 @@ func newRepo(t *testing.T, version string) *repoFixture {
 		"",
 	}, "\n"))
 	r.write(t, "README.en.md", strings.Join([]string{
-		"# WEDRA",
+		"# Fidespipe",
 		"",
 		"## Current contract",
 		"",
@@ -62,7 +62,7 @@ func newRepo(t *testing.T, version string) *repoFixture {
 		"",
 	}, "\n"))
 	r.write(t, "docs/versioning.md", strings.Join([]string{
-		"# Версионирование WEDRA",
+		"# Версионирование Fidespipe",
 		"",
 		"| Ось | Источник | Текущее значение |",
 		"|---|---|---|",
@@ -305,7 +305,7 @@ func TestCheckRepoFailsOnGoFloorDrift(t *testing.T) {
 // означал бы «проверка не нашла чего сравнивать».
 func TestCheckRepoFailsWhenGoDirectiveMissing(t *testing.T) {
 	r := newRepo(t, "0.34.0")
-	r.write(t, "go.mod", "module wedra\n")
+	r.write(t, "go.mod", "module fidespipe\n")
 	out, err := CheckRepo(r.dir)
 	if err == nil || !strings.Contains(err.Error(), "директива `go X.Y`") {
 		t.Fatalf("пустой go.mod обязан ломать проверку, а не проходить её: %v\n%s", err, out)

@@ -1,8 +1,8 @@
 package core
 
 import (
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 type Duration = pipeline.Duration

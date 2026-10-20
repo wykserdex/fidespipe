@@ -12,7 +12,7 @@
 // нужен прямой CreateProcessW с атрибутом
 // PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, а os/exec такого не умеет —
 // в списке атрибутов у него есть только PARENT_PROCESS. Поэтому
-// контейнеризованный процесс создаёт не ядро WEDRA, а отдельный
+// контейнеризованный процесс создаёт не ядро Fidespipe, а отдельный
 // процесс-помощник: тот же самый бинарь, запущенный с одной узкой целью.
 // На Linux та же роль у bubblewrap, только там это отдельная программа, а
 // здесь — режим этого же бинаря.
@@ -37,7 +37,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/appcontainer"
+	"github.com/wykserdex/fidespipe/internal/appcontainer"
 )
 
 // FailureCode — код возврата помощника, когда контейнер не собрался.

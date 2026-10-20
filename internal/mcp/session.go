@@ -3,8 +3,8 @@ package mcp
 import (
 	"context"
 	"encoding/json"
-	"github.com/wykserdex/wedra/internal/buildinfo"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/buildinfo"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 	"strings"
 	"sync"
 )
@@ -312,7 +312,7 @@ func (s *Server) handleCall(call *inflightCall, req *Request) *Response {
 		return &Response{Result: map[string]interface{}{
 			"protocolVersion": version,
 			"capabilities":    map[string]interface{}{"tools": map[string]interface{}{}},
-			"serverInfo":      map[string]interface{}{"name": "wedra", "version": buildinfo.Resolve()},
+			"serverInfo":      map[string]interface{}{"name": "fidespipe", "version": buildinfo.Resolve()},
 		}}
 	case "ping":
 		return &Response{Result: map[string]interface{}{}}

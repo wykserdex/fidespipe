@@ -10,11 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/core"
+	"github.com/wykserdex/fidespipe/internal/core"
 )
 
 // pluginFixture — сервер с настоящим плагином, созданным тем же ядром, что и
-// CLI (`wedra plugin create`), чтобы тесты не проверяли выдуманный артефакт.
+// CLI (`fidespipe plugin create`), чтобы тесты не проверяли выдуманный артефакт.
 func pluginFixture(t *testing.T) (*Server, *http.Cookie, string, string) {
 	t.Helper()
 	srv, root := h4Server(t, ListenOptions{Addr: testAddr}, "AAAA-BBBB-CCCC")

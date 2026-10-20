@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 // Регрессия: каталог прогонов выбирался по-разному у писателя и у читателя.
-// `pipeline run` вне репозитория WEDRA писал в runs/ (var/runs там не
+// `pipeline run` вне репозитория Fidespipe писал в runs/ (var/runs там не
 // существует), а `runs list`/`runs show` искали строго var/runs — только что
 // записанный ран был не виден вообще: список пуст, `runs show` падал
 // «журнал не найден».

@@ -1,7 +1,7 @@
 package execution
 
 import (
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 // resumeStepCursor — шаги, завершившиеся успешно, по журналу.

@@ -3,7 +3,7 @@ package execution
 import (
 	"sync/atomic"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 type loopBudgetCounter struct {

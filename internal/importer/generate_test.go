@@ -17,7 +17,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/core"
+	"github.com/wykserdex/fidespipe/internal/core"
 )
 
 // requirePython — прогон контракт-тестов зовёт настоящий интерпретатор.

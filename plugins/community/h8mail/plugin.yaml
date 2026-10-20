@@ -7,7 +7,7 @@ description: >
   IntelX и др. Обёртка всегда собирает конфиг с ключами из env во временный
   каталог и передаёт его флагом -c, затем читает CSV-репорт (-o, колонки
   Target/Type/Data). Ставится отдельно: pip install h8mail.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

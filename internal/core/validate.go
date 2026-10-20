@@ -1,6 +1,6 @@
 package core
 
-import "github.com/wykserdex/wedra/internal/pipeline"
+import "github.com/wykserdex/fidespipe/internal/pipeline"
 
 func Validate(pf *PipelineFile, eng *Engine) (errs, warns []string) {
 	return pipeline.Validate(pf, eng)

@@ -2,7 +2,7 @@ id: phone_check
 version: 0.1.0
 platform_api: "^0.1"
 description: "Любой формат телефона → E.164 (+375 (29) 123-45-67 → +375291234567)"
-author: "community · wedra showcase"
+author: "community · fidespipe showcase"
 
 runtime:
   type: python

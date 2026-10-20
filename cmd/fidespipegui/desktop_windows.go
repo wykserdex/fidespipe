@@ -17,14 +17,14 @@ import (
 func desktop(url string, debug bool, logf func(string, ...interface{})) {
 	dataPath := ""
 	if dir, err := os.UserConfigDir(); err == nil && dir != "" {
-		dataPath = filepath.Join(dir, "WEDRA", "webview2")
+		dataPath = filepath.Join(dir, "Fidespipe", "webview2")
 	}
 
 	wv := webview2.NewWithOptions(webview2.WebViewOptions{
 		Debug:    debug,
 		DataPath: dataPath,
 		WindowOptions: webview2.WindowOptions{
-			Title:  "WEDRA",
+			Title:  "Fidespipe",
 			Width:  1280,
 			Height: 860,
 			Center: true,

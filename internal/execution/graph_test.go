@@ -3,7 +3,7 @@ package execution
 import (
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 func TestBuildGraphEmpty(t *testing.T) {

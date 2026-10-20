@@ -117,13 +117,13 @@ func TestRepeatedAwaitDoesNotCallWaitTwice(t *testing.T) {
 func TestSanitizeForFileKeepsPackageShape(t *testing.T) {
 	// Имя файла лога выводится из имени пакета: там есть слэши и двоеточия,
 	// которые в пути недопустимы.
-	got := sanitizeForFile("github.com/wykserdex/wedra/internal/mcp:sub")
+	got := sanitizeForFile("github.com/wykserdex/fidespipe/internal/mcp:sub")
 	for _, bad := range []string{"/", ":", `\`, " ", "*", "?"} {
 		if strings.Contains(got, bad) {
 			t.Fatalf("в имени файла остался недопустимый символ %q: %q", bad, got)
 		}
 	}
-	if !strings.HasPrefix(got, "wedra_internal") {
+	if !strings.HasPrefix(got, "fidespipe_internal") {
 		t.Fatalf("имя файла потеряло читаемость: %q", got)
 	}
 }
@@ -202,12 +202,12 @@ func TestCheckStepOrder(t *testing.T) {
 	}
 }
 
-// Ни один шаг не должен звать бинарь, не взяв его из ensureWedra: иначе
+// Ни один шаг не должен звать бинарь, не взяв его из ensureFidespipe: иначе
 // шаг, запущенный отдельно, упадёт с невнятным "path not found".
 func TestBinaryUsingStepsGoThroughEnsure(t *testing.T) {
 	o := checkOpts{repo: t.TempDir()}
-	if _, err := ensureWedra(o); err == nil {
-		t.Log("ensureWedra отработал в пустом каталоге (не ошибка, но неожиданно)")
+	if _, err := ensureFidespipe(o); err == nil {
+		t.Log("ensureFidespipe отработал в пустом каталоге (не ошибка, но неожиданно)")
 	}
 }
 
@@ -247,12 +247,12 @@ func TestFirstLineFallsBackToError(t *testing.T) {
 	}
 }
 
-func TestEnsureWedraBuildsWhenMissing(t *testing.T) {
+func TestEnsureFidespipeBuildsWhenMissing(t *testing.T) {
 	// Каталог без исходников: сборка обязана упасть, и падать внятно.
 	dir := t.TempDir()
-	if _, err := ensureWedra(checkOpts{repo: dir}); err == nil {
+	if _, err := ensureFidespipe(checkOpts{repo: dir}); err == nil {
 		t.Skip("каталог неожиданно собрался; пропускаем")
-	} else if !strings.Contains(err.Error(), "сборка wedra") {
+	} else if !strings.Contains(err.Error(), "сборка fidespipe") {
 		t.Fatalf("ошибка без указания на сборку: %v", err)
 	}
 }

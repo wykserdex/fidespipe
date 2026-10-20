@@ -10,8 +10,8 @@ import (
 	"net"
 	"regexp"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // KindOf — JSON-тип значения (честно для Go-типов тоже).

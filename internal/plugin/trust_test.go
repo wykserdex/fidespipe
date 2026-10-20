@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // requirePython — тесты с реальным запуском процесса. Пробный запуск, а не

@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // ScanPlugins — плагины из plugins/official, plugins/community и plugins

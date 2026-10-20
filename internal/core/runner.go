@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/wykserdex/wedra/internal/execution"
+	"github.com/wykserdex/fidespipe/internal/execution"
 )
 
 type RunOptions = execution.RunOptions

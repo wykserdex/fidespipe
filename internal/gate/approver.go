@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Ошибки доставки решения.

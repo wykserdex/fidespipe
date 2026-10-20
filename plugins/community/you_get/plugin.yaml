@@ -8,7 +8,7 @@ description: >
   dry_run и заканчивает работу в json_output.output() до загрузки файла).
   Из отчёта берутся title, site (extractor), uploader, duration и число потоков.
   Инструмент ставится отдельно: pip install you-get.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

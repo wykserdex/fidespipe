@@ -5,15 +5,15 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 // core/text_stats — встроенный модуль: метрики текста.
 //
-// Зачем он встроен, а не ещё один community-плагин: до него у WEDRA не было ни
+// Зачем он встроен, а не ещё один community-плагин: до него у Fidespipe не было ни
 // одной встроенной полезной функции — единственным builtin был human_gate. Любой
 // осмысленный пайплайн требовал внешнего плагина, а значит клона репозитория и
 // Python в PATH. Встроенный модуль исполняется в процессе ядра, поэтому первая

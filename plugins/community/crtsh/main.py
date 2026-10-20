@@ -86,7 +86,7 @@ def main():
         url = API % urllib.parse.quote("%." + domain, safe="")
         try:
             req = urllib.request.Request(
-                url, headers={"User-Agent": "wedra-crtsh/0.1"})
+                url, headers={"User-Agent": "fidespipe-crtsh/0.1"})
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 body = resp.read().decode("utf-8", "replace")
                 http_code = resp.status

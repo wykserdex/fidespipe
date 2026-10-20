@@ -9,7 +9,7 @@ description: >
   `virustotal` на PyPI — не он: это сторонний клиент 2012 года под API v2.0,
   на Python 3 не импортируется (внутри httplib/urlparse), а API v2 давно
   выведен из эксплуатации. Донор переопределяется env VIRUSTOTAL_BIN.
-author: "community · wedra showcase (threat intel)"
+author: "community · fidespipe showcase (threat intel)"
 
 runtime:
   type: python

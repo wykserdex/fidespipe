@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Lock — метка установленного плагина (.wedra в каталоге плагина).
+// Lock — метка установленного плагина (.fidespipe в каталоге плагина).
 // Нужен для пиннинга: пайплайн может требовать name@version, раннер сверяет.
 type Lock struct {
 	Name        string `json:"name"`
@@ -26,7 +26,7 @@ type Lock struct {
 	DonorPath string `json:"donor_path,omitempty"`
 }
 
-const LockFile = ".wedra"
+const LockFile = ".fidespipe"
 
 func WriteLock(dir string, l Lock) error {
 	l.InstalledAt = time.Now().UTC().Format(time.RFC3339)
@@ -171,7 +171,7 @@ func cloneRef(source, ref, dir string) error {
 }
 
 // CopyDir — рекурсивное копирование (без скрытых файлов исходника,
-// кроме .gitignore ничего не тащим; .wedra из клона не тащим — свой пишем).
+// кроме .gitignore ничего не тащим; .fidespipe из клона не тащим — свой пишем).
 func CopyDir(src, dst string) error {
 	return filepath.WalkDir(src, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -182,7 +182,7 @@ func CopyDir(src, dst string) error {
 		}
 		if d.IsDir() {
 			base := filepath.Base(path)
-			if base == ".git" || base == ".wedra" {
+			if base == ".git" || base == ".fidespipe" {
 				return filepath.SkipDir
 			}
 			info, err := d.Info()
@@ -199,7 +199,7 @@ func CopyDir(src, dst string) error {
 			return os.MkdirAll(filepath.Join(dst, stringsRel(src, path)), mode)
 		}
 		base := filepath.Base(path)
-		if base == ".wedra" {
+		if base == ".fidespipe" {
 			return nil
 		}
 		info, err := d.Info()

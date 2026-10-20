@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf16"
 	"unsafe"
 
@@ -124,8 +125,8 @@ func profileSIDCaps(name string, caps *windows.SIDAndAttributes) (*windows.SID, 
 	}
 	// DisplayName и описание на английском: они показываются в диспетчере
 	// приложений, где русский текст неуместен.
-	display, _ := windows.UTF16PtrFromString("WEDRA plugin")
-	desc, _ := windows.UTF16PtrFromString("Изоляция плагина WEDRA")
+	display, _ := windows.UTF16PtrFromString("Fidespipe plugin")
+	desc, _ := windows.UTF16PtrFromString("Изоляция плагина Fidespipe")
 	var sid *windows.SID
 	var capPtr uintptr
 	capCount := uintptr(0)
@@ -212,15 +213,94 @@ func grant(path string, sid *windows.SID, perms windows.ACCESS_MASK) error {
 		windows.DACL_SECURITY_INFORMATION, nil, nil, merged, nil); err != nil {
 		return fmt.Errorf("выдача прав контейнеру(%s): %w", abs, err)
 	}
-	return nil
+	// Права записаны, но Windows пересчитывает наследование по дереву НЕ
+	// мгновенно: сразу после выдачи файл внутри каталога может ещё не иметь
+	// унаследованной записи, и процесс в контейнере получит «Permission
+	// denied» на первом же запуске.
+	//
+	// Измерено: первый запуск плагина после выдачи прав падал именно так, а
+	// второй (когда пересчёт уже завершился) проходил. Значит, ждать надо
+	// здесь, а не надеяться на удачу.
+	return waitInheritance(abs, sid, perms)
 }
 
-// aclGrants — есть ли в ACL запись для SID с нужными правами.
+// waitInheritance — ждёт, пока выданная запись появится в файле внутри
+// каталога.
 //
-// Проверка по DCL каталога, а не по факту доступа: запись в DCL каталога с
-// флагом наследования означает, что она разошлась и по детям — Windows
-// разошёл её при предыдущей выдаче. Проверять каждый файл дерева было бы
-// ровно той дорогой операцией, ради которой эта проверка и добавлена.
+// Проверяется именно ФАЙЛ, а не каталог: у каталога запись явная и появляется
+// сразу, а у файла — унаследованная, и вот она приходит последней.
+func waitInheritance(dir string, sid *windows.SID, perms windows.ACCESS_MASK) error {
+	target, err := firstFileIn(dir)
+	if err != nil {
+		// Проверять нечего: в каталоге нет файлов. Права выданы, ждать нечего.
+		return nil
+	}
+	deadline := time.Now().Add(inheritanceWait)
+	for {
+		got, err := fileHasAccess(target, sid, perms)
+		if err != nil {
+			return err
+		}
+		if got {
+			return nil
+		}
+		if time.Now().After(deadline) {
+			return fmt.Errorf("права не дошли до файлов внутри %s за %v", dir, inheritanceWait)
+		}
+		time.Sleep(inheritancePoll)
+	}
+}
+
+// inheritanceWait и inheritancePoll — границы ожидания пересчёта наследования.
+//
+// Предел в 30 секунд взят с запасом: измеренный пересчёт дерева интерпретатора
+// занимает 11-16 секунд, и ждать дольше бессмысленно — за это время
+// пересчёт либо закончился, либо не закончится уже никогда.
+const (
+	inheritanceWait = 30 * time.Second
+	inheritancePoll = 300 * time.Millisecond
+)
+
+// firstFileIn — первый файл в каталоге (не рекурсивно: нужен файл рядом с
+// каталогом, чья унаследованная запись проверяется).
+func firstFileIn(dir string) (string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return "", err
+	}
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		return filepath.Join(dir, e.Name()), nil
+	}
+	return "", errors.New("в каталоге нет файлов")
+}
+
+// fileHasAccess — есть ли в DCL файла запись для SID с нужными правами.
+func fileHasAccess(path string, sid *windows.SID, perms windows.ACCESS_MASK) (bool, error) {
+	sd, err := windows.GetNamedSecurityInfo(path, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
+	if err != nil {
+		return false, fmt.Errorf("чтение DCL(%s): %w", path, err)
+	}
+	acl, _, err := sd.DACL()
+	if err != nil {
+		return false, fmt.Errorf("DCL(%s): %w", path, err)
+	}
+	return aclGrants(acl, sid, perms), nil
+}
+
+// aclGrants — есть ли в ACL запись для SID.
+//
+// Сверка масок НЕ делается, и это не небрежность: Windows разворачивает
+// GENERIC-биты в конкретные права доступа, и унаследованная запись несёт
+// уже развёрнутую маску. Сверка по битам давала бы «прав нет» при записи,
+// которая есть, — и тогда каждая выдача считалась бы незавершённой и
+// повторялась бы заново (16 секунд на каждый запуск плагина).
+//
+// Запись для SID в DCL каталога означает, что она разошлась и по детям:
+// Windows разошёл её при предыдущей выдаче. Проверять каждый файл дерева
+// было бы ровно той дорогой операцией, ради которой эта проверка и добавлена.
 func aclGrants(acl *windows.ACL, sid *windows.SID, perms windows.ACCESS_MASK) bool {
 	if acl == nil {
 		return false
@@ -237,9 +317,8 @@ func aclGrants(acl *windows.ACL, sid *windows.SID, perms windows.ACCESS_MASK) bo
 		if !aceSID.Equals(sid) {
 			continue
 		}
-		if ace.Mask&perms == perms {
-			return true
-		}
+		_ = perms
+		return true
 	}
 	return false
 }

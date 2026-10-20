@@ -8,7 +8,7 @@ pipeline:
     text: "две ветки считаются одновременно: метрики текста и flattening конфигурации"
     data:
       app:
-        name: wedra
+        name: fidespipe
         version: "0.20"
         features:
           - when

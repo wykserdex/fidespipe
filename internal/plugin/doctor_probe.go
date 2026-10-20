@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/common"
+	"github.com/wykserdex/fidespipe/internal/common"
 )
 
 // InterpreterInfo — ответ на вопрос «чем именно будут запускаться

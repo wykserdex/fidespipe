@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // untrustedManifestWith — python-плагин, который на запуск пишет marker.
@@ -151,13 +151,13 @@ func TestWindowsRefusalIsActionable(t *testing.T) {
 func TestUntrustedEnvExcludesUserProfile(t *testing.T) {
 	// Профиль пользователя и произвольные переменные не должны попадать
 	// в изолированный плагин.
-	t.Setenv("WEDRA_TRUST_PROBE", "secret-value")
+	t.Setenv("FIDESPIPE_TRUST_PROBE", "secret-value")
 	env := untrustedBaseEnv(nil)
 	if len(env) == 0 {
 		t.Fatal("untrusted-окружение пустое — интерпретатор не запустится")
 	}
 	for _, kv := range env {
-		for _, banned := range []string{"WEDRA_TRUST_PROBE=", "APPDATA=", "LOCALAPPDATA=", "PROGRAMDATA=", "PUBLIC="} {
+		for _, banned := range []string{"FIDESPIPE_TRUST_PROBE=", "APPDATA=", "LOCALAPPDATA=", "PROGRAMDATA=", "PUBLIC="} {
 			if strings.HasPrefix(kv, banned) {
 				t.Fatalf("изолированный плагин получил %s", kv)
 			}
@@ -166,15 +166,15 @@ func TestUntrustedEnvExcludesUserProfile(t *testing.T) {
 }
 
 func TestUntrustedEnvNeverCarriesSecrets(t *testing.T) {
-	t.Setenv("WEDRA_TRUST_SECRET", "top-secret")
+	t.Setenv("FIDESPIPE_TRUST_SECRET", "top-secret")
 	m := &pipeline.Manifest{
 		ID:          "s",
 		Runtime:     pipeline.Runtime{Type: "python"},
 		Sandbox:     pipeline.SandboxUntrusted,
-		Permissions: pipeline.Permissions{Secrets: []string{"WEDRA_TRUST_SECRET"}},
+		Permissions: pipeline.Permissions{Secrets: []string{"FIDESPIPE_TRUST_SECRET"}},
 	}
 	for _, kv := range untrustedBaseEnv(nil) {
-		if strings.HasPrefix(kv, "WEDRA_TRUST_SECRET=") {
+		if strings.HasPrefix(kv, "FIDESPIPE_TRUST_SECRET=") {
 			t.Fatalf("секрет попал в untrusted-окружение: %s", kv)
 		}
 	}

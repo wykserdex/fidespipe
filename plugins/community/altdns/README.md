@@ -81,7 +81,7 @@ suffix с `publicsuffix.org`; с заблокированными `socket.connec
 
 ## Тесты
 
-`wedra plugin test plugins/community/altdns` — 19 кейсов, и они разделены
+`fidespipe plugin test plugins/community/altdns` — 19 кейсов, и они разделены
 намеренно:
 
 - **реальный инструмент** (кейсы без `ALTDNS_BIN`) запускают настоящий

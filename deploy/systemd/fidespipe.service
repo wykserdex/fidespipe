@@ -1,26 +1,26 @@
 [Unit]
-Description=WEDRA — планировщик цепочек
-Documentation=https://github.com/wykserdex/wedra
+Description=Fidespipe — планировщик цепочек
+Documentation=https://github.com/wykserdex/fidespipe
 # Сеть нужна для вебхуков оповещений и для установки плагинов из реестра.
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=wedra
-Group=wedra
+User=fidespipe
+Group=fidespipe
 
 # Каталоги. Плагины и пайплайны ставятся оператором, а не лежат в системе.
-Environment=WEDRA_TRUST_CONFIG=/etc/wedra/wedra-trust.yaml
+Environment=FIDESPIPE_TRUST_CONFIG=/etc/fidespipe/fidespipe-trust.yaml
 # Адрес раздачи ссылок одобрения. По умолчанию локальный: ссылка должна быть
 # доступна человеку, а не контейнеру. Для доступа с другой машины переопределите
-# WEDRA_APPROVE_URL (см. wedra.env.example).
-Environment=WEDRA_APPROVE_LISTEN=127.0.0.1:8766
+# FIDESPIPE_APPROVE_URL (см. fidespipe.env.example).
+Environment=FIDESPIPE_APPROVE_LISTEN=127.0.0.1:8766
 
-ExecStart=/usr/local/bin/wedra daemon \
-    --plugins=/var/lib/wedra/plugins \
-    --pipelines=/var/lib/wedra/pipelines \
-    --runs-dir=/var/lib/wedra/var/runs
+ExecStart=/usr/local/bin/fidespipe daemon \
+    --plugins=/var/lib/fidespipe/plugins \
+    --pipelines=/var/lib/fidespipe/pipelines \
+    --runs-dir=/var/lib/fidespipe/var/runs
 
 # Планировщик тикает раз в минуту и живёт долго: перезапуск при падении.
 Restart=on-failure
@@ -37,7 +37,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
 ProtectHome=read-only
-ReadWritePaths=/var/lib/wedra
+ReadWritePaths=/var/lib/fidespipe
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true
@@ -51,7 +51,7 @@ LockPersonality=true
 # доступен на чтение, а пишут они в свой каталог.
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=wedra
+SyslogIdentifier=fidespipe
 
 [Install]
 WantedBy=multi-user.target

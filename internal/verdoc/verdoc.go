@@ -92,7 +92,7 @@ const (
 )
 
 // CheckRepo сверяет версии. Отчёт возвращается строкой, а решение — через
-// error: так шаг wedra check покажет и короткую сводку, и подробности.
+// error: так шаг fidespipe check покажет и короткую сводку, и подробности.
 func CheckRepo(repo string) (string, error) {
 	current, err := readVersionFile(filepath.Join(repo, "VERSION"))
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 // Event не мутирует переданный map (footgun для переиспользуемых мап).

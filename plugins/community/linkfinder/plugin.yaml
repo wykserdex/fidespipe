@@ -8,7 +8,7 @@ description: >
   его и разбираем плагин. Донора нет на PyPI — ставится из репозитория
   (git clone + pip install -r requirements.txt), путь переопределяется env
   LINKFINDER_BIN.
-author: "community · wedra showcase (web security)"
+author: "community · fidespipe showcase (web security)"
 
 runtime:
   type: python

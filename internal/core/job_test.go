@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/testjob"
+	"github.com/wykserdex/fidespipe/internal/testjob"
 )
 
 // TestMain вводит тестовый бинарь в Job Object с KILL_ON_JOB_CLOSE до старта
@@ -26,7 +26,7 @@ import (
 //
 // Выполняется при ЛЮБОМ запуске тестов пакета, включая CI-шаг conformance
 // (`go test -tags integration ./internal/core -run "TestPluginTest|TestExec"`)
-// и шаг `wedra check`. Там он безвреден: job создаётся один раз за процесс и на
+// и шаг `fidespipe check`. Там он безвреден: job создаётся один раз за процесс и на
 // логику тестов не влияет; наоборот, он гарантирует, что Python-потомки не
 // переживут тестовый бинарь.
 //

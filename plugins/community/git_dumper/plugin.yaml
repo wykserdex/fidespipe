@@ -8,7 +8,7 @@ description: >
   (probe .git/HEAD, скачанные файлы, стадии обхода). Отчёт-файл донор не
   пишет — единственный машинный вывод это stdout. Ставится отдельно:
   pip install git-dumper.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

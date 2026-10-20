@@ -9,7 +9,7 @@ description: >
   и эксплуатации (--dbs/--tables/--dump/--sql-shell) плагин не передаёт никогда.
   Ghauri — Go-программа: донор объявлен в манифесте и ставится вместе с
   плагином (go install github.com/r0oth3x49/ghauri/cmd/ghauri@v1.0.5).
-author: "community · wedra showcase (vuln)"
+author: "community · fidespipe showcase (vuln)"
 
 runtime:
   type: python

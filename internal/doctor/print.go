@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // PrintHuman — отчёт человеческим языком в переданный writer.
@@ -15,7 +15,7 @@ import (
 // случайность — иначе вызов из GUI или из теста не смог бы ни проверить текст,
 // ни отдать его в HTTP-ответ). В cli вызов остаётся с os.Stdout.
 func PrintHuman(w io.Writer, rep Report) {
-	fmt.Fprintln(w, "WEDRA doctor — что сломано в окружении и что с этим делать")
+	fmt.Fprintln(w, "Fidespipe doctor — что сломано в окружении и что с этим делать")
 	fmt.Fprintln(w)
 	if rep.PythonError != "" {
 		fmt.Fprintln(w, "Python: НЕ НАЙДЕН —", rep.PythonError)

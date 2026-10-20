@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/gate"
 )
 
 const fxPlugins = "testdata/plugins/"
@@ -467,13 +467,13 @@ func TestRunGateRejectResumeRetriesItem(t *testing.T) {
 // ── v0.16: secrets — без env-переменной ран не стартует (до любого эффекта) ──
 
 func TestRunSecretsMissing(t *testing.T) {
-	os.Unsetenv("WEDRA_TEST_SECRET_DO_NOT_SET")
+	os.Unsetenv("FIDESPIPE_TEST_SECRET_DO_NOT_SET")
 	pf := &PipelineFile{
 		FormatVersion: PlatformAPI,
 		Pipeline: Pipeline{
 			Name:    "t_secrets",
 			Input:   map[string]interface{}{},
-			Secrets: []string{"WEDRA_TEST_SECRET_DO_NOT_SET"},
+			Secrets: []string{"FIDESPIPE_TEST_SECRET_DO_NOT_SET"},
 			Steps: []Step{
 				{ID: "echo", Plugin: fxPlugins + "echo_ok", OnError: "stop"},
 			},
@@ -483,7 +483,7 @@ func TestRunSecretsMissing(t *testing.T) {
 	if err == nil {
 		t.Fatal("ожидается ошибка: ран без secrets")
 	}
-	if !strings.Contains(err.Error(), "WEDRA_TEST_SECRET_DO_NOT_SET") {
+	if !strings.Contains(err.Error(), "FIDESPIPE_TEST_SECRET_DO_NOT_SET") {
 		t.Fatalf("ошибка должна содержать имя ключа: %v", err)
 	}
 }

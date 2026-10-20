@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 type Dirs struct {

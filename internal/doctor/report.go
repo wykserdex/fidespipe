@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // Вид донора. Не коды протокола (см. константы статусов), а различение для
@@ -29,7 +29,7 @@ const (
 
 // Plugin — состояние одного плагина.
 //
-// JSON-теги — побайтово те же, что были у doctorPlugin: вывод `wedra doctor
+// JSON-теги — побайтово те же, что были у doctorPlugin: вывод `fidespipe doctor
 // --json` документирован, в README и в чужих скриптах по нему ходят. Экспорт
 // типов не должен был изменить ни байт сериализации.
 type Plugin struct {

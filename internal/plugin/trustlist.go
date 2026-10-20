@@ -38,7 +38,7 @@ var ErrDigestUnavailable = errors.New("не удалось вычислить х
 
 // digestLockName — lock-файл установки. Единственное, что не входит в хэш.
 //
-// `.wedra` пишется в каталог плагина ПОСЛЕ копирования и содержит installed_at
+// `.fidespipe` пишется в каталог плагина ПОСЛЕ копирования и содержит installed_at
 // (время установки). Включённый в хэш, он сделал бы доверие невоспроизводимым:
 // одна и та же установка давала бы разный хэш.
 //
@@ -55,12 +55,20 @@ var ErrDigestUnavailable = errors.New("не удалось вычислить х
 // Побочный кэш Python не должен появляться вовсе: плагины запускаются с
 // PYTHONDONTWRITEBYTECODE=1 (process.go), поэтому официальный плагин не меняет
 // собственный хэш между запусками.
-const digestLockName = ".wedra"
+const digestLockName = ".fidespipe"
+
+// digestLockLegacyName — прежнее имя lock-файла. Исключается из хэша ТОЖЕ.
+//
+// Уже установленные плагины лежат со старым lock-файлом. Если он попадёт в
+// хэш, хэш этих плагинов изменится — и allow-list оператора перестанет
+// совпадать, то есть доверие сломается молча, ровно в момент переименования.
+// Исключение обоих имён сохраняет хэш прежним.
+const digestLockLegacyName = ".wedra"
 
 // ignoredByName — не входит ли файл в хэш. rel — путь от корня плагина с
 // прямыми слэшами.
 func ignoredByName(rel string) bool {
-	return rel == digestLockName
+	return rel == digestLockName || rel == digestLockLegacyName
 }
 
 // hasBytecode — есть ли в каталоге плагина байткод Python. Нужен только для
@@ -88,7 +96,7 @@ func hasBytecode(dir string) bool {
 
 // entryIsHashed — точка входа плагина входит в хэш содержимого.
 //
-// Иначе manifest с `runtime.entry: .wedra` исполнял бы файл, исключённый из
+// Иначе manifest с `runtime.entry: .fidespipe` исполнял бы файл, исключённый из
 // хэша. Путь, выходящий за каталог плагина, тоже не «содержимое» этого
 // каталога. Проверка дублирует валидатор манифеста намеренно: решение о
 // доверии не должно зависеть от того, что валидатор был вызван раньше.
@@ -363,7 +371,29 @@ func ValidateAllowHash(hash string) error {
 // есть «никто не доверен»). Ошибка парсинга, наоборот, ошибка: молча
 // проигнорированный битый allow-list выглядел бы как «плагины перестали
 // доверяться» без причины.
-const TrustConfigFile = "wedra-trust.yaml"
+const TrustConfigFile = "fidespipe-trust.yaml"
+
+// TrustConfigLegacyFile — прежнее имя файла конфига доверия.
+//
+// В нём лежат РЕШЕНИЯ оператора о доверии. Терять их из-за переименования
+// нельзя: доверенные плагины перестали бы запускаться, и выглядело бы это как
+// «плагин сломался», а не как «файл называется иначе». Поэтому прежнее имя
+// поддерживается как запасное: нового файла нет — ищем старый.
+const TrustConfigLegacyFile = "wedra-trust.yaml"
+
+// TrustConfigFileExists — есть ли конфиг доверия по одному из имён.
+//
+// Сначала новое имя, потом прежнее: если оператор переименовал файл сам, его
+// выбор должен уважаться.
+func TrustConfigFileExists(dir string) (string, bool) {
+	for _, name := range []string{TrustConfigFile, TrustConfigLegacyFile} {
+		path := filepath.Join(dir, name)
+		if info, err := os.Stat(path); err == nil && !info.IsDir() {
+			return path, true
+		}
+	}
+	return "", false
+}
 
 // TrustConfigVersion — версия формата конфига. Пустая версия допустима
 // (файл с одним лишь trusted_plugins — нормальный конфиг), но несовпадение
@@ -457,7 +487,7 @@ func BuiltinAllowList() *AllowList {
 }
 
 // EffectiveAllowList — allow-list, по которому реально принимается решение:
-// встроенный (пины реестра) ∪ конфиг оператора (wedra-trust.yaml).
+// встроенный (пины реестра) ∪ конфиг оператора (fidespipe-trust.yaml).
 //
 // Объединение, а не замена: конфиг оператора дополняет встроенный список, и
 // стирание из него засеянного плина обошлось бы в «все официальные плагины
@@ -485,7 +515,7 @@ func EffectiveAllowList(configPath string) (*AllowList, error) {
 // принята в проекте (ScanPlugins, RefToDir, handlePlugins), и один уровень
 // молча пропустил бы все official-плагины.
 //
-// Где это законно: `wedra plugin test <dir>`, конформность, тесты ядра. В этих
+// Где это законно: `fidespipe plugin test <dir>`, конформность, тесты ядра. В этих
 // местах каталог назвал человек (или тест, от имени того же человека) и попросил
 // прогнать ИМЕННО ЕГО — это и есть решение о доверии, выраженное человеком, а не
 // приписываемое плагином. Без этого разработка плагина была бы невозможна:
@@ -496,7 +526,7 @@ func EffectiveAllowList(configPath string) (*AllowList, error) {
 // DecideTrust, а не AllowListFromDirs.
 //
 // Доверие выдаётся по хэшу содержимого, то есть ровно так же, как из
-// wedra-trust.yaml: подмена файла после выдачи его отзовёт.
+// fidespipe-trust.yaml: подмена файла после выдачи его отзовёт.
 func AllowListFromDirs(dirs ...string) (*AllowList, error) {
 	list := NewAllowList()
 	eng := NewEngine()

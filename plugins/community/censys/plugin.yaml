@@ -8,7 +8,7 @@ description: >
   сниппет сам импортирует censys, читает CENSYS_API_ID/CENSYS_API_SECRET из
   os.environ и печатает нормализованный JSON. Ставится отдельно:
   pip install censys. Донор переопределяется env CENSYS_BIN.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

@@ -9,7 +9,7 @@ description: >
   secrets пуст), машинный вывод — JSON-лог (-l -f json). Инструмент ставится
   отдельно: pip install git+https://github.com/initstring/cloud_enum (на PyPI
   имя cloud-enum quarantined и пустое).
-author: "community · wedra showcase (cloud security)"
+author: "community · fidespipe showcase (cloud security)"
 
 runtime:
   type: python

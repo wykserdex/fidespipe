@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 func TestTrustPolicyAgentFlags(t *testing.T) {

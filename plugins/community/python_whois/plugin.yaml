@@ -8,7 +8,7 @@ description: >
   работает паттерном C — гоняет тот же интерпретатор с фиксированным сниппетом,
   который импортирует whois и печатает JSON в stdout. Бинарь переопределяется
   env PYTHON_WHOIS_BIN. Ставится отдельно: pip install python-whois.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

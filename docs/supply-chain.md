@@ -13,9 +13,9 @@
 
 | Артефакт | Что это | Чем защищён |
 | --- | --- | --- |
-| `wedra-{linux,darwin,windows}-{amd64,arm64}`, `tool-*` | бинарники под 6 платформ | суммой в `SHA256SUMS`, а тот подписан |
-| `wedragui-windows-{amd64,arm64}.exe` | desktop-сборка (WebView2) | то же |
-| `wedra-conformance-vX.Y.Z.zip` | конформный пакет | то же |
+| `fidespipe-{linux,darwin,windows}-{amd64,arm64}`, `tool-*` | бинарники под 6 платформ | суммой в `SHA256SUMS`, а тот подписан |
+| `fidespipegui-windows-{amd64,arm64}.exe` | desktop-сборка (WebView2) | то же |
+| `fidespipe-conformance-vX.Y.Z.zip` | конформный пакет | то же |
 | `SHA256SUMS` | список сумм всех артефактов | подпись cosign |
 | `SHA256SUMS.sigstore.json` | бандл подписи Sigstore | — |
 | `sbom.spdx.json` | SBOM в SPDX-JSON | подпись cosign |
@@ -53,8 +53,8 @@
 
 ```bash
 VER=0.34.0
-gh release download "v$VER" -p 'SHA256SUMS*' -p 'sbom.spdx.json*' -D wedra-$VER
-cd wedra-$VER
+gh release download "v$VER" -p 'SHA256SUMS*' -p 'sbom.spdx.json*' -D fidespipe-$VER
+cd fidespipe-$VER
 ```
 
 ### 2. Проверить подпись `SHA256SUMS`
@@ -62,7 +62,7 @@ cd wedra-$VER
 ```bash
 cosign verify-blob SHA256SUMS \
   --bundle SHA256SUMS.sigstore.json \
-  --certificate-identity "https://github.com/wykserdex/wedra/.github/workflows/release.yml@refs/tags/v$VER" \
+  --certificate-identity "https://github.com/wykserdex/fidespipe/.github/workflows/release.yml@refs/tags/v$VER" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 ```
 
@@ -75,7 +75,7 @@ cosign verify-blob SHA256SUMS \
 ```bash
 cosign verify-blob sbom.spdx.json \
   --bundle sbom.spdx.json.sigstore.json \
-  --certificate-identity "https://github.com/wykserdex/wedra/.github/workflows/release.yml@refs/tags/v$VER" \
+  --certificate-identity "https://github.com/wykserdex/fidespipe/.github/workflows/release.yml@refs/tags/v$VER" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 ```
 
@@ -93,7 +93,7 @@ sha256sum --check --strict SHA256SUMS
 
 ```bash
 cosign verify-blob SHA256SUMS --bundle SHA256SUMS.sigstore.json \
-  --certificate-identity "https://github.com/wykserdex/wedra/.github/workflows/release.yml@refs/tags/v$VER" \
+  --certificate-identity "https://github.com/wykserdex/fidespipe/.github/workflows/release.yml@refs/tags/v$VER" \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" | head -40
 ```
 
@@ -113,7 +113,7 @@ cosign verify-blob SHA256SUMS --bundle SHA256SUMS.sigstore.json \
    остался бы зелёным. Если `cosign` не оказался в `PATH`, шаг падает с
    прямой фразой про подпись, а не с `command not found`.
 
-2. **Шаг `supply` в `wedra check`** (и, значит, в CI — `ci.yml` зовёт ту же
+2. **Шаг `supply` в `fidespipe check`** (и, значит, в CI — `ci.yml` зовёт ту же
    команду). Он **не проверяет криптографию**; он проверяет, что шаг подписи
    вообще существует: в `.github/workflows/*.yml` нет ни одного `uses:` без
    полного 40-символьного SHA, в `release.yml` есть `sigstore/cosign-installer`,
@@ -123,7 +123,7 @@ cosign verify-blob SHA256SUMS --bundle SHA256SUMS.sigstore.json \
    воркфлоу — сборка зелёная, тесты зелёные, релиз зелёный, а цепочка
    разомкнута.
 
-   Локально: `wedra check --only=supply`.
+   Локально: `fidespipe check --only=supply`.
 
 ### Про закрепление действий по SHA
 

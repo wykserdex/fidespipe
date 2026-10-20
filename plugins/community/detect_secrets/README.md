@@ -47,7 +47,7 @@ pip install detect-secrets==1.5.0
 
 ## Тесты
 
-`wedra plugin test plugins/community/detect_secrets` — 16 кейсов, и они
+`fidespipe plugin test plugins/community/detect_secrets` — 16 кейсов, и они
 разделены намеренно:
 
 - **реальный инструмент** (кейсы без `DETECT_SECRETS_BIN`) запускают настоящий

@@ -2,7 +2,7 @@ package core
 
 import (
 	stdctx "context"
-	pt "github.com/wykserdex/wedra/internal/plugintest"
+	pt "github.com/wykserdex/fidespipe/internal/plugintest"
 )
 
 // Shim: public API plugintest остаётся через core

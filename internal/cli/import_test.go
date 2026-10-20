@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/importer"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/importer"
 )
 
 // TestPluginImportCreatesValidPlugin — команда создаёт рабочий плагин.

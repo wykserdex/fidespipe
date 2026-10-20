@@ -3,8 +3,8 @@ package execution
 import (
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 func TestRunStepForeachValidation(t *testing.T) {

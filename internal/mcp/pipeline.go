@@ -2,7 +2,7 @@ package mcp
 
 import (
 	"fmt"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 	"net"
 	"os"
 	"path/filepath"

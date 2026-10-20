@@ -10,7 +10,7 @@ description: >
   Стабильный машинный отчёт есть только в dev-ветке (--report-json), поэтому
   вывод разбирается консервативно по stdout. Sqlmap НЕ на PyPI: ставится из git —
   git clone https://github.com/sqlmapproject/sqlmap (подробности в README).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

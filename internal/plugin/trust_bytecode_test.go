@@ -1,7 +1,7 @@
 package plugin
 
 // Регрессии аудита N1: хэш содержимого плагина обязан покрывать всё, что может
-// исполниться. Раньше `*.pyc`, `__pycache__` и файл `.wedra` на любой глубине
+// исполниться. Раньше `*.pyc`, `__pycache__` и файл `.fidespipe` на любой глубине
 // исключались из хэша, и рядом с main.py можно было положить `json.pyc` —
 // `import json` выполнял чужой код, а плагин оставался доверенным.
 
@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 const jsonImportingScript = "import json, sys\n" +
@@ -46,7 +46,7 @@ func TestContentDigestCoversEverythingExecutable(t *testing.T) {
 		{"оптимизированный .pyo", "re.pyo"},
 		{"pyc в __pycache__", "__pycache__/helper.cpython-313.pyc"},
 		{"pyc в верхнем регистре расширения", "json.PYC"},
-		{"файл .wedra во вложенном каталоге", "sub/.wedra"},
+		{"файл .fidespipe во вложенном каталоге", "sub/.fidespipe"},
 		{"файл .git в корне", ".git"},
 		{"файл внутри .git", ".git/hook.py"},
 	}
@@ -66,11 +66,11 @@ func TestContentDigestCoversEverythingExecutable(t *testing.T) {
 func TestContentDigestIgnoresOnlyTopLevelLockFile(t *testing.T) {
 	_, dir := writePlainPlugin(t, "p", jsonImportingScript)
 	before := mustDigest(t, dir)
-	writeFile(t, filepath.Join(dir, ".wedra"), "installed_at: 2026-01-01\n")
+	writeFile(t, filepath.Join(dir, ".fidespipe"), "installed_at: 2026-01-01\n")
 	if mustDigest(t, dir) != before {
-		t.Fatal("lock-файл .wedra в корне не должен менять хэш")
+		t.Fatal("lock-файл .fidespipe в корне не должен менять хэш")
 	}
-	writeFile(t, filepath.Join(dir, ".wedra"), "installed_at: 2030-01-01\n")
+	writeFile(t, filepath.Join(dir, ".fidespipe"), "installed_at: 2030-01-01\n")
 	if mustDigest(t, dir) != before {
 		t.Fatal("содержимое lock-файла не должно влиять на хэш")
 	}
@@ -103,10 +103,10 @@ func allowFor(t *testing.T, m *pipeline.Manifest) *AllowList {
 
 // Точка входа вне хэша не доверяется, даже если хэш остальных файлов совпал.
 func TestDecideTrustRejectsEntryOutsideDigest(t *testing.T) {
-	for _, entry := range []string{".wedra", "../other/main.py", "/etc/passwd", ".", ".."} {
+	for _, entry := range []string{".fidespipe", "../other/main.py", "/etc/passwd", ".", ".."} {
 		m, dir := writePlainPlugin(t, "p", jsonImportingScript)
 		m.Runtime.Entry = entry
-		writeFile(t, filepath.Join(dir, ".wedra"), "print('not hashed')\n")
+		writeFile(t, filepath.Join(dir, ".fidespipe"), "print('not hashed')\n")
 		policy := TrustPolicy{Trusted: allowFor(t, m)}
 		got := DecideTrust(m, policy)
 		if got.Trusted {

@@ -25,7 +25,7 @@ import (
 
 // Version вшивается сборкой:
 //
-//	go build -ldflags "-X github.com/wykserdex/wedra/internal/buildinfo.Version=0.33c"
+//	go build -ldflags "-X github.com/wykserdex/fidespipe/internal/buildinfo.Version=0.33c"
 //
 // Пустое значение — признак dev-сборки, а не версия «пусто».
 var Version = ""

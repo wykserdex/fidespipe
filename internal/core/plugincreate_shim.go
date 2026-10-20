@@ -1,6 +1,6 @@
 package core
 
-import pc "github.com/wykserdex/wedra/internal/plugincreate"
+import pc "github.com/wykserdex/fidespipe/internal/plugincreate"
 
 // Shim: public API of plugincreate remains via core for backwards compat.
 // Новые пакеты импортируют "internal/plugincreate" напрямую.

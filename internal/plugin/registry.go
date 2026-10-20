@@ -7,9 +7,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 type Engine struct {
@@ -114,7 +114,7 @@ func (e *Engine) LoadManifest(ref string) (*pipeline.Manifest, error) {
 
 // donorEnvFor — переменная окружения с путём к донору плагина.
 //
-// Путь берётся из метки установки (.wedra): её пишет установщик, когда ставит
+// Путь берётся из метки установки (.fidespipe): её пишет установщик, когда ставит
 // донора. Читать её в рантайме — единственный способ узнать, куда установщик
 // положил файл: путь зависит от корня установки, а он у ядра другой.
 //

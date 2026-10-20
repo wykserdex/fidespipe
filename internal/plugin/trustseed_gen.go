@@ -12,7 +12,7 @@ package plugin
 // содержимого, поэтому подмена файла в установленном плагине понижает
 // доверие, даже если id остался прежним. Community-плагин, которого нет в
 // registry.yaml, доверен не будет — для него нужна запись в
-// wedra-trust.yaml.
+// fidespipe-trust.yaml.
 
 var builtinTrusted = map[string][]string{
 	"abuseipdb": {

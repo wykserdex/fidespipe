@@ -8,7 +8,7 @@ this repository. If private reporting is unavailable, contact the repository
 owner through the GitHub profile without publishing technical details in a
 public thread.
 
-Include the affected WEDRA version, platform, reproduction steps, and the
+Include the affected Fidespipe version, platform, reproduction steps, and the
 expected impact. Maintainers will acknowledge a complete report when they can
 and will coordinate disclosure timing with the reporter.
 
@@ -36,8 +36,8 @@ A release page is not a chain of custody by itself. This section states what is
 signed, by whom, and — just as important — what a signature here does **not**
 prove.
 
-**What is in a release.** Binaries for six platforms (`wedra-*`, legacy
-`tool-*`, `wedragui-windows-*`), a conformance archive, `SHA256SUMS`,
+**What is in a release.** Binaries for six platforms (`fidespipe-*`, legacy
+`tool-*`, `fidespipegui-windows-*`), a conformance archive, `SHA256SUMS`,
 `sbom.spdx.json`, and two Sigstore bundles `SHA256SUMS.sigstore.json` and
 `sbom.spdx.json.sigstore.json`. GitHub provenance attestations cover
 `dist/*`, including the bundles.
@@ -58,7 +58,7 @@ Rekor transparency log. Consequences worth stating plainly:
 **What a verifier must pin.** The certificate identity, exactly:
 
 ```
-https://github.com/wykserdex/wedra/.github/workflows/release.yml@refs/tags/vX.Y.Z
+https://github.com/wykserdex/fidespipe/.github/workflows/release.yml@refs/tags/vX.Y.Z
 ```
 
 with issuer `https://token.actions.githubusercontent.com`. This is the
@@ -81,7 +81,7 @@ not a bare `command not found`.
 
 **Two automated checks, on purpose.** The `cosign verify-blob` step above
 proves a signature is good. It does not prove the signing step still *exists*
-— deleting it breaks nothing anywhere. So `wedra check` step `supply` (and
+— deleting it breaks nothing anywhere. So `fidespipe check` step `supply` (and
 therefore CI) also requires, statically: every `uses:` in
 `.github/workflows/*.yml` pinned to a full 40-character SHA, and `release.yml`
 still containing `sigstore/cosign-installer`, `cosign sign-blob`,
@@ -115,7 +115,7 @@ the build reproducible. Comparing a signed artifact against one you built
 yourself is a separate exercise, not automated here.
 
 ## Trust is granted by the kernel, not by the plugin
-## The GUI HTTP server (`wedra gui`, `wedragui`, the `wedra mcp` gate console)
+## The GUI HTTP server (`fidespipe gui`, `fidespipegui`, the `fidespipe mcp` gate console)
 
 The GUI is an HTTP server that runs step plugins, so its port is a real
 attack surface on the machine. What it enforces:
@@ -161,11 +161,11 @@ user, with no isolation — only when the kernel has confirmed it. Confirmation
 requires **both** the plugin `id` and the **sha256 of the plugin directory's
 contents** to appear in the allow-list:
 
-- the operator's own `wedra-trust.yaml`, looked up in this order:
-  `--trust-config=<file>`, then `$WEDRA_TRUST_CONFIG`, then the directory of the
-  binary (`%ProgramFiles%\wedra\wedra-trust.yaml`). The working directory is
+- the operator's own `fidespipe-trust.yaml`, looked up in this order:
+  `--trust-config=<file>`, then `$FIDESPIPE_TRUST_CONFIG`, then the directory of the
+  binary (`%ProgramFiles%\fidespipe\fidespipe-trust.yaml`). The working directory is
   deliberately **not** searched: it is chosen by whoever invoked the command, not
-  by the operator. A repository clone carrying its own `wedra-trust.yaml` passes
+  by the operator. A repository clone carrying its own `fidespipe-trust.yaml` passes
   every ownership and permission check (the file belongs to the invoking user,
   mode 0644) and would silently widen the allow-list. If such a file exists in
   the working directory but was not selected, the core prints a warning with the
@@ -454,7 +454,7 @@ explicit list: the plugin directory, the interpreter directory, and the donor
 directory if the plugin declares one.
 
 The backend keeps the shape the Linux backend already had — a launcher plus
-arguments. The launcher is the WEDRA binary itself, started in a hidden mode
+arguments. The launcher is the Fidespipe binary itself, started in a hidden mode
 (`internal-sandbox-exec`), because `os/exec` cannot express the attribute list
 and the container process has to be created by a direct `CreateProcessW`. The
 helper is silent: its stdout is the plugin's stdout, and the plugin contract is
@@ -521,18 +521,18 @@ for the case they exist for — a person writing their own plugin:
    the run goes through the isolator (on Windows: an AppContainer; on Linux:
    bubblewrap);
 3. read the new hash from `GET /api/plugins/<id>/source` (`content_sha256`);
-4. add `"<id>@<sha256:…>"` to `trusted_plugins` in `wedra-trust.yaml`;
+4. add `"<id>@<sha256:…>"` to `trusted_plugins` in `fidespipe-trust.yaml`;
 5. it runs.
 
 Step 4 is a deliberate decision by a person, and it is the whole point of
 trusting by content hash rather than by name. The editor shows the exact line to
 copy and the path the running server actually reads, because the file is
 deliberately **not** read from the working directory: a clone of a repository
-with an appended `wedra-trust.yaml` once passed every check while silently
+with an appended `fidespipe-trust.yaml` once passed every check while silently
 widening the allow-list.
 
 `GET /api/trust` reports the search order (`--trust-config`, then
-`WEDRA_TRUST_CONFIG`, then the binary directory) and whether the file exists. An
+`FIDESPIPE_TRUST_CONFIG`, then the binary directory) and whether the file exists. An
 empty `config_path` is itself an answer: only the flag or the variable can
 configure trust.
 
@@ -589,7 +589,7 @@ tightening — they already had blanket egress — it removes a false claim from
 manifests. The declared host lists in those notes are still aspirational.
 
 On top of that, `internal/plugin/egress.go` implements the standard design used
-by other agent sandboxes: the proxy runs in the **unsandboxed** WEDRA process on
+by other agent sandboxes: the proxy runs in the **unsandboxed** Fidespipe process on
 loopback, the plugin receives `HTTP_PROXY`/`HTTPS_PROXY`, and the proxy allows
 only declared destinations. It resolves every A/AAAA record, refuses private,
 loopback, link-local and CGNAT ranges before dialling, then dials the **IP
@@ -614,7 +614,7 @@ future shared-netns backend, not a control in force today.
 `--unshare-net` used to be added only when the plugin declared no network, which
 meant a plugin declaring `any_host: true` ran with the **host's** network
 namespace. That was a wider hole than unfiltered egress: the plugin could reach
-every service bound to the host's loopback, including WEDRA's own HTTP API.
+every service bound to the host's loopback, including Fidespipe's own HTTP API.
 
 The namespace is now always separate, and egress is provided by a userspace
 stack (`slirp4netns`): `tap0` inside the plugin's namespace, traffic NAT-ed by the
@@ -630,7 +630,7 @@ host. Measured inside such a sandbox:
 Two details the implementation depends on, both found the hard way:
 
 - The plugin must not start before `tap0` exists, or its first requests fail.
-  WEDRA runs the command behind a gate: `/bin/sh -c 'while [ ! -e "$1" ]; ...;
+  Fidespipe runs the command behind a gate: `/bin/sh -c 'while [ ! -e "$1" ]; ...;
   exec "$@"'`, and the gate file is created only after the interface is up. The
   internal `$$` cannot be used to find the namespace either — under `--unshare-pid`
   it is a PID-namespace-relative pid, useless to `slirp4netns`. The host-visible
@@ -691,7 +691,7 @@ What this control is and is not:
   (see `docs/mcp.md`). The HTTP API and the CLI start runs from a human surface
   and do not apply the rule.
 
-The operator can turn the requirement off with `wedra mcp
+The operator can turn the requirement off with `fidespipe mcp
 --allow-unapproved-runs` for local trusted use. The bypass is not silent: the
 server prints a warning to stderr at startup and appends a record per bypassed
 run to `<runs-dir>/gate-bypass.jsonl`, flushed to disk before the run starts. If
@@ -702,7 +702,7 @@ the record cannot be written, the run is refused.
 `network: deny` has always been the documented default, but the gate only ran
 when the field was literally `deny`. A pipeline that omitted `network` matched
 neither branch, so it got **no network check at all**, and the subprocess was
-handed `WEDRA_NETWORK=allow` — the empty field granted network while the docs
+handed `FIDESPIPE_NETWORK=allow` — the empty field granted network while the docs
 promised it denied it.
 
 An earlier attempt at this was reverted because it refused existing pipelines

@@ -4,7 +4,7 @@ package registry
 // машины, credential-helper, insteadOf и protocol.* из ~/.gitconfig влияли на
 // то, что клонируется, и на то, откуда. Реестр — это исполняемый ввод (из него
 // ставятся плагины), поэтому «что именно ляжет на диск» обязано задаваться
-// здесь, а не наследоваться от того, кто запустил wedra.
+// здесь, а не наследоваться от того, кто запустил fidespipe.
 //
 // Три меры, все дешёвые и все fail-closed:
 //
@@ -33,7 +33,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/wykserdex/wedra/internal/common"
+	"github.com/wykserdex/fidespipe/internal/common"
 )
 
 // gitHarden — префикс аргументов: протоколы, которых не назвали, запрещены.
