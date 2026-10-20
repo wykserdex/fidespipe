@@ -247,7 +247,9 @@ func (s *Server) handleRunStart(w http.ResponseWriter, r *http.Request) {
 	s.setCancel(runID, cancel)
 	writeJSON(w, 202, map[string]interface{}{"status": "started", "file": req.File, "run": runID, "issues": issues})
 
+	s.runWG.Add(1)
 	go func() {
+		defer s.runWG.Done()
 		defer s.runMu.Unlock()
 		defer s.clearGate(runID)
 		defer s.clearCancel(runID)

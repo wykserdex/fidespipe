@@ -60,6 +60,11 @@ type Server struct {
 	// v0.9: отмена активных ранов: runID → cancel (POST /api/runs/<id>/cancel).
 	cancelsMu sync.Mutex
 	cancels   map[string]context.CancelFunc
+	// runWG — счётчик живых ранов. Нужен, чтобы дождаться их перед уборкой
+	// каталога: ран, переживший тест, дописывает в каталог ПОСЛЕ удаления его
+	// содержимого, и каталог остаётся непустым. На POSIX отмена unlink не
+	// мешает, поэтому это видно только там.
+	runWG sync.WaitGroup
 
 	// v0.9: одноразовый код обмена (EnableSession) и живые сессии. Пустой
 	// PairingCode — сессия не требуется (--no-session, встраивание, тесты).
@@ -497,4 +502,23 @@ func (s *Server) Routes() http.Handler {
 		}
 		mux.ServeHTTP(w, r)
 	})
+}
+
+// StopAll — остановить все живые раны и дождаться их.
+//
+// Нужен там, где каталог с прогонами сейчас удаляют: ран, который ещё пишет в
+// журнал, оставляет каталог непустым, и уборка падает. Обычно это тесты.
+func (s *Server) StopAll() {
+	s.cancelsMu.Lock()
+	for _, cancel := range s.cancels {
+		cancel()
+	}
+	s.cancelsMu.Unlock()
+	s.gatesMu.Lock()
+	for id, ui := range s.gates {
+		ui.Close()
+		delete(s.gates, id)
+	}
+	s.gatesMu.Unlock()
+	s.runWG.Wait()
 }
