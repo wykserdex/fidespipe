@@ -435,7 +435,25 @@ func Run(ctx context.Context, p Plan) (Result, error) {
 	// В куче, не на стеке: UpdateProcThreadAttribute запоминает УКАЗАТЕЛЬ на
 	// значение, а стек Go переезжает при росте, и между Update и CreateProcessW
 	// адрес успевает устареть.
+	// Capability internetClient даёт контейнеру выход в интернет. Она
+	// передаётся именно здесь, в создании процесса: capability выдаётся
+	// процессу, а не профилю, и профиль один на плагин.
+	var capList []windows.SIDAndAttributes
+	if p.AllowNetwork {
+		capSID, err := internetClientSID()
+		if err != nil {
+			return Result{}, err
+		}
+		capList = []windows.SIDAndAttributes{{
+			Sid:        capSID,
+			Attributes: windows.SE_GROUP_ENABLED,
+		}}
+	}
 	caps := &securityCapabilities{appContainerSID: sid}
+	if len(capList) > 0 {
+		caps.capabilities = &capList[0]
+		caps.capabilityCount = uint32(len(capList))
+	}
 	if err := attrs.Update(procThreadAttributeSecurityCapabilities,
 		unsafe.Pointer(caps), unsafe.Sizeof(*caps)); err != nil {
 		return Result{}, fmt.Errorf("SECURITY_CAPABILITIES: %w", err)
@@ -490,6 +508,28 @@ func Run(ctx context.Context, p Plan) (Result, error) {
 		return Result{}, fmt.Errorf("код возврата контейнеризованного процесса: %w", err)
 	}
 	return Result{ExitCode: int(int32(code))}, nil
+}
+
+// internetClientSID — capability «интернет» (S-1-15-3-1).
+//
+// SID строится вручную: x/sys/windows не знает про authority пакетов
+// приложений. Authority — SECURITY_APP_PACKAGE_AUTHORITY {0,0,0,0,0,15},
+// базовый RID capability — 3, а сам RID internetClient — 1.
+//
+// Это well-known capability, а не сгенерированный: для сгенерированных
+// SID нужен хэш имени и регистрация capability в системе, а well-known
+// система знает сама.
+func internetClientSID() (*windows.SID, error) {
+	authority := windows.SidIdentifierAuthority{[6]byte{0, 0, 0, 0, 0, 15}}
+	var sid *windows.SID
+	// AllocateAndInitializeSid: authority, число под-авторитетов, затем сами
+	// под-авторитеты. У S-1-15-3-1 их два: базовый RID capability (3) и
+	// RID самой capability (1), поэтому счётчик — 2, а не 1.
+	if err := windows.AllocateAndInitializeSid(&authority, 2, 3, 1,
+		0, 0, 0, 0, 0, 0, &sid); err != nil {
+		return nil, fmt.Errorf("SID capability internetClient: %w", err)
+	}
+	return sid, nil
 }
 
 // quoteArgv — склейка argv в командную строку CreateProcessW.
