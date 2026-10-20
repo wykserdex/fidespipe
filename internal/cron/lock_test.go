@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"strconv"
 	"testing"
+	"time"
 )
 
 // shellForTest — оболочка для заведомо короткого процесса.
@@ -47,6 +48,18 @@ func TestTryLockTakesOverDeadOwner(t *testing.T) {
 		t.Fatalf("вспомогательный процесс: %v", err)
 	}
 	pid := dead.Process.Pid
+	// Объект процесса на Windows живёт ещё мгновение после выхода, и
+	// OpenProcess на него отвечает — значит, «мёртвый» pid может считаться
+	// живым. Поэтому ждём, пока pid действительно перестанет существовать.
+	// Если не перестал (pid переиспользовали) — тест неприменим, и честный
+	// скип лучше мигающего теста.
+	deadline := time.Now().Add(3 * time.Second)
+	for time.Now().Before(deadline) && processAlive(pid) {
+		time.Sleep(20 * time.Millisecond)
+	}
+	if processAlive(pid) {
+		t.Skipf("pid %d переиспользован другим процессом — тест неприменим", pid)
+	}
 	if err := os.WriteFile(lp, []byte(strconv.Itoa(pid)+" 2026-10-19T00:00:00Z\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}

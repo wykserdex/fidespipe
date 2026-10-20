@@ -201,6 +201,11 @@ type Daemon struct {
 	RunsDir      string
 	// runner — функция запуска: файл -> run_id
 	Runner func(pipelineFile string, autoApprove bool) (string, error)
+
+	// queue — долговечная очередь слотов. Заводится в Run; если не удалось —
+	// демон работает без неё, но тогда слот, переживший перезапуск, может
+	// выполниться дважды. Это заметно, и об этом говорится в журнал.
+	queue *queue
 }
 
 func (d *Daemon) Tick(ctx context.Context) error {
@@ -266,13 +271,48 @@ func (d *Daemon) Tick(ctx context.Context) error {
 			continue
 		}
 		autoApprove := sched.HumanGate == "autoApprove" || sched.HumanGate == "auto_approve"
+		// Слот ЗАНИМАЕТСЯ до запуска. Если демон перезапустится, пока ран шёл,
+		// слот уже занят — и повторного запуска не будет: для пайплайна с
+		// побочным эффектом это двойное действие.
+		//
+		// Ключ слота — пайплайн и ВРЕМЯ слота, а не минута тика. Иначе
+		// перезапуск в ту же минуту испортил бы и выполнение, и пропуск.
+		key := slotKey(f, *next)
+		q := d.queue
+		if q == nil {
+			// Tick может быть вызван без Run (тесты, встраивание). Очередь
+			// тогда не заведена, и слот выполнился бы без защиты от
+			// повторного запуска. Fail-closed: лучше не выполнить слот, чем
+			// выполнить его дважды.
+			var qerr error
+			q, qerr = openQueue(filepath.Join(d.RunsDir, ".queue"))
+			if qerr != nil {
+				fmt.Fprintf(os.Stderr, "schedule %s: очередь слотов недоступна, слот пропущен: %v\n", f, qerr)
+				continue
+			}
+			d.queue = q
+		}
+		claimed, cerr := q.Claim(key, f)
+		if cerr != nil {
+			// Очередь не доверяет своему состоянию после неуверенной записи.
+			// Лучше не запустить слот, чем запустить его дважды.
+			fmt.Fprintf(os.Stderr, "schedule %s: очередь недоступна, слот пропущен: %v\n", f, cerr)
+			continue
+		}
+		if !claimed {
+			// Слот уже отрабатывал. Молча пропускаем: повторный запуск того же
+			// слота — это и есть то, чего мы избегаем.
+			continue
+		}
 		// В блокировку пишется pid: по нему протухание и определяется, и
 		// формат совпадает с блокировкой демона.
 		_ = os.WriteFile(runningLock, []byte(fmt.Sprintf("%d %s\n", os.Getpid(), now.Format(time.RFC3339))), 0o644)
+		outcome := slotDone
 		if d.Runner != nil {
 			runID, err := d.Runner(f, autoApprove)
 			_ = runID
 			if err != nil {
+				outcome = slotFailed
 				fmt.Fprintf(os.Stderr, "schedule %s: %v\n", f, err)
 				// Ошибка оповещения печатается, а не отбрасывается. Раньше
 				// стояло `_ = fireAlert(...)`, из-за чего молчание о
@@ -285,6 +325,9 @@ func (d *Daemon) Tick(ctx context.Context) error {
 					fmt.Fprintf(os.Stderr, "schedule %s: %v\n", f, aerr)
 				}
 			}
+		}
+		if rerr := q.Release(key, outcome); rerr != nil {
+			fmt.Fprintf(os.Stderr, "schedule %s: слот не отпущен: %v\n", f, rerr)
 		}
 		_ = os.Remove(runningLock)
 		if _, err := os.Stat(runningLock + ".queued"); err == nil {
@@ -433,6 +476,26 @@ func (d *Daemon) Run(ctx context.Context) error {
 		defer unlock()
 	} else {
 		return fmt.Errorf("daemon уже запущен (lock %s)", lockPath(d.RunsDir))
+	}
+	// Очередь слотов. Без неё демон работает, но слот, переживший
+	// перезапуск, может выполниться дважды.
+	q, qerr := openQueue(filepath.Join(d.RunsDir, ".queue"))
+	if qerr != nil {
+		fmt.Fprintf(os.Stderr, "daemon: очередь слотов недоступна (%v); слот, переживший перезапуск, может выполниться дважды\n", qerr)
+	} else {
+		d.queue = q
+		// Слоты, застигнутые работающими: работа шла, когда демон умер.
+		// Повторять её нельзя — неизвестно, что она уже надела, поэтому по
+		// каждому уходит оповещение, а сам слот помечается прерванным.
+		for _, notice := range q.Interrupted() {
+			fmt.Fprintf(os.Stderr, "daemon: %s\n", notice)
+		}
+		// Старые claim'ы убираются: слот, отработавший сутки назад, запускаться
+		// уже не должен, а держать его в state.json незачем. Файл иначе растёт
+		// бесконечно.
+		if n := q.TrimClaims(claimAge); n > 0 {
+			fmt.Fprintf(os.Stderr, "daemon: убрано старых слотов: %d\n", n)
+		}
 	}
 	ticker := time.NewTicker(time.Minute)
 	defer ticker.Stop()
