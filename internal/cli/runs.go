@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 func RunRunsList(args []string) {

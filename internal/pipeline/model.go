@@ -13,7 +13,7 @@ type Duration struct{ time.Duration }
 
 // MarshalYAML обязателен парно к UnmarshalYAML. Без него yaml.v3 пишет
 // `timeout: {duration: 0s}`, а чтение падает с «cannot unmarshal !!map into
-// string». Это ловил `wedra pipeline install`: он нормализует пресет через
+// string». Это ловил `fidespipe pipeline install`: он нормализует пресет через
 // yaml.Marshal и единственное место, где core-структура уходит на диск.
 func (d Duration) MarshalYAML() (interface{}, error) {
 	return d.Duration.String(), nil
@@ -370,7 +370,7 @@ const (
 // Раньше каждая точка кода решала это самостоятельно сравнением
 // `p.Network == "deny"`, и unset-ветка нигде не совпадала с дефолтом из
 // документации: гейт не срабатывал вовсе, а плагин получал
-// WEDRA_NETWORK=allow. Одна функция вместо трёх независимых проверок —
+// FIDESPIPE_NETWORK=allow. Одна функция вместо трёх независимых проверок —
 // чтобы валидация и рантайм не разошлись снова.
 func EffectiveNetwork(p *Pipeline) string {
 	if p == nil || p.Network == "" {

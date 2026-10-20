@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // локальные алиасы — ранее шли из internal/core/types.go, теперь без зависимости на core
@@ -77,7 +77,7 @@ func RunConformance(fixturesDir string) ConformanceReport {
 	// Доверие фикстурам: конформность гоняет плагины ИЗ КАТАЛОГА, который
 	// оператор назвал (или который сама функция выбрала из каталога ядра). Это
 	// прямое указание человека, а не самообъявление плагина, — по сути тем же
-	// основанием, что и `wedra plugin test <dir>`. Без этого батарея падала бы
+	// основанием, что и `fidespipe plugin test <dir>`. Без этого батарея падала бы
 	// на отказе по политике и не проверяла бы ничего.
 	fixtureCtx := context.Background()
 	if list, err := plugin.AllowListFromDirs(fixturesDir); err == nil {
@@ -170,7 +170,7 @@ func RunConformance(fixturesDir string) ConformanceReport {
 			return nil, nil, confFail(name+"_fixture", name+" не загрузился")
 		}
 		executed[name] = true
-		return m, plugin.ExecWithEnvCtx(fixtureCtx, m, []byte(input), timeout, []string{"WEDRA_NETWORK=deny"}), ConformanceCheck{}
+		return m, plugin.ExecWithEnvCtx(fixtureCtx, m, []byte(input), timeout, []string{"FIDESPIPE_NETWORK=deny"}), ConformanceCheck{}
 	}
 
 	// 1. handshake: echo_ok
@@ -263,14 +263,14 @@ func RunConformance(fixturesDir string) ConformanceReport {
 		checks = append(checks, confPass("optional_input"))
 	}
 
-	// Сеть: пустой WEDRA_NETWORK плагину не достаётся, вместо него deny.
+	// Сеть: пустой FIDESPIPE_NETWORK плагину не достаётся, вместо него deny.
 	// Фикстура net_probe отдаёт значение переменной — контракт «declare-now».
 	if m, res, bad := fixtureRun("net_probe", `{"value":"x"}`, 10*time.Second); bad.Name != "" {
 		checks = append(checks, bad)
 	} else if _, _, err := plugin.EnforceOutput(m, res.Output); err != nil {
 		checks = append(checks, confFail("network_env", err.Error()))
 	} else if res.Output["value"] != "deny" {
-		checks = append(checks, confFail("network_env", "WEDRA_NETWORK не дошёл до плагина: "+fmt.Sprint(res.Output)))
+		checks = append(checks, confFail("network_env", "FIDESPIPE_NETWORK не дошёл до плагина: "+fmt.Sprint(res.Output)))
 	} else {
 		checks = append(checks, confPass("network_env"))
 	}

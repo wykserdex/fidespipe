@@ -6,7 +6,7 @@ description: >
   heartbleed, certificate info и т.д. Обёртка над CLI sslyze, машинный отчёт
   --json_out=<файл> читается из временного каталога. Ставится отдельно:
   pip install sslyze.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

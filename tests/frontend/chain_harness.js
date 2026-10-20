@@ -217,7 +217,7 @@ const jsonResp = obj => ({
 });
 const ctx = vm.createContext({
   window: {
-    wedraSession: async () => true,
+    fidespipeSession: async () => true,
     location: { href: 'http://x/editor/', search: '', origin: 'http://x' },
     addEventListener: () => {}, removeEventListener: () => {},
     innerWidth: 1600, innerHeight: 900,
@@ -233,7 +233,7 @@ const ctx = vm.createContext({
     })
     : jsonResp({}),
   location: { href: 'http://x/editor/', search: '', origin: 'http://x' },
-  confirm: () => true, alert: () => {}, wedraSession: async () => true,
+  confirm: () => true, alert: () => {}, fidespipeSession: async () => true,
   Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Error,
 });
 vm.runInContext(fs.readFileSync(SRC, 'utf8'), ctx, { filename: 'app.js' });

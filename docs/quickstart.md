@@ -1,6 +1,6 @@
 # START HERE — тест за 5 минут
 
-Это ранняя версия платформы WEDRA: локально, по контракту, цепочки из YAML + человек в петле. Цепочки — один из сценариев, а не суть: суть в контракте, доверии и журнале, поверх которых строятся планировщик, магазин, редактор и MCP.
+Это ранняя версия платформы Fidespipe: локально, по контракту, цепочки из YAML + человек в петле. Цепочки — один из сценариев, а не суть: суть в контракте, доверии и журнале, поверх которых строятся планировщик, магазин, редактор и MCP.
 
 Тестировать идеально — не хваля: нас интересует, **где ты споткнулся**.
 
@@ -14,30 +14,30 @@
 ## Шаг 0 — бинарь под твою ОС
 
 ```
-wedra-windows-amd64.exe      ← Windows (SmartScreen может ругнуться на неподписанный бинарь — «Подробнее → Выполнить»)
-wedra-linux-amd64            ← Linux
-wedra-darwin-arm64           ← macOS Apple Silicon (при Gatekeeper: xattr -d com.apple.quarantine ./wedra-darwin-arm64)
-wedra-darwin-amd64           ← macOS Intel
+fidespipe-windows-amd64.exe      ← Windows (SmartScreen может ругнуться на неподписанный бинарь — «Подробнее → Выполнить»)
+fidespipe-linux-amd64            ← Linux
+fidespipe-darwin-arm64           ← macOS Apple Silicon (при Gatekeeper: xattr -d com.apple.quarantine ./fidespipe-darwin-arm64)
+fidespipe-darwin-amd64           ← macOS Intel
 ```
 
-Дальше пишем `wedra` — подставь свой путь. Работай из корня распакованной папки (пути в пайплайнах относительны).
+Дальше пишем `fidespipe` — подставь свой путь. Работай из корня распакованной папки (пути в пайплайнах относительны).
 
 ## 5-минутный сценарий
 
 **1. Статическая проверка цепочки (покажет, что контракты ловятся до запуска):**
 ```bash
-wedra pipeline validate examples/email_check.yaml
+fidespipe pipeline validate examples/email_check.yaml
 ```
 
 **2. Пак A — проверка email-списка, человек в петле:**
 ```bash
-wedra pipeline run examples/email_check.yaml
+fidespipe pipeline run examples/email_check.yaml
 ```
 Пройдёт 2 email из 3; третий заведомо битый, и ран на нём остановится — это ожидаемо, не поломка. В конце будет `ok=2 aborted=1`. На паузе `human_gate`: Enter (без правки) → `a` (принять) или `r` (отклонить).
 
 **3. Человек в петле вообще без сети и без Python** — самый быстрый способ убедиться, что система живая:
 ```bash
-wedra demo
+fidespipe demo
 ```
 Это тот же ран с настоящим гейтом человека, только текст метрится встроенным кодом. Ни git, ни Python, ни сети. Если ты видишь `ok=1 aborted=0` — всё, дальше можно читать спокойно.
 
@@ -50,9 +50,9 @@ python docs/llm_stub.py
 Во втором окне — сам прогон:
 
 ```bash
-# Windows (cmd):    set GEMINI_BASE_URL=http://127.0.0.1:8766 && set LLM_OAI_BASE_URL=http://127.0.0.1:8766/v1 && set GEMINI_API_KEY=local && set LLM_OAI_API_KEY=local && wedra.exe pipeline run examples\llm_text_chain.yaml
-# PowerShell:       $env:GEMINI_BASE_URL="http://127.0.0.1:8766"; $env:LLM_OAI_BASE_URL="http://127.0.0.1:8766/v1"; $env:GEMINI_API_KEY="local"; $env:LLM_OAI_API_KEY="local"; .\wedra.exe pipeline run examples\llm_text_chain.yaml
-# Linux/macOS:      GEMINI_BASE_URL=http://127.0.0.1:8766 LLM_OAI_BASE_URL=http://127.0.0.1:8766/v1 GEMINI_API_KEY=local LLM_OAI_API_KEY=local ./wedra pipeline run examples/llm_text_chain.yaml
+# Windows (cmd):    set GEMINI_BASE_URL=http://127.0.0.1:8766 && set LLM_OAI_BASE_URL=http://127.0.0.1:8766/v1 && set GEMINI_API_KEY=local && set LLM_OAI_API_KEY=local && fidespipe.exe pipeline run examples\llm_text_chain.yaml
+# PowerShell:       $env:GEMINI_BASE_URL="http://127.0.0.1:8766"; $env:LLM_OAI_BASE_URL="http://127.0.0.1:8766/v1"; $env:GEMINI_API_KEY="local"; $env:LLM_OAI_API_KEY="local"; .\fidespipe.exe pipeline run examples\llm_text_chain.yaml
+# Linux/macOS:      GEMINI_BASE_URL=http://127.0.0.1:8766 LLM_OAI_BASE_URL=http://127.0.0.1:8766/v1 GEMINI_API_KEY=local LLM_OAI_API_KEY=local ./fidespipe pipeline run examples/llm_text_chain.yaml
 ```
 
 Ожидаемый финал: `ok=1 aborted=0`.
@@ -63,40 +63,40 @@ python docs/llm_stub.py
 
 С настоящими ключами то же самое по-настоящему — просто убери переменные `*_BASE_URL`:
 ```bash
-# Linux/macOS:      GEMINI_API_KEY=<ключ Gemini> LLM_OAI_API_KEY=<ключ> ./wedra pipeline run examples/llm_text_chain.yaml
+# Linux/macOS:      GEMINI_API_KEY=<ключ Gemini> LLM_OAI_API_KEY=<ключ> ./fidespipe pipeline run examples/llm_text_chain.yaml
 ```
 
-> **Про `LLM_MOCK=1`, который ты встретишь в старых записках и в комментариях `examples/*.yaml`.** Он не работает и не должен: ядро намеренно не пропускает такие переключатели в плагины при обычном запуске (иначе тестовый флаг из окружения подменял бы боевой прогон подделкой — см. CHANGELOG). Он работает только внутри `wedra plugin test plugins/official/llm_gemini`. Для обычного запуска путь один — `*_BASE_URL`, как выше.
+> **Про `LLM_MOCK=1`, который ты встретишь в старых записках и в комментариях `examples/*.yaml`.** Он не работает и не должен: ядро намеренно не пропускает такие переключатели в плагины при обычном запуске (иначе тестовый флаг из окружения подменял бы боевой прогон подделкой — см. CHANGELOG). Он работает только внутри `fidespipe plugin test plugins/official/llm_gemini`. Для обычного запуска путь один — `*_BASE_URL`, как выше.
 
 **5. Собери свой плагин за минуту:**
 ```bash
-wedra plugin create plugins/proba
+fidespipe plugin create plugins/proba
 # отредактируй plugins/proba/main.py (там урок протокола в комментариях)
-wedra plugin test plugins/proba      # контракт-тесты — должны быть зелёными из коробки
+fidespipe plugin test plugins/proba      # контракт-тесты — должны быть зелёными из коробки
 ```
 
 **6. Загляни в журнал:** `var/runs/<последняя папка>/journal.jsonl` — все события рана, по одной строке на событие. То же самое, но разобранное и с входами-выходами:
 ```bash
-wedra runs show <последний run_id> var/runs
+fidespipe runs show <последний run_id> var/runs
 ```
 (run_id — он в строке `запуск "<имя>" (журнал: ...)` при старте.)
 
 ## Что ещё можно сделать (поверх пяти минут выше)
 
-Пять минут выше — это про ЗАПУСК. Всё, что ниже, — про то, чем WEDRA стала
+Пять минут выше — это про ЗАПУСК. Всё, что ниже, — про то, чем Fidespipe стала
 после «просто соединить плагины».
 
 **Понять, что сломано в окружении:**
 ```bash
-wedra doctor
+fidespipe doctor
 ```
 Ничего не ставит и ничего не запускает. Пересчитывает каждый плагин тем же
-Python, которым запускается сама WEDRA, и печатает, сколько готовы и что
+Python, которым запускается сама Fidespipe, и печатает, сколько готовы и что
 доустановить. На чистой машине скажет чего не хватает.
 
 **Поставить плагина вместе с донором:**
 ```bash
-wedra plugin install sherlock
+fidespipe plugin install sherlock
 ```
 Донор ставится сам: `runtime.requires` — это ровно `pip install пакет==версия`.
 У пяти плагинов донора нет на PyPI, и он ставится **типизированным рецептом**
@@ -104,15 +104,15 @@ wedra plugin install sherlock
 
 **Написать плагин прямо в браузере:**
 ```bash
-wedra gui
+fidespipe gui
 ```
 Вкладка «Плагины» — редактор: правка `plugin.yaml`, `main.py`, тестов и
 README, проверка до записи, прогон тестов, создание плагина из шаблона.
 
 **Превратить чужой Python-проект в плагин:**
 ```bash
-wedra plugin import ./telegram-outreach --plan   # сначала посмотреть план
-wedra plugin import ./telegram-outreach          # потом создать плагин
+fidespipe plugin import ./telegram-outreach --plan   # сначала посмотреть план
+fidespipe plugin import ./telegram-outreach          # потом создать плагин
 ```
 Команда разбирает `pyproject.toml` (или `setup.cfg`), строит план и создаёт
 каталог плагина, который проходит проверку манифеста и даёт зелёные тесты. Что
@@ -121,8 +121,8 @@ wedra plugin import ./telegram-outreach          # потом создать п�
 
 **Запускать по расписанию:**
 ```bash
-wedra schedule      # что подошло и когда
-wedra daemon        # демон: тикает раз в минуту и запускает подошедшее
+fidespipe schedule      # что подошло и когда
+fidespipe daemon        # демон: тикает раз в минуту и запускает подошедшее
 ```
 Демон работает из **долговечной очереди**: слот занимается до запуска, поэтому
 перезапуск демона не приводит к повторному выполнению, а работа, застигнутая
@@ -130,7 +130,7 @@ wedra daemon        # демон: тикает раз в минуту и зап�
 
 **Одобрить гейт без терминала** (для сервера, где терминала нет):
 ```bash
-wedra approve <run_id> <step_id> --link
+fidespipe approve <run_id> <step_id> --link
 ```
 Печатает подписанную ссылку: открой её с телефона и реши. Ссылка подписана
 ключом, живёт час и работает один раз. Демон при этом тоже печатает ссылку
@@ -138,13 +138,13 @@ wedra approve <run_id> <step_id> --link
 
 **Убрать старые прогоны:**
 ```bash
-wedra runs prune --keep-last=50 --keep-days=30
+fidespipe runs prune --keep-last=50 --keep-days=30
 ```
 Без флагов команда не удаляет ничего.
 
 **Дать агенту инструменты:**
 ```bash
-wedra mcp
+fidespipe mcp
 ```
 Агент может предложить план, проверить пайплайн и запустить цепочку — но
 решение на `core/human_gate` остаётся за человеком. Подробности — в
@@ -155,7 +155,7 @@ wedra mcp
 1. Дошёл ли до рабочей цепочки **без моих подсказок**? Если нет — на каком шаге завяз?
 2. Сколько минут от распаковки до первого зелёного прогона? (замерь честно)
 3. Что было непонятно в терминах: «плагин», «цепочка», «human_gate», «контракт»?
-4. `wedra plugin create` → свой плагин: получилось? сколько минут?
+4. `fidespipe plugin create` → свой плагин: получилось? сколько минут?
 5. Один абзац: стал бы ты таким пользоваться и для какой своей задачи?
 
 Любой traceback, неловкая ошибка, «а чего оно молчит» — присылай скрином/текстом, это золото.

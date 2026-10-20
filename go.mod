@@ -1,4 +1,4 @@
-module github.com/wykserdex/wedra
+module github.com/wykserdex/fidespipe
 
 go 1.26
 

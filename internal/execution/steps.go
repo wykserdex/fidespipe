@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 func runStepFlow(eng Engine, pf *pipeline.PipelineFile, st *pipeline.Step, ctx *runctx.Ctx, j *journal.Journal, opts RunOptions) (string, error) {
@@ -235,7 +235,7 @@ func runStep(eng Engine, pf *pipeline.PipelineFile, st *pipeline.Step, ctx *runc
 	}
 	// v0.17: declare-now — subprocess получает контракт сети. Значение по
 	// умолчанию — deny, а не allow: раньше здесь стоял literal "allow", и
-	// пайплайн с незаполненным полем network отдавал плагину WEDRA_NETWORK=allow,
+	// пайплайн с незаполненным полем network отдавал плагину FIDESPIPE_NETWORK=allow,
 	// то есть пустое поле молча разрешало сеть.
 	netEnv := "allow"
 	if pipeline.EffectiveNetwork(&pf.Pipeline) == pipeline.NetworkDeny {
@@ -248,7 +248,7 @@ func runStep(eng Engine, pf *pipeline.PipelineFile, st *pipeline.Step, ctx *runc
 			"step": st.ID, "attempt": attempt,
 			"network": netEnv, "network_declared": pipeline.NetworkHostList(m),
 		})
-		res = plugin.ExecWithEnvCtx(opts.Ctx, m, rawIn, timeout, []string{"WEDRA_NETWORK=" + netEnv})
+		res = plugin.ExecWithEnvCtx(opts.Ctx, m, rawIn, timeout, []string{"FIDESPIPE_NETWORK=" + netEnv})
 		j.Event("step_end", map[string]interface{}{
 			"step": st.ID, "attempt": attempt, "exit_code": res.ExitCode,
 			"duration_ms": res.Duration.Milliseconds(), "status": statusOf(res),

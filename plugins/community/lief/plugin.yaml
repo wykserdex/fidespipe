@@ -11,7 +11,7 @@ description: >
   Наружу не отдаются: authentihash (md5/sha1/sha256/sha512) — хеш-отпечаток
   файла, путь PDB (codeview_pdb) и отладочная информация, rich_header,
   время сборки, таблица символов. Пин: pip install lief==1.0.0
-author: "community · wedra showcase (reverse engineering)"
+author: "community · fidespipe showcase (reverse engineering)"
 
 runtime:
   type: python

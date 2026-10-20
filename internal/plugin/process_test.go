@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 	"gopkg.in/yaml.v3"
 )
 
@@ -154,10 +154,10 @@ func TestBuiltinNamespaceIsClosed(t *testing.T) {
 
 func TestPluginOnlyReceivesDeclaredSecrets(t *testing.T) {
 	requirePythonT(t)
-	t.Setenv("WEDRA_TEST_DECLARED_SECRET", "declared")
-	t.Setenv("WEDRA_TEST_UNRELATED_SECRET", "leaked")
+	t.Setenv("FIDESPIPE_TEST_DECLARED_SECRET", "declared")
+	t.Setenv("FIDESPIPE_TEST_UNRELATED_SECRET", "leaked")
 	dir := t.TempDir()
-	script := "import os,sys,json\njson.load(sys.stdin)\njson.dump({'status':'ok','output':{'declared':os.environ.get('WEDRA_TEST_DECLARED_SECRET',''),'unrelated':os.environ.get('WEDRA_TEST_UNRELATED_SECRET','')}},sys.stdout)\n"
+	script := "import os,sys,json\njson.load(sys.stdin)\njson.dump({'status':'ok','output':{'declared':os.environ.get('FIDESPIPE_TEST_DECLARED_SECRET',''),'unrelated':os.environ.get('FIDESPIPE_TEST_UNRELATED_SECRET','')}},sys.stdout)\n"
 	if err := os.WriteFile(filepath.Join(dir, "main.py"), []byte(script), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -169,7 +169,7 @@ func TestPluginOnlyReceivesDeclaredSecrets(t *testing.T) {
 			"declared":  {Type: "string"},
 			"unrelated": {Type: "string"},
 		},
-		Permissions: pipeline.Permissions{Secrets: []string{"WEDRA_TEST_DECLARED_SECRET"}},
+		Permissions: pipeline.Permissions{Secrets: []string{"FIDESPIPE_TEST_DECLARED_SECRET"}},
 	}
 	res := ExecWithEnvCtx(trustCtx(t, m), m, []byte("{}"), 10*time.Second, nil)
 	if !res.OK() {

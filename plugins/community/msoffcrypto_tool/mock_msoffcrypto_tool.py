@@ -5,7 +5,7 @@
 печатает в stdout РОВНО ОДИН JSON, — поэтому мок повторяет протокол сниппета, а
 не CLI: тот же argv (путь к файлу и путь для результата, второй может быть
 пустым), тот же stdin с JSON {"password": ...}, тот же маркер доменной ошибки
-{"wedra_error": ..., "wedra_message": ...} и exit 1.
+{"fidespipe_error": ..., "fidespipe_message": ...} и exit 1.
 
 Где применяется: только кейсы, которые настоящим донором не вызвать — упасть
 на конкретном входе, зависнуть или отдать битый ответ он не может. Контракт
@@ -53,8 +53,8 @@ out_path = sys.argv[2] if len(sys.argv) > 2 else ""
 
 
 def bail(code, message):
-    sys.stdout.write(json.dumps({"wedra_error": code,
-                                 "wedra_message": message}))
+    sys.stdout.write(json.dumps({"fidespipe_error": code,
+                                 "fidespipe_message": message}))
     sys.exit(1)
 
 

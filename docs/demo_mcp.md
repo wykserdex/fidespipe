@@ -1,4 +1,4 @@
-# Demo: агент + wedra + человек (≈3 мин)
+# Demo: агент + fidespipe + человек (≈3 мин)
 
 Сценарий для видео/GIF в README. Материал готов: `examples/email_triage_chain.yaml`
 (после фикса 0.2 даёт 3 ok / 1 aborted), `plugins/official/*`, `examples/csv_*`.
@@ -12,7 +12,7 @@
 - `list_plugins` → находит `syntax_mx_checker`, `disposable_checker`, `email_triage`
 - пишет YAML пайплайна с `foreach: input.emails`, `item_type: string`, `item_format: email`
 
-## 2. Агент ошибается — wedra подсказывает кодами
+## 2. Агент ошибается — fidespipe подсказывает кодами
 
 Первый YAML с битой привязкой:
 
@@ -25,7 +25,7 @@
 ## 3. Запуск — ждёт человека
 
 - `run_pipeline` → `{run_id, status: "waiting_human"}`
-- `wedra mcp` сам открывает браузер человека на этом ране (консоль гейтов на
+- `fidespipe mcp` сам открывает браузер человека на этом ране (консоль гейтов на
   127.0.0.1, ссылка с одноразовым кодом входа; агенту уходит адрес без кода),
   человек правит `risk` в гейте `review` и жмёт accept
 - `get_run` → `done`: `3 ok / 1 aborted` (`"bad-email"` abortнул только свой элемент),
@@ -38,7 +38,7 @@ curl -X POST http://127.0.0.1:<порт из hint>/api/runs/<id>/gate -d '{"acti
 ```
 
 - у агента нет инструмента одобрения (MCP: только `get_run` с hint
-  «попросите пользователя одобрить шаг X в окне wedra»)
+  «попросите пользователя одобрить шаг X в окне fidespipe»)
 - и агент не может выкинуть гейт: пайплайн без `core/human_gate`, где есть шаг
   с capabilities «сеть/диск/секреты», отклоняется с `E_GATE_REQUIRED` до старта
 - `--yes` при `approval: human` / `pipeline.gates: human_only` тоже ждёт человека
@@ -47,10 +47,10 @@ curl -X POST http://127.0.0.1:<порт из hint>/api/runs/<id>/gate -d '{"acti
 ## Повторить локально
 
 ```bash
-go build -o wedra ./cmd/wedra
-./wedra pipeline validate --json examples/email_triage_chain.yaml
-./wedra pipeline run examples/email_triage_chain.yaml --yes
+go build -o fidespipe ./cmd/fidespipe
+./fidespipe pipeline validate --json examples/email_triage_chain.yaml
+./fidespipe pipeline run examples/email_triage_chain.yaml --yes
 # → ok=3 aborted=1
-./wedra plugin test --conformance internal/core/testdata/plugins --json
+./fidespipe plugin test --conformance internal/core/testdata/plugins --json
 # → ok:true (handshake, big_stdout, big_stderr, cancel, error_codes)
 ```

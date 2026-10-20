@@ -92,7 +92,7 @@ pip install pefile==2024.8.26
 
 ## Тесты
 
-`wedra plugin test plugins/community/pefile` — 31 кейс, и они разделены
+`fidespipe plugin test plugins/community/pefile` — 31 кейс, и они разделены
 намеренно:
 
 - **реальный инструмент** (кейсы без `PEFILE_BIN`) запускают настоящий `pefile`

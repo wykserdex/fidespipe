@@ -9,10 +9,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/doctor"
-	"github.com/wykserdex/wedra/internal/install"
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/doctor"
+	"github.com/wykserdex/fidespipe/internal/install"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // storeLogLimit — сколько журнала установки отдаём в ответе.
@@ -180,7 +180,7 @@ func (s *Server) handleStore(w http.ResponseWriter, r *http.Request) {
 // handleStoreInstall — установка плагина из витрины.
 //
 // Здесь идёт РЕАЛЬНАЯ установка: git-клон, запись в plugins/, блокировка
-// .wedra. Поэтому обработчик сознательно делает две вещи, которых нет в
+// .fidespipe. Поэтому обработчик сознательно делает две вещи, которых нет в
 // read-only витрине: требует запись в PluginsDir и отдаёт наружу журнал.
 //
 // Безопасность целиком наследуется от обёртки Routes(): сессия, CSRF,

@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 // fakeUI — скриптованный ввод: список строк, затем EOF.

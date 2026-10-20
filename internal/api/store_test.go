@@ -21,7 +21,7 @@ import (
 const storeRegistryYAML = `version: "0.1"
 plugins:
   demo_plugin:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/demo_plugin_impl
     version: v0.33c
     commit: 0000000000000000000000000000000000000000

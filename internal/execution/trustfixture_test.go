@@ -10,12 +10,12 @@ package execution
 // fail).
 //
 // Помощник собирает allow-list из РЕАЛЬНОГО хэша каталога: доверие выдаётся
-// явно и по содержимому, ровно как это делает оператор в wedra-trust.yaml.
+// явно и по содержимому, ровно как это делает оператор в fidespipe-trust.yaml.
 
 import (
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // trustPluginsDir — allow-list по каталогу с тестовыми плагинами.

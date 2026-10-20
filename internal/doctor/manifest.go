@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // pipWord — «pip install» в любом регистре, как его пишут в README и в коде.

@@ -15,7 +15,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // ErrSandboxUnsupported — на этой платформе/хосте нет рабочей изоляции.
@@ -49,7 +49,7 @@ func sandboxEgress(ctx context.Context, m *pipeline.Manifest) ([]string, func(),
 		return nil, noop, fmt.Errorf("egress-фильтр: %w", err)
 	}
 	stop := eg.stop
-	// Прокси живёт в неизолированном процессе WEDRA, поэтому его нужно гасить
+	// Прокси живёт в неизолированном процессе Fidespipe, поэтому его нужно гасить
 	// вместе с контекстом запуска, иначе порт и сокеты переживут плагин.
 	go func() {
 		<-ctx.Done()
@@ -95,7 +95,7 @@ func sandboxCommand(ctx context.Context, argv []string, m *pipeline.Manifest, sc
 // "Read-only file system".
 func newSandboxScratch() (string, func(), error) {
 	noop := func() {}
-	dir, err := os.MkdirTemp("", "wedra-sbx-")
+	dir, err := os.MkdirTemp("", "fidespipe-sbx-")
 	if err != nil {
 		return "", noop, fmt.Errorf("scratch для песочницы: %w", err)
 	}

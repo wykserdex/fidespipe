@@ -18,8 +18,8 @@
 | `go test` без `-timeout` — это неограниченное ожидание при утечке пайпа | доказано | §1 (`testWaitDelay = 0`); закрыто в `e91a130` |
 | `go list ./...` в воркере был **без дедлайна** | доказано (по коду `7d1ad20`) | §3.1; закрыто этим изменением |
 | `.NET Process.WaitForExit()` без аргумента ждёт EOF перенаправленных пайпов | доказано (семантика .NET) | §3.2; закрыто этим изменением |
-| Баг WEDRA (`cmd.Wait` без `WaitDelay`) — настоящий баг продукта | доказано | §2; исправлен в `e91a130` |
-| Баг WEDRA **объясняет** зависание Windows-джоба | **не доказано** | §2: аудит набора тестов не даёт ни одного пути через успешный ран |
+| Баг Fidespipe (`cmd.Wait` без `WaitDelay`) — настоящий баг продукта | доказано | §2; исправлен в `e91a130` |
+| Баг Fidespipe **объясняет** зависание Windows-джоба | **не доказано** | §2: аудит набора тестов не даёт ни одного пути через успешный ран |
 | После зелёного Windows-прогона остаются живые потомки тестов | **доказано: нет** | §4.2: `ok=17 fail=0`, ни одного `rel=1`; §4.3: то же на раннере; §4.5: `DETACHED`/`SURVIVOR`/`KILLED` — 0 |
 | `GITHUB_STEP_SUMMARY` переживает отмену джоба | **опровергнуто** | §3.3: summary пуст и через REST не читается даже на зелёном прогоне |
 | Лог джоба переживает отмену | **ненадёжно** | §3.3: на одном отменённом джобе есть, на инцидентном — `log not found` |
@@ -63,7 +63,7 @@ FAIL    hangtest    5.004s
 `-timeout` `testWaitDelay = 0`, и ожидание действительно неограниченно — это и
 закрыто в `e91a130` для core/macOS.
 
-## 2. Баг WEDRA: настоящий, исправлен, к зависанию джоба не привязан
+## 2. Баг Fidespipe: настоящий, исправлен, к зависанию джоба не привязан
 
 Воспроизведение и фикс — `e91a130` (`cmd.WaitDelay`, разбор
 `exec.ErrWaitDelay`, два регрессионных теста); в `5661186` значение унифицировано
@@ -186,7 +186,7 @@ fail=0 notChecked=0`, лимит 10, запас есть на 8 находок.
 **Читать улики теперь надо так** (summary больше не годится):
 
 ```
-gh api repos/wykserdex/wedra/check-runs/<job_id>/annotations?per_page=100
+gh api repos/wykserdex/fidespipe/check-runs/<job_id>/annotations?per_page=100
 ```
 
 Ожидаемая лестница: нет `start …` → встало до воркера; есть `start`, нет `CENSUS`
@@ -276,8 +276,8 @@ gh api repos/wykserdex/wedra/check-runs/<job_id>/annotations?per_page=100
 строки — и обе оказались **не** инцидентом:
 
 ```
-[06:52:35.865 +   5s] === wedra/internal/common ===
-[06:52:46.130 +  15s] ok      wedra/internal/common  10s
+[06:52:35.865 +   5s] === fidespipe/internal/common ===
+[06:52:46.130 +  15s] ok      fidespipe/internal/common  10s
 [06:52:46.146 +  15s] DETACHED pid=10925 ppid=1 :: sleep 60
 [06:52:46.159 +  15s]     родословная: /sbin/init(1)
 [06:52:46.164 +  15s]     KILLED pid=10925 — оторванный потомок не должен пережить шаг …
@@ -381,7 +381,7 @@ Windows-джоб после установки census, артефакт `windows
 (`guard.out.txt`):
 
 ```
-[07:05:16.231 +   0s] guard start: host=Windows_NT repo=D:\a\wedra\wedra budget=600s perPackage=200s goTimeout=150s killLeaks=True
+[07:05:16.231 +   0s] guard start: host=Windows_NT repo=D:\a\fidespipe\fidespipe budget=600s perPackage=200s goTimeout=150s killLeaks=True
 [07:06:52.009 +  96s] ok=17 fail=0 notChecked=0
 ```
 
@@ -423,7 +423,7 @@ FAIL  internal/plugin   150.033s
 логе census увидел сироту сразу после убитого пакета:
 
 ```
-FAIL  github.com/wykserdex/wedra/internal/plugin  150.033s
+FAIL  github.com/wykserdex/fidespipe/internal/plugin  150.033s
 DETACHED rel=1 pid=2464 ppid=2440 :: go run ./internal/plugin/cmd/genseed -check
    родословная: pid 2440 (умер)
 KILLED pid=2464
@@ -465,7 +465,7 @@ KILLED pid=2464
    не переживает отмену и через REST не читается.
    **Читать артефакт `windows-gotest-logs` — отмену он переживает (§4.5),** в нём
    `guard.out.txt` с таблицей пакетов и census. Аннотации — запасной канал:
-   `gh api repos/wykserdex/wedra/check-runs/<job_id>/annotations?per_page=100`,
+   `gh api repos/wykserdex/fidespipe/check-runs/<job_id>/annotations?per_page=100`,
    фильтровать по `title=census`. Ожидаемая лестница: нет `guard start` → встало
    до воркера; есть `guard start` → встал `go list` или конкретный `=== pkg ===`;
    есть строка с `rel=1` → вот кто пережил пакет.

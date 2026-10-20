@@ -3,7 +3,7 @@ package execution
 import (
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // netEngine отдаёт фиксированный манифест с заданным сетевым объявлением.
@@ -39,7 +39,7 @@ var blanketNet = []pipeline.NetworkPermission{{AnyHost: true}}
 // An omitted `network` field is deny, exactly like an explicit `network: deny`.
 // It used to be neither: the gate compared `p.Network == "deny"` and
 // `== "allow"`, so an empty field matched no branch, ran no check at all, and
-// the subprocess was handed WEDRA_NETWORK=allow — fail-open while the docs
+// the subprocess was handed FIDESPIPE_NETWORK=allow — fail-open while the docs
 // promised deny. The unset rows below are the regression for that.
 //
 // Assertions use ASCII markers on purpose: the messages this gate produces are

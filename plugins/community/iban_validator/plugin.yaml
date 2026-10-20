@@ -2,7 +2,7 @@ id: iban_validator
 version: 0.1.0
 platform_api: "^0.1"
 description: "Проверка IBAN (ISO 13616): синтаксис, страна и длина, контрольная сумма mod-97. Без сети."
-author: "community · волна 3 (plugin-pack wedra)"
+author: "community · волна 3 (plugin-pack fidespipe)"
 
 runtime:
   type: python

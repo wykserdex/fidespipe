@@ -17,7 +17,7 @@
 - `big_stderr` — большой stderr без нарушения протокола
 - `num_only` — число на входе и выходе
 - `consumer_opt` — optional-вход отсутствует
-- `net_probe` — доходит ли `WEDRA_NETWORK=deny`
+- `net_probe` — доходит ли `FIDESPIPE_NETWORK=deny`
 - `net_demo` — объявляет сеть host:port (проверяется политикой, не исполняется)
 
 Проверки:
@@ -27,7 +27,7 @@
 - мусор в stdout → protocol_violation (`bad_proto`)
 - незадекларированное поле отбрасывается (`undeclared_output`)
 - дрейф типа и отсутствие обязательного поля (`type_drift`, `required_output`)
-- number round-trip, optional-вход, `WEDRA_NETWORK`, file_ref warning
+- number round-trip, optional-вход, `FIDESPIPE_NETWORK`, file_ref warning
 - доменная ошибка не выглядит как авария; `retryable: true` доезжает до ядра
 - timeout и отмена
 - лимит stdout и stderr
@@ -39,5 +39,5 @@
 неисполненное покрытым.
 
 Запуск: `go test ./internal/core/ -run 'TestPluginTest|TestExec' -v -count=1`
-или батарея CLI: `wedra plugin test --conformance --json`
-или одна фикстура: `wedra plugin test conformance/fixtures/v0.2/<name>`
+или батарея CLI: `fidespipe plugin test --conformance --json`
+или одна фикстура: `fidespipe plugin test conformance/fixtures/v0.2/<name>`

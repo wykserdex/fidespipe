@@ -22,16 +22,16 @@ target = sys.argv[1] if len(sys.argv) > 1 else ""
 print("pyelftools mock: разбираю %s" % target, file=sys.stderr)
 
 if os.environ.get("MOCK_NOT_ELF") == "1":
-    print(json.dumps({"wedra_error": "not_elf",
-                      "wedra_message": "файл не читается как ELF: Invalid ELF magic"}))
+    print(json.dumps({"fidespipe_error": "not_elf",
+                      "fidespipe_message": "файл не читается как ELF: Invalid ELF magic"}))
     sys.exit(1)
 if os.environ.get("MOCK_BAD_FILE") == "1":
-    print(json.dumps({"wedra_error": "bad_file",
-                      "wedra_message": "не удалось разобрать ELF: truncated section header"}))
+    print(json.dumps({"fidespipe_error": "bad_file",
+                      "fidespipe_message": "не удалось разобрать ELF: truncated section header"}))
     sys.exit(1)
 if os.environ.get("MOCK_NO_MODULE") == "1":
-    print(json.dumps({"wedra_error": "pyelftools_not_installed",
-                      "wedra_message": "пакет pyelftools не импортируется: No module named 'elftools'"}))
+    print(json.dumps({"fidespipe_error": "pyelftools_not_installed",
+                      "fidespipe_message": "пакет pyelftools не импортируется: No module named 'elftools'"}))
     sys.exit(1)
 if os.environ.get("MOCK_NO_REPORT") == "1":
     sys.exit(0)

@@ -10,7 +10,7 @@ description: >
   Учётные данные читает САМ инструмент (AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_DEFAULT_REGION); main.py ключей
   не требует и в сеть не ходит. Ставится отдельно: pip install scoutsuite.
-author: "community · wedra showcase (cloud audit)"
+author: "community · fidespipe showcase (cloud audit)"
 
 runtime:
   type: python

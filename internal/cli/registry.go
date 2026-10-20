@@ -14,14 +14,14 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/common"
+	"github.com/wykserdex/fidespipe/internal/common"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
-// RunRegistryValidate — wedra registry validate [--registry=<url|path>] [--local-source=<dir>]
+// RunRegistryValidate — fidespipe registry validate [--registry=<url|path>] [--local-source=<dir>]
 func RunRegistryValidate(args []string) {
 	regSrc := registry.DefaultSource()
 	localSource := ""
@@ -180,7 +180,7 @@ func resolveRoot(entry registry.Entry, hDir, localSource string, cache map[strin
 		}
 	}
 	// 3) git clone (depth 1)
-	tmp, err := os.MkdirTemp("", "wedra-registry-*")
+	tmp, err := os.MkdirTemp("", "fidespipe-registry-*")
 	if err != nil {
 		return nil, err
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 type Transport interface {

@@ -24,7 +24,7 @@ func TestInjectedVersionBeatsWorkingDirFile(t *testing.T) {
 }
 
 // Dev-сборка без инжекта обязана по-прежнему видеть VERSION из рабочего
-// каталога: иначе `go run ./cmd/wedra check` в чекауте репо перестанет
+// каталога: иначе `go run ./cmd/fidespipe check` в чекауте репо перестанет
 // печатать версию.
 func TestDevBuildFallsBackToWorkingDirFile(t *testing.T) {
 	dir := t.TempDir()

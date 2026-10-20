@@ -6,7 +6,7 @@ description: >
   (stdlib, без зависимостей): GET https://crt.sh/?q=%25.<domain>&output=json →
   имена (CN+SAN), issuers, просроченные. Выход агрегированный (реестр может
   вернуть тысячи записей — сырьё не тащим).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

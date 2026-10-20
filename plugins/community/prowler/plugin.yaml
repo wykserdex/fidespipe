@@ -10,7 +10,7 @@ description: >
   AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_DEFAULT_REGION/AWS_REGION);
   main.py ключей не требует и в сеть не ходит. Ставится отдельно: pip install
   prowler.
-author: "community · wedra showcase (cloud audit)"
+author: "community · fidespipe showcase (cloud audit)"
 
 runtime:
   type: python

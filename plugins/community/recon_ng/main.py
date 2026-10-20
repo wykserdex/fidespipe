@@ -9,7 +9,7 @@
 на каждый модуль, затем блок отчёта `modules load reporting/json /
 options set filename results.json / run / back`, и в конце `exit` — без него
 recon-ng после чтения сценария проваливается в бесконечный цикл prompt'а на
-закрытом stdin. Запуск: <RECON_NG_BIN | recon-ng> -w wedra_<hash> -r run.rcn
+закрытом stdin. Запуск: <RECON_NG_BIN | recon-ng> -w fidespipe_<hash> -r run.rcn
 --no-version --no-analytics --no-marketplace (последние три флага гасят
 проверку версии, телеметрию и обращение к маркетплейсу; модули берутся из
 уже установленных в ~/.recon-ng/modules). stdin закрыт, cwd = temp-папка.
@@ -17,7 +17,7 @@ recon-ng после чтения сценария проваливается в 
 Отчёт: модуль reporting/json пишет results.json — путь передан относительным
 именем, поэтому файл попадает в temp-папку, а не в воркспейс recon-ng.
 
-Воркспейс создаётся в ~/.recon-ng/workspaces/wedra_<hash> и удаляется после
+Воркспейс создаётся в ~/.recon-ng/workspaces/fidespipe_<hash> и удаляется после
 прогона (имя уникально на цель, состояние не теряется и не копится).
 
 Выход (stdout JSON): {target, modules[], findings[], count}. findings — по
@@ -48,7 +48,7 @@ DEFAULT_MODULES = ["recon/domains-hosts/certificate_transparency",
 
 MODULE_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_./-]*$")
 TARGET_RE = re.compile(r"^[^\s\"'<>|;&$`]+$")
-WORKSPACE_PREFIX = "wedra_"
+WORKSPACE_PREFIX = "fidespipe_"
 
 
 try:
@@ -191,7 +191,7 @@ def main():
                         "или увеличьте wall_timeout", retryable=True)
         finally:
             # воркспейс — во временном каталоге ОС не помещается: имя
-            # уникально на цель, удаляем только свой (префикс wedra_)
+            # уникально на цель, удаляем только свой (префикс fidespipe_)
             if workspace.startswith(WORKSPACE_PREFIX) and ws_path.startswith(ws_root):
                 shutil.rmtree(ws_path, ignore_errors=True)
         if proc.stderr:

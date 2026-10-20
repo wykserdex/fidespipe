@@ -524,7 +524,7 @@ $('#to-editor').addEventListener('click', () => {
   // Редактор открывает файл из своего выпадающего списка; параметра ?open= у
   // него нет. Поэтому передаём имя через хранилище сессии и НЕ обещаем
   // «откроется сразу» — кнопка ведёт в редактор, где файл уже выбран.
-  try { sessionStorage.setItem('wedra.open', st.built); } catch (e) { /* приватный режим */ }
+  try { sessionStorage.setItem('fidespipe.open', st.built); } catch (e) { /* приватный режим */ }
   location.href = '/editor/';
 });
 $('#clear').addEventListener('click', () => {

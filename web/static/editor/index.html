@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>WEDRA — редактор пайплайнов</title>
+<title>Fidespipe — редактор пайплайнов</title>
 <style>
   /* Тот же язык, что и у консоли: тёмный нейтральный фон, волосяные линии,
      один цветной акцент (--acc) — только там, где интерфейс «живой»:
@@ -477,21 +477,21 @@
   .hint{font-size:11px;color:var(--faint);line-height:1.65;margin-top:8px}
 
   /* вход по одноразовому коду (разметка собирается в editor/app.js) */
-  #wedra-session-box{position:fixed;inset:0;background:rgba(7,7,8,.94);display:flex;
+  #fidespipe-session-box{position:fixed;inset:0;background:rgba(7,7,8,.94);display:flex;
     align-items:center;justify-content:center;z-index:9999;padding:20px}
-  #wedra-session-box .sbox{background:var(--ink2);border:1px solid var(--hair2);border-radius:var(--r);
+  #fidespipe-session-box .sbox{background:var(--ink2);border:1px solid var(--hair2);border-radius:var(--r);
     padding:26px;max-width:440px;width:100%;box-shadow:0 30px 60px -40px #000}
-  #wedra-session-box h2{font-family:var(--sans);margin:0 0 10px;font-size:20px;font-weight:600}
-  #wedra-session-box p{color:var(--ash);font-size:12.5px;line-height:1.7;margin:0 0 16px}
-  #wedra-session-box input{width:100%;box-sizing:border-box;background:var(--sunken);color:var(--bone);
+  #fidespipe-session-box h2{font-family:var(--sans);margin:0 0 10px;font-size:20px;font-weight:600}
+  #fidespipe-session-box p{color:var(--ash);font-size:12.5px;line-height:1.7;margin:0 0 16px}
+  #fidespipe-session-box input{width:100%;box-sizing:border-box;background:var(--sunken);color:var(--bone);
     border:1px solid var(--hair2);border-radius:var(--r);padding:10px 11px;font-family:var(--mono);
     font-size:14px;letter-spacing:.14em}
-  #wedra-session-box input:focus{outline:none;border-color:var(--acc)}
-  #wedra-session-box .serr{color:var(--err);font-size:11.5px;margin-top:9px;min-height:16px}
-  #wedra-session-box button{margin-top:12px;width:100%;background:var(--bone);color:var(--ink);
+  #fidespipe-session-box input:focus{outline:none;border-color:var(--acc)}
+  #fidespipe-session-box .serr{color:var(--err);font-size:11.5px;margin-top:9px;min-height:16px}
+  #fidespipe-session-box button{margin-top:12px;width:100%;background:var(--bone);color:var(--ink);
     border:1px solid var(--bone);border-radius:var(--r);padding:11px;font-size:10.5px;letter-spacing:.16em;
     text-transform:uppercase;font-weight:600;cursor:pointer;font-family:inherit}
-  #wedra-session-box button:hover{background:#fff}
+  #fidespipe-session-box button:hover{background:#fff}
 
   /* ── переходы ───────────────────────────────────────────────────────────
      Узлы и панель свойств перерисовываются целиком на каждый renderAll() —
@@ -558,7 +558,7 @@
 </head>
 <body>
 <header>
-  <h1><span class="mark" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 20 20"><path d="M10 1.5v17" stroke="currentColor" stroke-width="1.1"/><path d="M9.4 6.2 2.5 2.8l1.9 4.6zM9.4 12 2.5 8.6l1.9 4.6zM10.6 6.2l6.9-3.4-1.9 4.6zM10.6 12l6.9-3.4-1.9 4.6z" fill="currentColor"/></svg></span>WEDRA <span class="dim">· редактор</span></h1>
+  <h1><span class="mark" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 20 20"><path d="M10 1.5v17" stroke="currentColor" stroke-width="1.1"/><path d="M9.4 6.2 2.5 2.8l1.9 4.6zM9.4 12 2.5 8.6l1.9 4.6zM10.6 6.2l6.9-3.4-1.9 4.6zM10.6 12l6.9-3.4-1.9 4.6z" fill="currentColor"/></svg></span>Fidespipe <span class="dim">· редактор</span></h1>
   <select id="file-open" title="открыть существующий"></select>
   <input id="file-name" title="имя файла; новое имя сохраняет копию (.yaml)"/>
   <span class="badge" id="val-badge">…</span>

@@ -9,7 +9,7 @@ description: >
   git clone https://github.com/smicallef/spiderfoot.git, затем
   pip3 install -r requirements.txt, запуск `python3 sf.py`. Либо распакованный
   релиз v4.0.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

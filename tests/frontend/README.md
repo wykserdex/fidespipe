@@ -62,8 +62,8 @@ parse → serialize → parse). Второй — чистый JS, и его не
 
 Требуется запущенный GUI без сессии:
 
-    go build -o wedra.exe ./cmd/wedra
-    ./wedra.exe gui --listen 127.0.0.1:8765 --no-session
+    go build -o fidespipe.exe ./cmd/fidespipe
+    ./fidespipe.exe gui --listen 127.0.0.1:8765 --no-session
 
 Фикстуры плагинов берутся из `/api/plugins`, а не пишутся руками: рукописные
 данные дважды соврали с реальными манифестами и стенд «находил» несуществующие

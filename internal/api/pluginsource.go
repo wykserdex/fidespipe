@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // pluginSourceFiles — единственный белый список файлов, которые редактор может
@@ -176,7 +176,7 @@ func stagingDir(dir string, files map[string]string) (string, func(), error) {
 			return "", func() {}, errors.New("файл вне белого списка редактора: " + name)
 		}
 	}
-	tmp, err := os.MkdirTemp("", "wedra-plugin-edit-")
+	tmp, err := os.MkdirTemp("", "fidespipe-plugin-edit-")
 	if err != nil {
 		return "", func() {}, err
 	}
@@ -526,7 +526,7 @@ func (s *Server) handlePluginTest(w http.ResponseWriter, r *http.Request) {
 
 // handlePluginCreate — создать новый плагин из шаблона, из интерфейса.
 //
-// Внутри ровно то же ядро, что у `wedra plugin create`: два пути создания
+// Внутри ровно то же ядро, что у `fidespipe plugin create`: два пути создания
 // плагина разошлись бы, и «из браузера» со временем начал бы отличаться от
 // «из терминала». Генератор сам проверяет результат (core.CreatePluginWith
 // возвращает результат прогонов), поэтому отдельного вызова ValidatePluginDir

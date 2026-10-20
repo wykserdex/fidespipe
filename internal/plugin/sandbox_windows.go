@@ -11,7 +11,7 @@
 // выдать, включая каталог интерпретатора.
 //
 // Форма интеграции та же, что на Linux: launcher плюс аргументы. Launcher —
-// это тот же бинарь WEDRA, но в скрытом режиме internal-sandbox-exec, который
+// это тот же бинарь Fidespipe, но в скрытом режиме internal-sandbox-exec, который
 // создаёт контейнеризованный процесс напрямую (см. internal/appcontainer и
 // internal/cli/sandbox_exec.go). Обёрткой это не выражается: атрибуты
 // PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES нельзя передать через os/exec.
@@ -27,9 +27,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/appcontainer"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/sandboxexec"
+	"github.com/wykserdex/fidespipe/internal/appcontainer"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/sandboxexec"
 )
 
 // winProbeOnce/winProbeOK — результат пробы хоста, один на процесс.
@@ -44,7 +44,7 @@ var (
 
 func sandboxBackend() (string, bool) { return "appcontainer", true }
 
-// sandboxLauncher — тот же бинарь WEDRA: он же умеет в скрытом режиме
+// sandboxLauncher — тот же бинарь Fidespipe: он же умеет в скрытом режиме
 // создать контейнеризованный процесс.
 func sandboxLauncher() (string, bool) {
 	exe, err := os.Executable()
@@ -69,7 +69,7 @@ func sandboxUsable() bool {
 func sandboxArgs(m *pipeline.Manifest, argv []string, scratch string) (string, []string, sandboxNetwork, error) {
 	launcher, ok := sandboxLauncher()
 	if !ok {
-		return "", nil, nil, fmt.Errorf("%w: не удалось определить путь к исполняемому файлу WEDRA — "+
+		return "", nil, nil, fmt.Errorf("%w: не удалось определить путь к исполняемому файлу Fidespipe — "+
 			"запускать контейнеризованный процесс некому", ErrSandboxUnsupported)
 	}
 	if !sandboxUsable() {
@@ -258,7 +258,7 @@ func networkCapabilityWorks() (bool, string, error) {
 	netProbeOnce.Do(func() {
 		exe, err := os.Executable()
 		if err != nil {
-			netProbeErr = fmt.Errorf("не найден исполняемый файл WEDRA: %w", err)
+			netProbeErr = fmt.Errorf("не найден исполняемый файл Fidespipe: %w", err)
 			return
 		}
 		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)

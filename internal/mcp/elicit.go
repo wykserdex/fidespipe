@@ -15,7 +15,7 @@ package mcp
 //   - Схема elicitation плоская: только примитивы. Поля формы гейта — тоже
 //     плоские строки, поэтому отображение честное, но вложенных структур
 //     (массивов объектов) в гейте через elicitation не покажешь.
-//   - wedra НЕ МОЖЕТ проверить, что за клиентом сидит человек: автономный хост
+//   - fidespipe НЕ МОЖЕТ проверить, что за клиентом сидит человек: автономный хост
 //     вправе ответить сам. Именно поэтому путь не включается сам собой, а
 //     требует флага оператора --gate-elicitation: решение человека — это
 //     решение человека, и объявлять его таковым может только тот, кто знает
@@ -35,9 +35,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // elicitTimeout — сколько ждать ответа человека. Гейт — это не запрос к API:
@@ -202,7 +202,7 @@ func (u *elicitGateUI) buildRequest() (map[string]interface{}, string) {
 	if len(required) > 0 {
 		schema["required"] = required
 	}
-	message := "WEDRA · шаг «" + u.step.ID + "» ждёт решения человека.\n"
+	message := "Fidespipe · шаг «" + u.step.ID + "» ждёт решения человека.\n"
 	if len(lines) > 0 {
 		message += "Данные формы:\n" + strings.Join(lines, "\n") + "\n"
 	}
@@ -311,7 +311,7 @@ func (s *Server) sendClientRequest(ctx context.Context, method string, params in
 		return nil, errors.New("нет активной сессии: сервер не обслуживает транспорт")
 	}
 	s.outboundSeq++
-	id := json.RawMessage(strconv.Quote("wedra-" + strconv.FormatInt(s.outboundSeq, 10)))
+	id := json.RawMessage(strconv.Quote("fidespipe-" + strconv.FormatInt(s.outboundSeq, 10)))
 	if s.pending == nil {
 		s.pending = map[string]chan *clientResponse{}
 	}

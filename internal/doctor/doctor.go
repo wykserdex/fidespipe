@@ -43,14 +43,14 @@ package doctor
 import (
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // Статусы плагина. Это НЕ коды ошибок протокола: они не попадают ни в журнал
 // рана, ни в issues валидации, и намеренно не имеют вида E_*/W_*, чтобы гейт
 // errcodes (коды в Go ↔ protocol/v0.2/ERRORS.md) не считал их контрактом.
 //
-// Значения строк — это JSON-контракт `wedra doctor --json`: вывод документирован
+// Значения строк — это JSON-контракт `fidespipe doctor --json`: вывод документирован
 // и используется в README, поэтому переименование переменной не должно было
 // тронуть ни одну букву значения.
 const (

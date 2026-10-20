@@ -11,7 +11,7 @@ description: >
   самого олеTools). `-a` гасит печать исходников, и код макроса наружу не
   отдаётся: плагин разбирает документ, а не публикует его содержимое.
   Пин: pip install oletools==0.60.2
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

@@ -7,7 +7,7 @@ description: >
   текстовый stdout (у донора машинного формата нет) и отдаёт найденные
   субдомены с IP. Ставится отдельно: pip install fierce3 (оригинал
   haifazeem/fierce — только Python 2).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // twoGatePipeline — два human_gate подряд в одном ране. Именно этот сценарий

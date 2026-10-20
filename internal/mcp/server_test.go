@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 func TestPruneRunsKeepsBoundedCompletedState(t *testing.T) {

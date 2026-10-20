@@ -142,7 +142,7 @@ async function api(path, opts = {}) {
   const body = ct.includes('json') ? await r.json() : await r.text();
   if (!r.ok) {
     // H4: 401 — нет сессии человека (cookie выдаётся обменом одноразового кода)
-    if (r.status === 401) { sessionOverlay(); throw new Error('нет сессии: нужен одноразовый код из терминала wedra'); }
+    if (r.status === 401) { sessionOverlay(); throw new Error('нет сессии: нужен одноразовый код из терминала fidespipe'); }
     throw new Error(typeof body === 'string' ? body : JSON.stringify(body));
   }
   return body;
@@ -151,7 +151,7 @@ async function apiRaw(path, opts = {}) {
   const r = await fetch(path, opts);
   const text = await r.text();
   if (!r.ok) {
-    if (r.status === 401) { sessionOverlay(); throw new Error('нет сессии: нужен одноразовый код из терминала wedra'); }
+    if (r.status === 401) { sessionOverlay(); throw new Error('нет сессии: нужен одноразовый код из терминала fidespipe'); }
     throw new Error(text);
   }
   return text;
@@ -159,26 +159,26 @@ async function apiRaw(path, opts = {}) {
 
 // ── H4: сессия человека ──────────────────────────────────────────────────
 // Всё под /api/* (кроме /api/health) требует cookie. Cookie выдаётся обменом
-// ОДНОРАЗОВОГО кода, напечатанного в терминале, где запущен wedra. Пока cookie
+// ОДНОРАЗОВОГО кода, напечатанного в терминале, где запущен fidespipe. Пока cookie
 // нет, редактор показывает поле ввода кода вместо пустого холста: тот же путь,
-// что и у `wedra gui --open` (там код едет в ссылке ?c= и ставит cookie сразу).
+// что и у `fidespipe gui --open` (там код едет в ссылке ?c= и ставит cookie сразу).
 function sessionOverlay() {
-  if (document.getElementById('wedra-session-box')) return;
+  if (document.getElementById('fidespipe-session-box')) return;
   const box = document.createElement('div');
-  box.id = 'wedra-session-box';
-  // стили — в editor/index.html (#wedra-session-box): разметка не тащит цвета в JS
+  box.id = 'fidespipe-session-box';
+  // стили — в editor/index.html (#fidespipe-session-box): разметка не тащит цвета в JS
   box.innerHTML =
     '<div class="sbox">' +
-    '<h2>Вход в WEDRA</h2>' +
-    '<p>Код входа одноразовый и напечатан в терминале, где запущен wedra. Он нужен один раз: ' +
+    '<h2>Вход в Fidespipe</h2>' +
+    '<p>Код входа одноразовый и напечатан в терминале, где запущен fidespipe. Он нужен один раз: ' +
     'обменяется на cookie, и редактор перезагрузится сам.</p>' +
-    '<input id="wedra-code" placeholder="XXXX-XXXX-XXXX" autocomplete="off"/>' +
-    '<div id="wedra-code-err" class="serr"></div>' +
-    '<button id="wedra-code-go">Войти</button>' +
+    '<input id="fidespipe-code" placeholder="XXXX-XXXX-XXXX" autocomplete="off"/>' +
+    '<div id="fidespipe-code-err" class="serr"></div>' +
+    '<button id="fidespipe-code-go">Войти</button>' +
     '</div>';
   document.body.appendChild(box);
-  const input = box.querySelector('#wedra-code');
-  const err = box.querySelector('#wedra-code-err');
+  const input = box.querySelector('#fidespipe-code');
+  const err = box.querySelector('#fidespipe-code-err');
   const submit = async () => {
     const code = input.value.trim();
     if (!code) return;
@@ -191,14 +191,14 @@ function sessionOverlay() {
     err.textContent = d.error || 'код не подошёл';
     input.select();
   };
-  box.querySelector('#wedra-code-go').onclick = submit;
+  box.querySelector('#fidespipe-code-go').onclick = submit;
   input.onkeydown = e => { if (e.key === 'Enter') submit(); };
   input.focus();
 }
 
-// wedraSession — можно ли работать. Сессия выключена (--no-session) или уже
+// fidespipeSession — можно ли работать. Сессия выключена (--no-session) или уже
 // есть — сразу true; иначе показываем поле кода и ждём перезагрузки.
-async function wedraSession() {
+async function fidespipeSession() {
   let st = null;
   try { st = await (await fetch('/api/session')).json(); } catch (e) { return true; }
   if (!st || !st.required || st.authenticated) return true;
@@ -2482,7 +2482,7 @@ window.closeYaml = () => { $('#yaml-view').style.display = 'none'; };
 // ── init ──────────────────────────────────────────────────────────────────
 async function init() {
   // H4: без сессии /api/* закрыт, поэтому сначала вход, потом редактор
-  if (!await wedraSession()) return;
+  if (!await fidespipeSession()) return;
   try { state.plugins = await api('/api/plugins'); } catch (e) { console.error(e); }
   renderPalette();
   initCanvas();
@@ -2500,9 +2500,9 @@ async function init() {
   // sessionStorage — параметра ?open= у редактора нет, а заводить ради
   // одного перехода второй способ открытия незачем.
   let openNext = '';
-  try { openNext = sessionStorage.getItem('wedra.open') || ''; } catch (e) { /* приватный режим */ }
+  try { openNext = sessionStorage.getItem('fidespipe.open') || ''; } catch (e) { /* приватный режим */ }
   if (openNext) {
-    try { sessionStorage.removeItem('wedra.open'); } catch (e) { /* пусто */ }
+    try { sessionStorage.removeItem('fidespipe.open'); } catch (e) { /* пусто */ }
     // loadFileList() не возвращает признака успеха, а openFile() сам
     // разбирается с ошибкой. Поэтому просто открываем.
     await openFile(openNext);

@@ -6,7 +6,7 @@ description: >
   пакет deepseagirl/degoogle). Обёртка над CLI degoogle: собирает дорк, разбирает
   текстовый отчёт выдачи и вытаскивает контакты из описаний и URL. Ставится
   отдельно: pip install degoogle.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

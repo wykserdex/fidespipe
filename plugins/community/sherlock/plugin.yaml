@@ -6,7 +6,7 @@ description: >
   CLI sherlock: гоняет --print-all --no-color, разбирает текстовый репорт из
   stdout (строки «[+] Сайт: url» / «[-] Сайт: …») и отдаёт нормализованный
   список найденных профилей. Ставится отдельно: pip install sherlock-project.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

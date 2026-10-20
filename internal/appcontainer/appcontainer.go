@@ -6,7 +6,7 @@
 // прямой CreateProcessW с атрибутом PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES,
 // а os/exec этого не умеет. Отсюда и форма пакета — он создаёт контейнеризованный
 // процесс напрямую, а вызывающая сторона запускает его через скрытую подкоманду
-// wedra (см. internal/cli/sandbox_exec.go).
+// fidespipe (см. internal/cli/sandbox_exec.go).
 //
 // Модель безопасности AppContainer: у процесса в контейнере нет ни одной записи
 // доступа, кроме явно выданных. Ничего не «монтируется только на чтение», как в
@@ -42,7 +42,7 @@ type Readable []string
 // Plan — что и с какими правами запускать.
 type Plan struct {
 	// Name — устойчивое имя профиля контейнера. Обычно выводится из id
-	// плагина, и переживает перезапуск WEDRA.
+	// плагина, и переживает перезапуск Fidespipe.
 	Name string
 
 	// Argv — команда плагина. Argv[0] обязан быть НАСТОЯЩИМ интерпретатором,
@@ -89,7 +89,7 @@ type Result struct {
 // цифры, точка и дефис, остальное отбрасывается.
 func ProfileName(pluginID string) string {
 	var b strings.Builder
-	b.WriteString("wedra.")
+	b.WriteString("fidespipe.")
 	for _, r := range pluginID {
 		switch {
 		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9':

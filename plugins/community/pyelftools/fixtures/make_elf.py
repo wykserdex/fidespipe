@@ -62,8 +62,8 @@ TEXT64 = bytes([
     0x90, 0x90, 0x90, 0x90, 0x90,              # nop-подушка
 ]) + bytes(range(0x40, 0x60))                  # «данные» внутри .text
 TEXT32 = bytes([0x31, 0xC0, 0xC3]) + bytes(13)  # xor eax,eax; ret; выравнивание
-DATA64 = b"WEDRAFIXT" + bytes(7)
-DATA32 = b"WEDRAFIXT" + bytes(5)
+DATA64 = b"FidespipeFIXT" + bytes(7)
+DATA32 = b"FidespipeFIXT" + bytes(5)
 
 
 def align_up(value, alignment):
@@ -98,7 +98,7 @@ def strtab(entries):
 
 def build_elf64():
     dynstr, so = strtab(["libc.so.6", "libpthread.so.0", "libfixture.so",
-                         "wedra_fixture_answer", "wedra_fixture_data"])
+                         "fidespipe_fixture_answer", "fidespipe_fixture_data"])
     shstr, sh = strtab([".dynstr", ".dynsym", ".text", ".dynamic", ".data",
                         ".bss", ".shstrtab"])
 
@@ -128,8 +128,8 @@ def build_elf64():
     dynsym_addr = dynsym_off
     symbols = [
         (0, 0, 0, 0, 0),                                          # STN_UNDEF, SHN_UNDEF=0
-        (so["wedra_fixture_answer"], STB_GLOBAL << 4 | STT_FUNC, 3, 0, 32),
-        (so["wedra_fixture_data"], STB_GLOBAL << 4 | STT_OBJECT, 5, 0, 16),
+        (so["fidespipe_fixture_answer"], STB_GLOBAL << 4 | STT_FUNC, 3, 0, 32),
+        (so["fidespipe_fixture_data"], STB_GLOBAL << 4 | STT_OBJECT, 5, 0, 16),
     ]
     for name, info, shndx, value, size in symbols:
         blob.put(struct.pack("<IBBHQQ", name, info, 0, shndx, value, size))

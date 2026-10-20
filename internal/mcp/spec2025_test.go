@@ -17,8 +17,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // --- клиент, который умеет отвечать серверу ---
@@ -573,7 +573,7 @@ func TestConformanceClientCapabilities(t *testing.T) {
 
 // Серверный запрос и ответ на него: классификация сообщений по признаку method.
 func TestConformanceClientResponseClassified(t *testing.T) {
-	item := parseItem([]byte(`{"jsonrpc":"2.0","id":"wedra-1","result":{"action":"accept"}}`))
+	item := parseItem([]byte(`{"jsonrpc":"2.0","id":"fidespipe-1","result":{"action":"accept"}}`))
 	if item.Resp == nil {
 		t.Fatalf("ответ клиента не распознан: %+v", item)
 	}
@@ -590,7 +590,7 @@ func TestConformanceClientResponseClassified(t *testing.T) {
 func TestConformanceUnknownClientResponseIgnored(t *testing.T) {
 	srv := testServer(t)
 	// Ответ на запрос, которого никто не ждал: не паника, не зависание.
-	srv.deliverClientResponse(&clientResponse{ID: json.RawMessage(`"wedra-нет"`)})
+	srv.deliverClientResponse(&clientResponse{ID: json.RawMessage(`"fidespipe-нет"`)})
 	if len(srv.pending) != 0 {
 		t.Fatalf("карта ожиданий не пуста: %v", srv.pending)
 	}

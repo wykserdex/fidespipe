@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 // Ран с ожидающим гейтом, ссылка одобрения и её открытие — целиком.

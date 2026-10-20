@@ -17,9 +17,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // writeGatePlugin — плагин с заданными permissions. Права задаются явно,
@@ -37,7 +37,7 @@ func writeGatePlugin(t *testing.T, pluginsDir, id string, perms map[string]inter
 		"output":      map[string]interface{}{"done": map[string]interface{}{"type": "boolean"}},
 		"permissions": perms,
 		"description": "фикстура теста требования гейта",
-		"author":      "wedra tests",
+		"author":      "fidespipe tests",
 	}
 	raw, err := json.Marshal(manifest)
 	if err != nil {
@@ -101,7 +101,7 @@ func gateServer(t *testing.T, opts gateServerOpts) (*Server, string) {
 	// после введения доверия он недоверенный: без изолятора (а на Windows её
 	// нет) запуск обязан быть отклонён. Тест проверяет ГЕЙТ, а не доверие,
 	// поэтому доверие выдаётся явно — ровно так же, как это сделал бы
-	// оператор через wedra-trust.yaml. Ослаблять политику ради теста нельзя:
+	// оператор через fidespipe-trust.yaml. Ослаблять политику ради теста нельзя:
 	// тогда тест гейта начал бы проходить на коде, который в жизни не
 	// запустится.
 	allow, err := plugin.AllowListFromDirs(pluginDir)

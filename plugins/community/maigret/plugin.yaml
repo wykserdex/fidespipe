@@ -5,7 +5,7 @@ description: >
   Maigret (soxrave) — поиск username по 4000+ сайтам. Обёртка над CLI maigret:
   запускает поиск ника, собирает JSON-репорт (-J simple), возвращает сайты с
   найденным (Claimed) аккаунтом. Maigret ставится отдельно: pip install maigret.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

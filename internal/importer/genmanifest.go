@@ -150,11 +150,11 @@ func decideDonor(plan ImportPlan, skel *skeleton, res *Result) {
 	case strings.TrimSpace(skel.donorRoot) == "":
 		res.Blockers = append(res.Blockers,
 			"нечем добавить каталог донора в sys.path — main.py не сможет импортировать модуль проекта; "+
-				"укажите DONOR_ROOT вручную (или задайте переменную WEDRA_DONOR_ROOT при запуске)")
+				"укажите DONOR_ROOT вручную (или задайте переменную FIDESPIPE_DONOR_ROOT при запуске)")
 	case !filepath.IsAbs(skel.donorRoot):
 		res.Blockers = append(res.Blockers, fmt.Sprintf(
 			"каталог донора %q относительный, а плагин запускается из своей папки: разрешить его нечем; "+
-				"укажите абсолютный путь в DONOR_ROOT вручную или задайте WEDRA_DONOR_ROOT",
+				"укажите абсолютный путь в DONOR_ROOT вручную или задайте FIDESPIPE_DONOR_ROOT",
 			skel.donorRoot))
 	}
 

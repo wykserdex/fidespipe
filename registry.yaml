@@ -1,12 +1,12 @@
 # registry v0.1 — формат заморожен (как протокол).
 #
-# Reестр живёт здесь (корень репо wedra) — минимальная конфигурация:
+# Reестр живёт здесь (корень репо fidespipe) — минимальная конфигурация:
 # один репо = реестр + источник плагинов/пресетов. Когда появится
 # отдельное комьюнити, реестр выносится в свой репо — формат не меняется.
 #
 # Установка:
-#   wedra plugin install <name>[@version]
-#   wedra pipeline install <name>          # + автоустановка плагинов
+#   fidespipe plugin install <name>[@version]
+#   fidespipe pipeline install <name>          # + автоустановка плагинов
 #
 # Поля записи:
 #   source      — git-репо, где лежит плагин/пресет (или локальный путь)
@@ -27,806 +27,806 @@ version: "0.1"
 plugins:
   # official
   syntax_mx_checker:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/official/syntax_mx_checker
-    version: v0.32
-    commit: 761cfaa84b5adb7bbbf02a3a6dac1a6b8f84f8ad
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: синтаксис email + MX-записи
   disposable_checker:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/official/disposable_checker
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: disposable-домены
   llm_openai:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/official/llm_openai
-    version: v0.32
-    commit: 1694e6ba6d725cee1487e94668f6ac16543b1849
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: OpenAI-вызов (ключ из env)
   llm_anthropic:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/official/llm_anthropic
-    version: v0.32c
-    commit: 1694e6ba6d725cee1487e94668f6ac16543b1849
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: Anthropic-вызов (ключ из env)
   llm_gemini:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/official/llm_gemini
-    version: v0.32c
-    commit: 1694e6ba6d725cee1487e94668f6ac16543b1849
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: Gemini-вызов (ключ из env)
   # community
   csv_loader:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/csv_loader
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: CSV → rows
   text_analyzer:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/text_analyzer
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: слова/длина текста
   email_triage:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/email_triage
-    version: v0.32
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: классификация email
   dir_lister:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/dir_lister
-    version: v0.32
-    commit: ba824854f53311c1fd2d12f9f74d852b5f5577a4
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: список каталога
 
   word_freq:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/word_freq
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: топ-N частых слов (стоп-слова ≤2 отброшены)
   json_diff:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/json_diff
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "diff двух JSON: added/removed/changed"
   batch_email_triage:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/batch_email_triage
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: батч-триаж email (синтаксис + disposable, агрегат)
   report_formatter:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/report_formatter
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: агрегат batch_email_triage → текстовый отчёт
   iban_validator:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/iban_validator
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Проверка IBAN (ISO 13616): синтаксис, страна, длина, контрольная сумма mod-97. Без сети и ключей."
   phone_normalizer:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/phone_normalizer
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Нормализация списка телефонов в E.164, батч с разбором валид/инвалид. Без сети и ключей."
   phone_check:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/phone_check
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Одиночный телефон в любом формате → E.164. Без сети и ключей."
   text_similarity:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/text_similarity
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Левенштейн + нормализованное сходство двух строк, флаг near-duplicate. Без сети и ключей."
   date_parser:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/date_parser
-    version: v0.32
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Человекочитаемые даты → ISO 8601 (ru/en, частые форматы). Без сети и ключей."
   json_flatten:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/json_flatten
-    version: v0.32
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "JSON-объект → плоский map (точки в ключах), с лимитом глубины. Без сети и ключей."
 
   maigret:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/maigret
-    version: v0.34
-    commit: 7c0612f69eba8c1e474c5550e6b9a5b519e61e7d
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Maigret (soxrave) — поиск username по 4000+ сайтам. Зависимость объявлена: maigret==0.6.6, ставится кнопкой в карточке плагина."
   holehe:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/holehe
-    version: v0.34
-    commit: 7c0612f69eba8c1e474c5550e6b9a5b519e61e7d
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Holehe (megadose) — проверка email/username на утечки по 120+ сайтам. Зависимость объявлена: holehe==1.61, ставится кнопкой в карточке плагина."
   crtsh:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/crtsh
-    version: v0.32c
-    commit: 83b726325663ae0acd1608062a57cdb560a142fd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "crt.sh (Certificate Transparency) — сертификаты по домену. Без зависимостей (stdlib-HTTP)."
   the_harvester:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/the_harvester
-    version: v0.32
-    commit: 7c0612f69eba8c1e474c5550e6b9a5b519e61e7d
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "theHarvester (laramies) — emails/имена/субдомены по домену. Установка из git: pip install git+https://github.com/laramies/theHarvester.git@4.9.2"
   abuseipdb:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/abuseipdb
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "AbuseIPDB — репутация IP: abuseConfidenceScore, число жалоб, страна, паттерн C. PyPI-пакет сломан под py3, ставится из git."
 
   altdns:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/altdns
-    version: v0.33c
-    commit: 901d82c6faa228dae47439ef7e5e9db0fd212480
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "altdns (infosec-au) — генерация перестановок поддоменов по словарю, полностью офлайн. pip install py-altdns."
 
   arjun:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/arjun
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Arjun (s0md3v) — фаззинг скрытых GET-параметров, JSON-отчёт -oJ. pip install arjun."
 
   binwalk:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/binwalk
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "binwalk (ReFirmLabs) v3 — поиск и извлечение данных из бинарников, JSON-отчёт. v3 ставится через cargo/Docker, pip-пакет нерабочий."
 
   censys:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/censys
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Censys — сервисы и геолокация хоста через SDK censys-python, паттерн C; ключи из CENSYS_API_ID/CENSYS_API_SECRET."
 
   cloud_enum:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/cloud_enum
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "cloud_enum (initstring) — открытые облачные хранилища по ключу/имени. На PyPI имя quarantined, ставится из git."
 
   cloudmapper:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/cloudmapper
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "cloudmapper (MitMaro) — карта инфраструктуры AWS по своим аккаунтам (узлы и рёбра). Установка из git, путь через CLOUDMAPPER_BIN."
 
   commix:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/commix
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Commix (commixproject) — автоматизация инъекций, batch-режим. --report-json есть только в master (4.2 не выпускался)."
 
   corsy:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/corsy
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Corsy (s0md3v) — сканер CORS-мисконфигураций, JSON-отчёт. pip install corsy."
 
   degoogle:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/degoogle
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "degoogle — Google-доркинг: email и телефоны по домену из выдачи. pip install degoogle."
 
   detect_secrets:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/detect_secrets
-    version: v0.33c
-    commit: e747bed8fcfca4e2d6de66272c3c59829be50cf9
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "detect-secrets (Yelp) — поиск секретов в коде, baseline-JSON; значения секретов наружу не отдаются. pip install detect-secrets."
 
   dirsearch:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/dirsearch
-    version: v0.33c
-    commit: 93a4ec9a095bff0cd0d296030e7f8d944c03f4e6
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "dirsearch (maurosoria) — брутфорс директорий и файлов, JSON-отчёт. pip install dirsearch."
 
   dnsrecon:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/dnsrecon
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "dnsrecon (darkoperator) — DNS-разведка: A/AAAA/NS/MX/SOA/SPF/CNAME, AXFR, брутфорс по словарю. pip install dnsrecon."
 
   dnstwist:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/dnstwist
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "dnstwist (elceef) — перестановки домена (тайпсквоттинг, фишинг), JSON-вывод. pip install dnstwist."
 
   droopescan:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/droopescan
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "droopescan (SamJoan) — плагиновый сканер CMS (Drupal, WordPress, Silverstripe). pip install droopescan, но требует Python <= 3.11."
 
   emailfinder:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/emailfinder
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "emailfinder — email-адреса домена через Hunter.io; ключ читает инструмент из HUNTER_API_KEY. pip install emailfinder."
 
   exifread:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/exifread
-    version: v0.33c
-    commit: 761cfaa84b5adb7bbbf02a3a6dac1a6b8f84f8ad
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "exifread (lexiflex) — EXIF-метаданные изображений через библиотеку, паттерн C. pip install exifread."
 
   exiftool:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/exiftool
-    version: v0.33c
-    commit: baa18a9209fad6ef650f50b254fd8c253697df37
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "ExifTool (Phil Harvey) — метаданные файлов (EXIF/IPTC/XMP, GPS) через -j. Системный ExifTool либо pyexiftool."
 
   fierce:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/fierce
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "fierce — DNS-брутфорс домена по словарю, разбор stdout. pip install fierce3."
 
   gallery_dl:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/gallery_dl
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "gallery-dl (mikf) — метаданные изображений и галерей, без скачивания. pip install gallery-dl."
 
   geoiplookup:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/geoiplookup
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "geoiplookup (MaxMind, C) — страна по IP из локальной базы GeoIP .dat, сети не нужно. MMDB не открывает. apt install geoip-bin."
 
   ghauri:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/ghauri
-    version: v0.33c
-    commit: baa18a9209fad6ef650f50b254fd8c253697df37
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Ghauri (r0oth3x49) — детектор SQL-инъекций на Python. На PyPI отсутствует, ставится из git."
 
   ghunt:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/ghunt
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "GHunt (mxrch) — OSINT по Google-аккаунтам. Учётные данные донора в ~/.malfrats/ghunt/creds.m, из env он их не читает."
 
   git_dumper:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/git_dumper
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "git-dumper (arthaud) — поиск оставленного .git на целевом хосте, разбор stdout. pip install git-dumper."
 
   gospider:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/gospider
-    version: v0.33c
-    commit: baa18a9209fad6ef650f50b254fd8c253697df37
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "gospider (jaeles-project) — краулер с извлечением эндпоинтов из JS, robots.txt и sitemap. go install github.com/jaeles-project/gospider@latest."
 
   h8mail:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/h8mail
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "h8mail (Prosper0800) — email в утечках (HIBP, Snusbase, Dehashed, IntelX); конфиг ключей собирается из env в temp. pip install h8mail."
 
   hakrawler:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/hakrawler
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "hakrawler (hakluke) — веб-краулер для OSINT: URL, JS-файлы, формы. go install github.com/hakluke/hakrawler@latest."
 
   instaloader:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/instaloader
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "instaloader — метаданные публичного профиля Instagram, без логина и загрузок, паттерн C. pip install instaloader."
 
   ipwhois:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/ipwhois
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "ipwhois (Philip Hane) — WHOIS/RDAP по IP v4/v6: сеть, диапазоны, RIR, ASN. pip install ipwhois."
 
   joomscan:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/joomscan
-    version: v0.33c
-    commit: baa18a9209fad6ef650f50b254fd8c253697df37
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "OWASP JoomScan — аудит Joomla: версия, известные уязвимости, компоненты. apt install joomscan."
 
   lief:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/lief
-    version: v0.33c
-    commit: 901d82c6faa228dae47439ef7e5e9db0fd212480
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "LIEF (LIEF-project) — универсальный разбор бинарников PE/ELF/Mach-O, паттерн C. pip install lief."
 
   linkfinder:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/linkfinder
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "LinkFinder (GerbenJavado) — краулинг страницы и извлечение ссылок из JS. Ставится из репозитория, путь через LINKFINDER_BIN."
 
   metafinder:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/metafinder
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "metafinder (Josue87) — метаданные в выдаче поисковиков по домену, отчёт-файл. pip install metafinder."
 
   msoffcrypto_tool:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/msoffcrypto_tool
-    version: v0.33c
-    commit: 901d82c6faa228dae47439ef7e5e9db0fd212480
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "msoffcrypto-tool (nolze) — проверка/снятие пароля офисного документа; пароль из MSOFFCRYPTO_PASSWORD. pip install msoffcrypto-tool."
 
   nosqlmap:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/nosqlmap
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "nosqlmap (codingo) — проверка NoSQL-инъекций. На PyPI отсутствует, код донора на Python 2 (реальный прогон требует py2)."
 
   oletools:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/oletools
-    version: v0.33c
-    commit: 901d82c6faa228dae47439ef7e5e9db0fd212480
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "oletools (decalage2) — анализ макросов в офисных документах, JSON-вывод olevba -j. pip install oletools."
 
   otx_pulse:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/otx_pulse
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "AlienVault OTX — публичные пульсы по индикатору без ключа, паттерн C на stdlib-urllib."
 
   pefile:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/pefile
-    version: v0.33c
-    commit: 330e068a362c8d6ba6b337226182a5ff586bff8b
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "pefile (erocarrera) — разбор PE: архитектура образа, секции, каталог импортов; PDB-путь и imphash наружу не отдаются. pip install pefile==2024.8.26."
 
   pocsuite3:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/pocsuite3
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "pocsuite3 (poc-suite) — проверка POC по явно заданной цели. Скрипта `poc` нет, точки входа pocsuite/poc-console."
 
   prowler:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/prowler
-    version: v0.33c
-    commit: 97f56a9ab762cd1b3e14cf637bef2b60b46a1b89
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Prowler (prowler-cloud) — аудит соответствия и безопасности облака, отчёт OCSF. pip install prowler."
 
   pyelftools:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/pyelftools
-    version: v0.33c
-    commit: 901d82c6faa228dae47439ef7e5e9db0fd212480
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "pyelftools (eliben) — разбор ELF: класс, секции, импортируемые библиотеки, паттерн C. pip install pyelftools."
 
   python_whois:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/python_whois
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "python-whois (mvondrak) — WHOIS-данные домена через библиотеку, паттерн C. pip install python-whois."
 
   recon_ng:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/recon_ng
-    version: v0.33c
-    commit: b17a4a5c5d9c924aa8fd1b37a3919e5e17cdae2f
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "recon-ng — модульный OSINT-фреймворк, сценарий собирается плагином, отчёт JSON. Пакета на PyPI нет, ставится из исходников (git clone)."
 
   scoutsuite:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/scoutsuite
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "ScoutSuite (nccgroup) — аудит облачного аккаунта, JSON-отчёт. pip install scoutsuite."
 
   sherlock:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/sherlock
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Sherlock (sherlock-project) — поиск username по 400+ соцсетям, разбор stdout. pip install sherlock-project."
 
   shodan:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/shodan
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Shodan — данные хоста по IP через официальный SDK, паттерн C; ключ из SHODAN_API_KEY. pip install shodan."
 
   social_analyzer:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/social_analyzer
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "social-analyzer (okandemirci) — профили по соцсетям из username, с обходом простой антибот-защиты. pip install social-analyzer."
 
   spiderfoot:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/spiderfoot
-    version: v0.33c
-    commit: b17a4a5c5d9c924aa8fd1b37a3919e5e17cdae2f
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "SpiderFoot (smicallef) — OSINT-фреймворк, модульные прогоны по цели, JSON в stdout. Пакета на PyPI нет, ставится из исходников (git clone)."
 
   sqlmap:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/sqlmap
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "sqlmap (sqlmapproject) — аудит SQL-инъекций по явно заданной цели, без техник эксплуатации. Установка из git, подробности в README."
 
   sslyze:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/sslyze
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "sslyze (nabla-c0t3r) — анализ TLS/SSL цели, JSON-отчёт sslyze --json_out. pip install sslyze."
 
   sublist3r:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/sublist3r
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Sublist3r (aboul3la) — пассивный сбор поддоменов, отчёт-файл. pip install Sublist3r."
 
   threatfox:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/threatfox
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "ThreatFox (abuse.ch) — поиск IOC по публичному API, паттерн C на stdlib-urllib; Auth-Key опционален (THREATFOX_AUTH_KEY)."
 
   tplmap:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/tplmap
-    version: v0.33c
-    commit: ec567e4fb25faa732784827e0bab6c42f80e63bd
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "tplmap (epinna) — поиск SSTI по явно заданной цели, разбор stdout. Установка из репозитория, путь через TPLMAP_BIN."
 
   virustotal:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/virustotal
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "VirusTotal — репутация файла/домена/IP через SDK vt-py, паттерн C; ключ из VT_API_KEY. pip install vt-py."
 
   volatility3:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/volatility3
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "volatility3 — анализ дампов памяти, JSON-рендерер, плагины pslist/cmdline/banners. pip install volatility3."
 
   wafw00f:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/wafw00f
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "wafw00f (EnableSecurity) — определение WAF/firewall за сайтом, JSON-отчёт. pip install wafw00f."
 
   wapiti:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/wapiti
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Wapiti (wapiti-scanner) — аудит веб-приложения, JSON-отчёт, scope ограничен URL. pip install wapiti3."
 
   webanalyze:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/webanalyze
-    version: v0.33c
-    commit: baa18a9209fad6ef650f50b254fd8c253697df37
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "webanalyze (rverton) — отпечаток технологий сайта, JSON-вывод. go install github.com/rverton/webanalyze/cmd/webanalyze@latest."
 
   wfuzz:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/wfuzz
-    version: v0.33c
-    commit: 97f56a9ab762cd1b3e14cf637bef2b60b46a1b89
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "wfuzz (xmendez) — фаззинг параметров по словарю, JSON-отчёт. pip install wfuzz."
 
   xsstrike:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/xsstrike
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "XssStrike (s0md3v) — поиск XSS, разбор stdout. pip install xsstrike."
 
   you_get:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/you_get
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "you-get (soimort) — метаданные видео с разных сервисов (--json). pip install you-get."
 
   yt_dlp:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/yt_dlp
-    version: v0.33c
-    commit: 435e129227c7f7a8f552322d81222d630c9c6a6a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "yt-dlp — метаданные видео по URL (-J), без скачивания. pip install yt-dlp."
   cron_next:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/cron_next
-    version: v0.33c
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Ближайшее срабатывание 5-польного cron от заданного момента (UTC). Без сети."
 
   csv_stats:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/csv_stats
-    version: v0.33c
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Статистики числовой колонки CSV из текста: count/mean/min/max/sum. Без сети."
 
   dns_lookup:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/dns_lookup
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "DNS-резолв хоста в IP (A/AAAA через getaddrinfo), фильтр семейства."
 
   domain_parser:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/domain_parser
-    version: v0.33c
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Разбор URL/хоста: схема, хост, порт, путь, punycode→unicode, детект IP-литерала. Без сети."
 
   email_extractor:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/email_extractor
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Извлечение email-адресов из текста: дедуп, лимит, уникальные домены. Без сети."
 
   geo_distance:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/geo_distance
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Расстояние между двумя точками по гаверсинусу: км/метры/мили. Без сети."
 
   hash_tool:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/hash_tool
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Хэши: определение типа по виду (md5/sha*/bcrypt/argon2/uuid) и вычисление digest. Без сети."
 
   http_probe:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/http_probe
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "HTTP GET-проба URL: статус, финальный URL, content-type, размер, время."
 
   ip_intel:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/ip_intel
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Разбор IP-адреса: версия, приватный/loopback/multicast/reserved, нормализация. Без сети."
 
   jwt_decode:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/jwt_decode
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Разбор JWT без верификации: header/payload, alg, протух ли по exp. Без сети."
 
   password_strength:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/password_strength
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Оценка стойкости пароля 0-4: длина, классы символов, энтропия, стоп-лист. Без сети."
 
   port_probe:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/port_probe
-    version: v0.33c
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "TCP-проба host:port: открыт/закрыт, задержка, опциональный баннер."
 
   regex_extract:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/regex_extract
-    version: v0.33c
-    commit: 132424a7bee0e06f8c9eabf5504f1426ec717818
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Извлечение совпадений regex из текста с лимитом max_n. Без сети."
 
   ssl_info:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: plugins/community/ssl_info
-    version: v0.33c
-    commit: d99abea5eb23977f2b681b7b48318dc366aafb4a
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "TLS-сертификат хоста: CN, издатель, сроки, протух ли, самоподписан ли."
 presets:
   csv_foreach:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/csv_foreach.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: CSV → analysis → human gate (foreach steps.*)
   csv_foreach_summary:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/csv_foreach_summary.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: CSV → foreach → агрегат (after_foreach)
   email_check:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/email_check.yaml
-    version: v0.32c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "email: синтаксис + disposable + MX"
   email_triage_chain:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/email_triage_chain.yaml
-    version: v0.32c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: email → triage → human review
   dir_snapshots:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/dir_snapshots.yaml
-    version: v0.32
-    commit: ba824854f53311c1fd2d12f9f74d852b5f5577a4
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: снимок каталога + гейт (artifacts)
   llm_text_chain:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/llm_text_chain.yaml
-    version: v0.32c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: LLM-цепочка (ключ — через secrets/env)
   iban_check:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/iban_check.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Проверка IBAN + human_gate на показ (community, волна 3)."
   phones_audit:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/phones_audit.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Батч-аудит телефонов (E.164, валид/инвалид) + human_gate (community, волна 3)."
   near_dupe_check:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/near_dupe_check.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Сравнение двух строк на near-duplicate + human_gate (community, волна 3)."
   when_demo:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/when_demo.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "when: шаг выполняется по условию (steps.stats.words >= 10) + human_gate."
   foreach_step_demo:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/foreach_step_demo.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "foreach на шаге: word_freq по списку текстов, агрегат steps.freqs_all + human_gate."
   parallel_demo:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/parallel_demo.yaml
-    version: v0.32
-    commit: 21e46778e5397cf8b6f6704c4e3514902ce80858
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "parallel_group: word_freq и json_flatten параллельно, барьер, human_gate."
   secrets_scan:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/secrets_scan.yaml
-    version: v0.33c
-    commit: e747bed8fcfca4e2d6de66272c3c59829be50cf9
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Поиск секретов в коде (detect-secrets) + human_gate на показ; network: deny, только локальные файлы."
   pe_triage:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/pe_triage.yaml
-    version: v0.33c
-    commit: 330e068a362c8d6ba6b337226182a5ff586bff8b
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Разбор PE-файла (pefile): архитектура, секции, импорты + human_gate на показ; network: deny."
   csv_load:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/csv_load.yaml
-    version: v0.33c
-    commit: eb34e1495662d499604bedd12e7e9f846c7c3bfe
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Загрузка CSV (csv_loader): число строк, заголовки, сами строки -> human_gate; одиночный прогон, foreach видит только input.*"
   gate_demo:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/gate_demo.yaml
-    version: v0.33c
-    commit: 861ced5067506d3142cf6372d1790b5cb6853dd5
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Минимальный гейт без плагинов: правящееся поле note, accept/reject; reject = неуспех рана (exit 1)."
   llm_same_provider:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/llm_same_provider.yaml
-    version: v0.33c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "llm_gemini дважды в одной цепочке: draft -> human_gate -> refine, bind перекрывает разводку манифеста; network: allow, ключ GEMINI_API_KEY."
   osint_domain_audit:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/osint_domain_audit.yaml
-    version: v0.33c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Аудит домена: параллельно crt.sh (CT-сертификаты) + theHarvester (почты/хосты) -> human_gate; network: allow, нужны внешние доноры."
   osint_username_audit:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/osint_username_audit.yaml
-    version: v0.33c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Цепочка username -> Maigret (4000+ сайтов) -> email -> Holehe (утечки) -> human_gate; network: allow, нужны CLI maigret/holehe."
   quick_intel:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/quick_intel.yaml
-    version: v0.33c
-    commit: 9f5db34099255ce45429670965991d695e32bc40
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Офлайн-разбор цели: домен, IP, e-mail из текста, sha256 хоста, расстояние между точками; без гейта, сеть не объявлена."
   single_check:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/single_check.yaml
-    version: v0.33c
-    commit: dc5db0cfdba6a0065fc339f35a72358b30e7ee90
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Одиночная проверка e-mail: синтаксис+MX и disposable -> human_gate; bind вместо зашитого from, on_error stop/skip."
   text_stats:
-    source: https://github.com/wykserdex/wedra
+    source: https://github.com/wykserdex/fidespipe
     path: examples/text_stats.yaml
-    version: v0.33c
-    commit: d97e0b366b4b6b4fc7be0f71a27d8e196b2f8776
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Текст -> метрики (text_analyzer): строки, слова, уникальные, самое длинное -> human_gate; network: deny, полностью офлайн."

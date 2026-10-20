@@ -16,7 +16,7 @@ package main
 //
 // Именно по пину, а не по HEAD: registry.yaml — это то, что реально уедет
 // пользователю, и доверенным должен быть ровно тот байт-в-байт код, который
-// развернёт `wedra plugin install`. Хэш HEAD-плагина был бы доверием к
+// развернёт `fidespipe plugin install`. Хэш HEAD-плагина был бы доверием к
 // содержимому, которого в реестре нет.
 //
 // Клон НЕ делается по сети: пины лежат в истории этого же репозитория, и CI
@@ -60,8 +60,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 const outPath = "internal/plugin/trustseed_gen.go"
@@ -80,7 +80,7 @@ func main() {
 	names := reg.PluginNames()
 	sort.Strings(names)
 
-	tmp, err := os.MkdirTemp("", "wedra-genseed-*")
+	tmp, err := os.MkdirTemp("", "fidespipe-genseed-*")
 	if err != nil {
 		fail("временный каталог: %v", err)
 	}
@@ -333,6 +333,6 @@ var header = `package plugin
 // содержимого, поэтому подмена файла в установленном плагине понижает
 // доверие, даже если id остался прежним. Community-плагин, которого нет в
 // registry.yaml, доверен не будет — для него нужна запись в
-// wedra-trust.yaml.
+// fidespipe-trust.yaml.
 
 `

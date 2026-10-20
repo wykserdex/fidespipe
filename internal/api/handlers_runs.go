@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/execution"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/execution"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 	"io"
 	"net/http"
 	"os"
@@ -64,7 +64,7 @@ func (s *Server) handleRuns(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if truncated {
-		w.Header().Set("X-Wedra-Runs-Truncated", "true")
+		w.Header().Set("X-Fidespipe-Runs-Truncated", "true")
 	}
 	json.NewEncoder(w).Encode(list)
 }

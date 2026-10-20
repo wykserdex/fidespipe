@@ -8,7 +8,7 @@ description: >
   --all-files`, читает baseline-JSON со stdout и отдаёт места находок: тип,
   путь относительно корня сканирования, номер строки. Значения секретов и их
   SHA-1 наружу не отдаются. Пин: pip install detect-secrets==1.5.0
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

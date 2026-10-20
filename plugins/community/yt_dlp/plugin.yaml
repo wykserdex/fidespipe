@@ -9,7 +9,7 @@ description: >
   многосоткибайтного info-репорта в выход уходят только title, uploader,
   duration, extractor, webpage_url и число форматов.
   Инструмент ставится отдельно: pip install yt-dlp.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

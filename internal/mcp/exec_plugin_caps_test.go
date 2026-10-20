@@ -16,7 +16,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // capServer — сервер с реальным каталогом плагинов, чтобы проверка дошла до

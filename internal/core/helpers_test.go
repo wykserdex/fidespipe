@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // requirePython пропускает интеграционные тесты без интерпретатора.
@@ -80,7 +80,7 @@ func countEvents(events []map[string]interface{}, typ string) int {
 // инверсии доверия (H1) плагин из testdata — внешний код, и ран без allow-list
 // падал бы на отказе по политике вместо той проверки, ради которой написан.
 //
-// Тот же приём, что в `wedra plugin test <dir>`: каталог назван человеком
+// Тот же приём, что в `fidespipe plugin test <dir>`: каталог назван человеком
 // (здесь — тестом), а не объявлен самим плагином.
 func quietOpts(t *testing.T) RunOptions {
 	t.Helper()

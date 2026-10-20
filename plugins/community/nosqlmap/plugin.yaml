@@ -10,7 +10,7 @@ description: >
   nosqlmap нет; обязательные --params (номерами) и --doTimeAttack передаются
   всегда. Инструмент ставится отдельно из исходников, донор написан на
   Python 2 (см. README плагина).
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // agentServer — сервер с ЯВНО разрешённым exec_plugin. Тесты ниже проверяют

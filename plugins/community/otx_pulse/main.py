@@ -54,7 +54,7 @@ SNIPPET = (
     "url = API + kind + '/' + urllib.parse.quote(indicator, safe='') + "
     "'/general'\n"
     "req = urllib.request.Request(url, headers={'User-Agent': "
-    "'wedra-otx-pulse/0.1'})\n"
+    "'fidespipe-otx-pulse/0.1'})\n"
     "try:\n"
     "    with urllib.request.urlopen(req, timeout=timeout) as resp:\n"
     "        text = resp.read().decode('utf-8', 'replace')\n"

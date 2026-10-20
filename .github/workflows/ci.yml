@@ -10,7 +10,7 @@ jobs:
   core:
     runs-on: ubuntu-latest
     steps:
-      # Полная история нужна шагу `wedra check`: registry validate сверяет
+      # Полная история нужна шагу `fidespipe check`: registry validate сверяет
       # commit-пины с историей («пин является предком HEAD»). На мелкой копии
       # actions/checkout по умолчанию (depth 1) этих коммитов нет, и проверка
       # падает как «Not a valid commit name» — то есть supply-chain проверка
@@ -76,7 +76,7 @@ jobs:
               /plugin.test -test.run "Sandbox|Untrusted|Trust" -test.v'
       # Единая точка проверки: fmt, vet, lint, mod, versions, errcodes,
       # schemas, supply, build, test, conformance, mcp, pipelines, plugins,
-      # registry. Локально это ровно та же команда (`wedra check`), поэтому
+      # registry. Локально это ровно та же команда (`fidespipe check`), поэтому
       # расхождение между CI и разработчиком невозможно по построению, а не по
       # договорённости.
       #
@@ -84,15 +84,15 @@ jobs:
       # поднять его выше, `go test ./...` пройдёт без изолятора, и sandbox-тесты
       # начнут SKIP вместо PASS — покрытие молча уедет вниз, и никто этого
       # не заметит по зелёной галке.
-      # staticcheck нужен шагу lint внутри wedra check, и шаг этот fail-closed:
+      # staticcheck нужен шагу lint внутри fidespipe check, и шаг этот fail-closed:
       # без линтера в PATH проверка падает, а не молча проходит без него.
-      - name: staticcheck (шаг lint в wedra check)
+      - name: staticcheck (шаг lint в fidespipe check)
         run: |
           GOBIN="$RUNNER_TEMP/bin" go install honnef.co/go/tools/cmd/staticcheck@2026.2.1
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
       # Доноры, чьи конформные тесты запускают НАСТОЯЩИЙ инструмент, а не мок.
       # Список не «кажется правильным», а измерен: каждый плагин здесь упал бы
-      # в чистом интерпретаторе — прогон `wedra plugin test` в venv без
+      # в чистом интерпретаторе — прогон `fidespipe plugin test` в venv без
       # наследования site-packages даёт 6/19 altdns, 16/23 pyelftools, 17/24
       # lief, 19/27 msoffcrypto_tool, 20/25 oletools, 13/15 dirsearch, 12/16
       # detect_secrets, 24/31 pefile. Остальные плагины с непустым
@@ -116,8 +116,8 @@ jobs:
             python3 -m pip install --disable-pip-version-check -r "plugins/community/$p/requirements.lock"
           done
           python3 -m unittest discover -s tests/plugins -v
-      - name: wedra check (fmt, vet, lint, mod, versions, errcodes, schemas, supply, build, test, conformance, mcp, pipelines, plugins, registry)
-        run: go run ./cmd/wedra check --race --timeout=720
+      - name: fidespipe check (fmt, vet, lint, mod, versions, errcodes, schemas, supply, build, test, conformance, mcp, pipelines, plugins, registry)
+        run: go run ./cmd/fidespipe check --race --timeout=720
       # Артефакты развёртывания проверяются ТУТ ЖЕ, а не «когда-нибудь
       # вручную». Dockerfile и юниты systemd на машине разработчика не
       # проверяются: Docker есть не везде, systemd — только на Linux. Без
@@ -132,30 +132,30 @@ jobs:
           # ругается на отсутствующий исполняемый файл, а это не ошибка
           # самого юнита. Пользователь и каталоги тоже нужны реальные: иначе
           # systemd-analyze не считает юнит валидным.
-          sudo ln -sf /bin/true /usr/local/bin/wedra
-          sudo useradd --system --home-dir /var/lib/wedra --shell /usr/sbin/nologin wedra || true
-          sudo mkdir -p /var/lib/wedra /etc/wedra
+          sudo ln -sf /bin/true /usr/local/bin/fidespipe
+          sudo useradd --system --home-dir /var/lib/fidespipe --shell /usr/sbin/nologin fidespipe || true
+          sudo mkdir -p /var/lib/fidespipe /etc/fidespipe
           for unit in deploy/systemd/*.service; do
             echo "== $unit"
             systemd-analyze verify "$unit"
           done
           # Образ: собираются обе цели — рантайм и консоль. Сборка проверяет
           # Dockerfile по-настоящему, а не «файл существует».
-          docker build -t wedra:ci .
-          docker build -t wedra:ci-gui --target gui .
+          docker build -t fidespipe:ci .
+          docker build -t fidespipe:ci-gui --target gui .
           # Внутри образа должно быть всё, без чего недоверенный плагин не
           # запустится: bubblewrap (изоляция) и python (плагины).
-          # --entrypoint обязателен: в образе ENTRYPOINT — сам wedra.
-          docker run --rm --entrypoint sh wedra:ci -c 'command -v bwrap && command -v python3'
+          # --entrypoint обязателен: в образе ENTRYPOINT — сам fidespipe.
+          docker run --rm --entrypoint sh fidespipe:ci -c 'command -v bwrap && command -v python3'
       - name: build legacy tool
         run: go build -o tool ./cmd/tool
-      - name: build wedra
-        run: go build -o wedra ./cmd/wedra
+      - name: build fidespipe
+        run: go build -o fidespipe ./cmd/fidespipe
       - name: plugin list + search
         run: |
-          ./wedra plugin list
-          ./wedra plugin search csv
-          ./wedra plugin search llm
+          ./fidespipe plugin list
+          ./fidespipe plugin search csv
+          ./fidespipe plugin search llm
       # Ловит класс «установлено нечитаемое»: install нормализует пресет через
       # yaml.Marshal, и вывод маршалинга один раз разошёлся с парсером так,
       # что `pipeline install` печатал «пресет готов», а следующий же
@@ -187,17 +187,17 @@ jobs:
           # каталоге, чтобы не переписывать примеры самого checkout.
           cd "$work"
           for p in when_demo email_check; do
-            "$GITHUB_WORKSPACE/wedra" pipeline install "$p" --registry=registry.yaml
-            "$GITHUB_WORKSPACE/wedra" pipeline validate "examples/$p.yaml"
+            "$GITHUB_WORKSPACE/fidespipe" pipeline install "$p" --registry=registry.yaml
+            "$GITHUB_WORKSPACE/fidespipe" pipeline validate "examples/$p.yaml"
           done
       - name: v0.20 control flow live (when, foreach-step, parallel)
         run: |
-          ./wedra pipeline run examples/when_demo.yaml --yes
-          ./wedra pipeline run examples/foreach_step_demo.yaml --yes
-          ./wedra pipeline run examples/parallel_demo.yaml --yes
+          ./fidespipe pipeline run examples/when_demo.yaml --yes
+          ./fidespipe pipeline run examples/foreach_step_demo.yaml --yes
+          ./fidespipe pipeline run examples/parallel_demo.yaml --yes
       - name: v0.22 GUI API live (health + in-process run)
         run: |
-          ./wedra gui --listen 127.0.0.1:8917 >/tmp/gui.log 2>&1 &
+          ./fidespipe gui --listen 127.0.0.1:8917 >/tmp/gui.log 2>&1 &
           GUI_PID=$!
           for i in $(seq 1 20); do curl -sf 127.0.0.1:8917/api/health >/dev/null && break; sleep 0.5; done
           curl -sf 127.0.0.1:8917/api/health | grep '"status":"ok"'
@@ -207,7 +207,7 @@ jobs:
           # чужой Host (DNS-rebinding) — 403 даже без cookie
           curl -s -o /dev/null -w '%{http_code}' 127.0.0.1:8917/api/health -H 'Host: evil.example' | grep 403
           # не-loopback без явного флага — отказ с внятным текстом
-          ./wedra gui --listen 0.0.0.0:8917 2>&1 | grep -q 'allow-remote'
+          ./fidespipe gui --listen 0.0.0.0:8917 2>&1 | grep -q 'allow-remote'
           # вход по одноразовому коду из терминала → cookie
           CODE=$(grep -oE '[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}' /tmp/gui.log | head -1)
           test -n "$CODE"
@@ -222,7 +222,7 @@ jobs:
           tail -n 5 /tmp/gui.log
       - name: v0.24 browser gate live (wait → decision via API)
         run: |
-          ./wedra gui --listen 127.0.0.1:8918 >/tmp/gui-gate.log 2>&1 &
+          ./fidespipe gui --listen 127.0.0.1:8918 >/tmp/gui-gate.log 2>&1 &
           GUI_PID=$!
           for i in $(seq 1 20); do curl -sf 127.0.0.1:8918/api/health >/dev/null && break; sleep 0.5; done
           CODE=$(grep -oE '[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}' /tmp/gui-gate.log | head -1)
@@ -255,7 +255,7 @@ jobs:
         run: |
           node --check web/static/editor/app.js
           node --check web/static/app.js
-          ./wedra gui --listen 127.0.0.1:8919 >/tmp/gui-ed.log 2>&1 &
+          ./fidespipe gui --listen 127.0.0.1:8919 >/tmp/gui-ed.log 2>&1 &
           GUI_PID=$!
           for i in $(seq 1 20); do curl -sf localhost:8919/api/health >/dev/null && break; sleep 0.5; done
           CODE=$(grep -oE '[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}' /tmp/gui-ed.log | head -1)
@@ -263,7 +263,7 @@ jobs:
           curl -sf -o /dev/null -c /tmp/cj19 -X POST localhost:8919/api/session -H 'Content-Type: application/json' -d "{\"code\":\"$CODE\"}"
           # страница и редактор живы без сессии (одностраничный сценарий)
           curl -sf localhost:8919/editor/ | grep "редактор"
-          curl -sf localhost:8919/ | grep "WEDRA"
+          curl -sf localhost:8919/ | grep "Fidespipe"
           # без cookie редакторские /api/* закрыты
           curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8919/api/parse/pipeline --data-binary @examples/gate_demo.yaml | grep 401
           ed() { curl -sf -b /tmp/cj19 "$@"; }
@@ -340,68 +340,68 @@ jobs:
           tail -n 3 /tmp/gui-ed.log
       - name: v0.7 standalone binary (embedded GUI, no repo)
         run: |
-          mkdir -p /tmp/wedra-standalone
-          cp ./wedra /tmp/wedra-standalone/
-          cd /tmp/wedra-standalone
-          ./wedra gui --listen 127.0.0.1:8920 >/tmp/gui-embed.log 2>&1 &
+          mkdir -p /tmp/fidespipe-standalone
+          cp ./fidespipe /tmp/fidespipe-standalone/
+          cd /tmp/fidespipe-standalone
+          ./fidespipe gui --listen 127.0.0.1:8920 >/tmp/gui-embed.log 2>&1 &
           GUI_PID=$!
           for i in $(seq 1 20); do curl -sf localhost:8920/api/health >/dev/null && break; sleep 0.5; done
-          curl -sf localhost:8920/ | grep "WEDRA"
+          curl -sf localhost:8920/ | grep "Fidespipe"
           curl -sf localhost:8920/editor/ | grep "редактор"
           curl -sf localhost:8920/editor/app.js | grep "pluginNetworkHint"
           curl -sf localhost:8920/app.js | grep "api/health"
           kill $GUI_PID 2>/dev/null || true
           tail -n 3 /tmp/gui-embed.log
-      - name: v0.8 desktop exe (wedragui) — cross-builds + PE check
+      - name: v0.8 desktop exe (fidespipegui) — cross-builds + PE check
         run: |
-          go build -o /tmp/wedragui-linux ./cmd/wedragui
-          GOOS=windows GOARCH=amd64 go build -o /tmp/wedragui-win-amd64.exe ./cmd/wedragui
-          GOOS=windows GOARCH=arm64 go build -o /tmp/wedragui-win-arm64.exe ./cmd/wedragui
-          GOOS=darwin GOARCH=amd64 go build -o /tmp/wedragui-darwin ./cmd/wedragui
-          head -c2 /tmp/wedragui-win-amd64.exe | grep MZ
+          go build -o /tmp/fidespipegui-linux ./cmd/fidespipegui
+          GOOS=windows GOARCH=amd64 go build -o /tmp/fidespipegui-win-amd64.exe ./cmd/fidespipegui
+          GOOS=windows GOARCH=arm64 go build -o /tmp/fidespipegui-win-arm64.exe ./cmd/fidespipegui
+          GOOS=darwin GOARCH=amd64 go build -o /tmp/fidespipegui-darwin ./cmd/fidespipegui
+          head -c2 /tmp/fidespipegui-win-amd64.exe | grep MZ
       - name: v0.8 desktop live (embedded GUI, clean dir)
         run: |
-          mkdir -p /tmp/wedragui-live && cd /tmp/wedragui-live
-          /tmp/wedragui-linux --port 8921 >/tmp/wedragui.log 2>&1 &
+          mkdir -p /tmp/fidespipegui-live && cd /tmp/fidespipegui-live
+          /tmp/fidespipegui-linux --port 8921 >/tmp/fidespipegui.log 2>&1 &
           WG_PID=$!
           for i in $(seq 1 20); do curl -sf localhost:8921/api/health >/dev/null && break; sleep 0.5; done
-          curl -sf localhost:8921/ | grep "WEDRA"
+          curl -sf localhost:8921/ | grep "Fidespipe"
           curl -sf localhost:8921/editor/ | grep "редактор"
-          grep -q "WEDRA desktop" /tmp/wedragui.log
+          grep -q "Fidespipe desktop" /tmp/fidespipegui.log
           kill -TERM $WG_PID
           sleep 1
-          pgrep -x wedragui-linux >/dev/null && exit 1 || true
+          pgrep -x fidespipegui-linux >/dev/null && exit 1 || true
       - name: v0.9 agent track (validate --json, conformance, MCP)
         run: |
-          ./wedra pipeline validate examples/email_triage_chain.yaml --json | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["ok"], d'
+          ./fidespipe pipeline validate examples/email_triage_chain.yaml --json | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["ok"], d'
           printf 'format_version: "0.2"\npipeline:\n  name: bad\n  input: {text: x}\n  steps:\n    - {id: a, plugin: plugins/community/text_analyzer, bind: {text: input.nope}}\n' > /tmp/bad.yaml
-          ! ./wedra pipeline validate /tmp/bad.yaml --json > /tmp/bad.json
+          ! ./fidespipe pipeline validate /tmp/bad.yaml --json > /tmp/bad.json
           grep -q E_PORT_SOURCE /tmp/bad.json
-          ./wedra plugin test internal/core/testdata/plugins --conformance
+          ./fidespipe plugin test internal/core/testdata/plugins --conformance
           # contract_input роняет элемент, не ран (exit 1 = были aborted — ожидаемо)
-          (./wedra pipeline run examples/email_triage_chain.yaml --yes || true) | grep 'ok=3 aborted=1'
+          (./fidespipe pipeline run examples/email_triage_chain.yaml --yes || true) | grep 'ok=3 aborted=1'
           printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}\n{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}\n' \
-            | ./wedra mcp --plugins "$PWD/plugins" --workdir "$PWD" --no-gui 2>/dev/null > /tmp/mcp.out
+            | ./fidespipe mcp --plugins "$PWD/plugins" --workdir "$PWD" --no-gui 2>/dev/null > /tmp/mcp.out
           grep -q '"version":"'"$(cat VERSION)"'"' /tmp/mcp.out
           grep -q cancel_run /tmp/mcp.out
       - name: foreach + after_foreach live
         run: |
-          ./wedra pipeline run examples/csv_foreach.yaml --yes
-          ./wedra pipeline run examples/csv_foreach_summary.yaml --yes
+          ./fidespipe pipeline run examples/csv_foreach.yaml --yes
+          ./fidespipe pipeline run examples/csv_foreach_summary.yaml --yes
       - name: resume live
         run: |
-          ./wedra pipeline run examples/csv_foreach.yaml --yes --runs-dir=var/runs | tail
+          ./fidespipe pipeline run examples/csv_foreach.yaml --yes --runs-dir=var/runs | tail
           last=$(ls -t var/runs | head -1)
           echo "resume $last"
-          ./wedra runs show $last
-          ./wedra runs list
+          ./fidespipe runs show $last
+          ./fidespipe runs list
       - name: json store live
         run: |
-          ./wedra pipeline run examples/csv_foreach_summary.yaml --yes --store=json --db-path=var/runs/runs.db
-          ./wedra runs list --store=json --db-path=var/runs/runs.db
-          last=$(./wedra runs list --store=json --db-path=var/runs/runs.db | grep -oE '[0-9]{8}-[0-9]{6}-[a-z0-9_-]+' | head -1)
+          ./fidespipe pipeline run examples/csv_foreach_summary.yaml --yes --store=json --db-path=var/runs/runs.db
+          ./fidespipe runs list --store=json --db-path=var/runs/runs.db
+          last=$(./fidespipe runs list --store=json --db-path=var/runs/runs.db | grep -oE '[0-9]{8}-[0-9]{6}-[a-z0-9_-]+' | head -1)
           echo "json run $last"
-          ./wedra runs show $last --store=json --db-path=var/runs/runs.db
+          ./fidespipe runs show $last --store=json --db-path=var/runs/runs.db
       - name: schemas check
         run: |
           ls schemas/
@@ -519,8 +519,8 @@ jobs:
           path: ${{ runner.temp }}/gotest/
           retention-days: 7
           if-no-files-found: ignore
-      - run: go build ./cmd/wedra
-      - run: go build ./cmd/wedragui
+      - run: go build ./cmd/fidespipe
+      - run: go build ./cmd/fidespipegui
 
   macos:
     runs-on: macos-latest
@@ -541,8 +541,8 @@ jobs:
       - name: sandbox isolation (verbose)
         run: go test ./internal/plugin/ -count=1 -v -run 'Sandbox|Untrusted|Trust'
       - run: go test ./internal/core -run TestConformance -count=1
-      - run: go build ./cmd/wedra
-      - run: go build ./cmd/wedragui
+      - run: go build ./cmd/fidespipe
+      - run: go build ./cmd/fidespipegui
 
   # v0.17: trust-гейт релиза — на теге реестр проверяется по РЕАЛЬНЫМ пинам
   # (клоны git по version из registry.yaml), без local-source.
@@ -561,7 +561,7 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: '1.26.9' # GO-2026-6617: net/http HPACK, чинится в 1.26.9
-      - run: go build -o wedra ./cmd/wedra
+      - run: go build -o fidespipe ./cmd/fidespipe
       # Тот же список доноров, что и в джобе core, и по той же причине:
       # `registry validate` гоняет plugin.test.yaml КАЖДОЙ записи реестра
       # (internal/cli/registry.go, RunPluginTests вызывается безусловно — не
@@ -575,7 +575,7 @@ jobs:
           for p in ssl_info detect_secrets dirsearch pefile altdns pyelftools lief msoffcrypto_tool oletools; do
             python3 -m pip install --disable-pip-version-check -r "plugins/community/$p/requirements.lock"
           done
-      - run: ./wedra registry validate --registry=registry.yaml
+      - run: ./fidespipe registry validate --registry=registry.yaml
 
   release:
     needs: [core, go-floor, windows, macos, registry-release]

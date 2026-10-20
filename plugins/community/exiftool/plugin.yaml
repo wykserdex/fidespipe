@@ -6,7 +6,7 @@ description: >
   устройства, GPS, даты съёмки. Обёртка над CLI exiftool (`-j` печатает JSON в
   stdout). Донор объявлен в манифесте и ставится вместе с плагином: официальный
   Image-ExifTool 13.59 с проверкой sha256. Нужен интерпретатор perl.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

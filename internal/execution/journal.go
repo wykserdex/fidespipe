@@ -3,8 +3,8 @@ package execution
 import (
 	"errors"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 func failEvent(j *journal.Journal, ctx *runctx.Ctx, err error, extra map[string]interface{}) {

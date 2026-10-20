@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/importer"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/importer"
 )
 
-// RunPluginImport — wedra plugin import <проект> [<каталог>] [--plan]
+// RunPluginImport — fidespipe plugin import <проект> [<каталог>] [--plan]
 //
 // Разбирает ВНЕШНИЙ Python-проект и создаёт из него каталог плагина.
 //
@@ -48,7 +48,7 @@ func RunPluginImport(args []string) {
 		}
 	}
 	if len(positional) == 0 {
-		fmt.Println("нужно: wedra plugin import <каталог-проекта> [<каталог-плагина>] [--plan]")
+		fmt.Println("нужно: fidespipe plugin import <каталог-проекта> [<каталог-плагина>] [--plan]")
 		os.Exit(2)
 	}
 	projectDir := positional[0]
@@ -124,7 +124,7 @@ func RunPluginImport(args []string) {
 	}
 
 	printImportWarnings("что останется на человеке", "что автоматика не осилит", res.Warnings, res.Blockers)
-	fmt.Println("  дальше: открой редактор (wedra gui) и допиши вызов функции донора")
+	fmt.Println("  дальше: открой редактор (fidespipe gui) и допиши вызов функции донора")
 }
 
 // printImportWarnings — печатает предупреждения и блокеры.
@@ -150,7 +150,7 @@ func printImportWarnings(warnHeader, blockHeader string, warnings, blockers []st
 
 // printPluginImportUsage — справка по команде.
 func printPluginImportUsage() {
-	fmt.Println(`wedra plugin import <каталог-проекта> [<каталог-плагина>] [--id=ИМЯ] [--description=ТЕКСТ] [--plan]
+	fmt.Println(`fidespipe plugin import <каталог-проекта> [<каталог-плагина>] [--id=ИМЯ] [--description=ТЕКСТ] [--plan]
 
 Разбирает внешний Python-проект и создаёт из него каталог плагина.
 

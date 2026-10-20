@@ -67,7 +67,7 @@ type inventory struct {
 }
 
 // CheckRepo сверяет коды с контрактом. Отчёт возвращается строкой, а решение —
-// через error: так шаг wedra check покажет и короткую сводку, и подробности.
+// через error: так шаг fidespipe check покажет и короткую сводку, и подробности.
 func CheckRepo(repo string) (string, error) {
 	inv, err := scan(repo)
 	if err != nil {

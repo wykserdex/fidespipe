@@ -1,4 +1,4 @@
-# Архитектура — WEDRA
+# Архитектура — Fidespipe
 
 Короткий проводник для нового читателя. Контракт — `protocol/v0.2/PROTOCOL.md`,
 здесь — как устроено ядро и почему.
@@ -25,8 +25,8 @@
 ## Дерево
 
 ```
-cmd/wedra/            # основной CLI
-cmd/wedragui/         # desktop launcher
+cmd/fidespipe/            # основной CLI
+cmd/fidespipegui/         # desktop launcher
 cmd/tool/             # compatibility CLI
 internal/
   pipeline/           # model, parser, validation, DAG, when
@@ -40,7 +40,7 @@ internal/
   doctor/             # измерение готовности окружения
   importer/           # разбор чужого Python-проекта в план плагина
   runctx/             # shared context and dot-paths
-  cli/                # WEDRA command adapter
+  cli/                # Fidespipe command adapter
   api/                # HTTP/GUI adapter
   mcp/                # MCP adapter
   core/               # transitional compatibility layer
@@ -121,7 +121,7 @@ validate (статика) → run:
 изменила бы этот хэш.
 
 **Готовность окружения (`internal/doctor`).** Меряет, а не объявляет: тот же
-Python, которым запускается сама WEDRA, проверяет каждый плагин и печатает,
+Python, которым запускается сама Fidespipe, проверяет каждый плагин и печатает,
 сколько готовы и что доустановить. Ничего не ставит и ничего не запускает.
 
 ## Управляющий поток (v0.20, PROTOCOL §12)

@@ -1,6 +1,6 @@
 package core
 
-import "github.com/wykserdex/wedra/internal/journal"
+import "github.com/wykserdex/fidespipe/internal/journal"
 
 type Journal = journal.Journal
 

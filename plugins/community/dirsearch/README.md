@@ -16,7 +16,7 @@ pip install dirsearch==0.5.0
 
 ## Тесты
 
-`wedra plugin test plugins/community/dirsearch` — 15 кейсов, и они разделены
+`fidespipe plugin test plugins/community/dirsearch` — 15 кейсов, и они разделены
 намеренно:
 
 - **реальный инструмент** (два кейса с `{{base_url}}`) сканирует локальный

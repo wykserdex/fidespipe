@@ -7,7 +7,7 @@ description: >
   интерпретатор со встроенным сниппетом, который импортирует exifread и
   печатает JSON в stdout (паттерн C); отчёт — stdout. Ставится отдельно:
   pip install exifread.
-author: "community · wedra showcase (forensics)"
+author: "community · fidespipe showcase (forensics)"
 
 runtime:
   type: python

@@ -3,7 +3,7 @@
 умеет по заказу упасть на конкретном входе).
 
 Имитирует тот же протокол, что и SNIPPET из main.py: exit 0 и один JSON-репорт
-в stdout — успех; exit 1 и {"wedra_error": …, "wedra_message": …} — доменная
+в stdout — успех; exit 1 и {"fidespipe_error": …, "fidespipe_message": …} — доменная
 ошибка.
 
 Числа в репорте — из настоящей фикстуры fixtures/sample.dll (18 секций,
@@ -42,17 +42,17 @@ if os.environ.get("MOCK_FAIL") == "1":
     sys.exit(3)
 
 if os.environ.get("MOCK_NO_MODULE") == "1":
-    print(json.dumps({"wedra_error": "pefile_not_installed",
-                      "wedra_message": "пакет pefile не импортируется"}))
+    print(json.dumps({"fidespipe_error": "pefile_not_installed",
+                      "fidespipe_message": "пакет pefile не импортируется"}))
     sys.exit(1)
 if os.environ.get("MOCK_NOT_PE") == "1":
-    print(json.dumps({"wedra_error": "not_pe",
-                      "wedra_message": "файл не читается как PE: DOS Header "
+    print(json.dumps({"fidespipe_error": "not_pe",
+                      "fidespipe_message": "файл не читается как PE: DOS Header "
                                        "magic not found."}))
     sys.exit(1)
 if os.environ.get("MOCK_BAD_FILE") == "1":
-    print(json.dumps({"wedra_error": "bad_file",
-                      "wedra_message": "не удалось разобрать PE: OSError(13)"}))
+    print(json.dumps({"fidespipe_error": "bad_file",
+                      "fidespipe_message": "не удалось разобрать PE: OSError(13)"}))
     sys.exit(1)
 
 if os.environ.get("MOCK_NO_REPORT") == "1":

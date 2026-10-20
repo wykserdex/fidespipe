@@ -146,7 +146,7 @@ func TestNoWorkflowsFails(t *testing.T) {
 	}
 }
 
-// Реальный репозиторий: шаг `supply` в `wedra check` полезен ровно настолько,
+// Реальный репозиторий: шаг `supply` в `fidespipe check` полезен ровно настолько,
 // насколько он проходит здесь. Синтетическая фикстура выше проверила бы саму
 // себя.
 func TestRealRepoPasses(t *testing.T) {

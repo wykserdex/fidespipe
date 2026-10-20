@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/buildinfo"
-	"github.com/wykserdex/wedra/internal/sandboxexec"
+	"github.com/wykserdex/fidespipe/internal/buildinfo"
+	"github.com/wykserdex/fidespipe/internal/sandboxexec"
 )
 
 func Run() {
@@ -28,7 +28,7 @@ func Run() {
 		handlePipeline(os.Args[2:])
 	case "plugin":
 		// Глобальная справка — только когда её просят У САМОЙ команды plugin.
-		// Раньше helpRequested смотрел во все аргументы, и `wedra plugin create
+		// Раньше helpRequested смотрел во все аргументы, и `fidespipe plugin create
 		// --help` упирался в общий список команд вместо справки по create.
 		if len(os.Args) > 2 && isHelpFlag(os.Args[2]) {
 			printHelp()
@@ -55,7 +55,7 @@ func Run() {
 		}
 		RunGUI(os.Args[2:])
 	case "version", "--version", "-v":
-		fmt.Printf("wedra v%s, protocol v0.2\n", buildinfo.Resolve())
+		fmt.Printf("fidespipe v%s, protocol v0.2\n", buildinfo.Resolve())
 	case "registry":
 		if helpRequested(os.Args[2:]) {
 			printHelp()
@@ -130,42 +130,42 @@ func Run() {
 
 func printHelp() {
 	ver := buildinfo.Resolve()
-	fmt.Printf(`WEDRA — контрактный исполнитель цепочек с человеком в петле (v%s)
+	fmt.Printf(`Fidespipe — контрактный исполнитель цепочек с человеком в петле (v%s)
 
 Команды (мясо, не косметика):
-  wedra pipeline run <file.yaml> [--yes] [--resume=<run_id>] [--runs-dir=var/runs] [--store=fs|json] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins]
-  wedra schedule [--pipelines=<dir>] [--runs-dir=<dir>]      # показать next_run для всех cron
-  wedra daemon [--pipelines=<dir>] [--runs-dir=<dir>]        # демон: тикает каждую минуту, запускает due пайплайны (solo vs scheduled)
-  wedra pipeline install <name|file.yaml|url> [--registry=<url|path>]  # пресет + автоустановка плагинов
-  wedra pipeline validate <file.yaml> [--json]      # --json: {ok, issues[]} с кодами (ERRORS.md)
-  wedra pipeline plan <file.yaml>
-  wedra pipeline lint <file.yaml>          # validate + file_ref error
-  wedra plugin install <name>[@version] [--registry=<url|path>]        # из реестра в plugins/
-  wedra plugin validate <dir>
-  wedra plugin test <dir> [--conformance] [--json]
-  wedra plugin test --conformance [--json] [--fixtures=dir]
-  wedra plugin create <dir> [--author --description --example]
-  wedra plugin import <проект> [<каталог>] [--id=ИМЯ] [--description=ТЕКСТ] [--plan]
+  fidespipe pipeline run <file.yaml> [--yes] [--resume=<run_id>] [--runs-dir=var/runs] [--store=fs|json] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins]
+  fidespipe schedule [--pipelines=<dir>] [--runs-dir=<dir>]      # показать next_run для всех cron
+  fidespipe daemon [--pipelines=<dir>] [--runs-dir=<dir>]        # демон: тикает каждую минуту, запускает due пайплайны (solo vs scheduled)
+  fidespipe pipeline install <name|file.yaml|url> [--registry=<url|path>]  # пресет + автоустановка плагинов
+  fidespipe pipeline validate <file.yaml> [--json]      # --json: {ok, issues[]} с кодами (ERRORS.md)
+  fidespipe pipeline plan <file.yaml>
+  fidespipe pipeline lint <file.yaml>          # validate + file_ref error
+  fidespipe plugin install <name>[@version] [--registry=<url|path>]        # из реестра в plugins/
+  fidespipe plugin validate <dir>
+  fidespipe plugin test <dir> [--conformance] [--json]
+  fidespipe plugin test --conformance [--json] [--fixtures=dir]
+  fidespipe plugin create <dir> [--author --description --example]
+  fidespipe plugin import <проект> [<каталог>] [--id=ИМЯ] [--description=ТЕКСТ] [--plan]
                                               # разобрать чужой Python-проект в плагин
-  wedra plugin inspect <dir>
-  wedra plugin search <query>              # поиск по official/community
-  wedra plugin list                        # список всех плагинов
-  wedra registry validate [--registry=<url|path>] [--local-source=<dir>]
+  fidespipe plugin inspect <dir>
+  fidespipe plugin search <query>              # поиск по official/community
+  fidespipe plugin list                        # список всех плагинов
+  fidespipe registry validate [--registry=<url|path>] [--local-source=<dir>]
                                                  # v0.17: trust-гейт реестра (манифест, id, конформность)
-  wedra runs list [var/runs]               # список прогонов (fs + json)
-  wedra runs show <run_id> [var/runs]      # журнал + context + artifacts
-  wedra runs resume <run_id> <pipeline.yaml> [--yes] [--runs-dir=var/runs] [--store=fs|json] [--db-path=file] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins]
-  wedra gui [--listen 127.0.0.1:8765] [--open] [--no-session] [--allow-remote] [--public-host=<имя:порт>] [--trusted-proxy] [--plugins=<dir>] [--pipelines=<dir>] [--runs-dir=<dir>]
+  fidespipe runs list [var/runs]               # список прогонов (fs + json)
+  fidespipe runs show <run_id> [var/runs]      # журнал + context + artifacts
+  fidespipe runs resume <run_id> <pipeline.yaml> [--yes] [--runs-dir=var/runs] [--store=fs|json] [--db-path=file] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins]
+  fidespipe gui [--listen 127.0.0.1:8765] [--open] [--no-session] [--allow-remote] [--public-host=<имя:порт>] [--trusted-proxy] [--plugins=<dir>] [--pipelines=<dir>] [--runs-dir=<dir>]
                                                   # консоль; вход — по одноразовому коду из терминала, /api/* кроме /api/health требует cookie
-  wedra mcp --plugins=<dir> [--workdir=<dir>] [--no-gui]  # MCP-сервер (stdio) для LLM-агентов
-  wedra approve <run_id> <step_id>                # только интерактивный TTY
-  wedra demo [--runs-dir=<dir>]                    # автономная цепочка: ноль git, ноль Python, ноль сети
-  wedra doctor [--json] [--plugins=<dir>]          # что сломано в окружении и что доустановить; ничего не ставит и не запускает
+  fidespipe mcp --plugins=<dir> [--workdir=<dir>] [--no-gui]  # MCP-сервер (stdio) для LLM-агентов
+  fidespipe approve <run_id> <step_id>                # только интерактивный TTY
+  fidespipe demo [--runs-dir=<dir>]                    # автономная цепочка: ноль git, ноль Python, ноль сети
+  fidespipe doctor [--json] [--plugins=<dir>]          # что сломано в окружении и что доустановить; ничего не ставит и не запускает
 
 Совместимость:
-  wedra check [--list|--fast|--census|--only=<step>] # ЕДИНАЯ проверка проекта: fmt, vet, mod, build, test, conformance, pipelines, plugins, registry
-  wedra run <file.yaml> == pipeline run
-  wedra validate <file.yaml> == pipeline validate
+  fidespipe check [--list|--fast|--census|--only=<step>] # ЕДИНАЯ проверка проекта: fmt, vet, mod, build, test, conformance, pipelines, plugins, registry
+  fidespipe run <file.yaml> == pipeline run
+  fidespipe validate <file.yaml> == pipeline validate
 
 Версия: v%s (честная 0.x), протокол v0.2
 См. protocol/v0.2/PROTOCOL.md, protocol/v0.2/ERRORS.md, docs/mcp.md, CHANGELOG.md

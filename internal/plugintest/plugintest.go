@@ -17,9 +17,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 	"gopkg.in/yaml.v3"
 )
 
@@ -380,7 +380,7 @@ func RunPluginTestsCtx(ctx stdctx.Context, dir, specPath string, quiet bool) (pa
 	if err != nil {
 		return 0, 0, err
 	}
-	// Доверие каталогу, который назвал оператор: `wedra plugin test <dir>` —
+	// Доверие каталогу, который назвал оператор: `fidespipe plugin test <dir>` —
 	// это просьба человека прогнать ИМЕННО ЭТОТ код. Основание то же, что у
 	// `AllowListFromDirs`: решение принял человек, а не плагин. Без этого
 	// разработка плагина была бы невозможна (а на Windows/macOS ещё и не

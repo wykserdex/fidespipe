@@ -8,7 +8,7 @@ description: >
   (-f json -o <файл>) и возвращает плоский список находок. Модуль по умолчанию —
   xss,sql: неразрушающий аудит (дефолтный пресет wapiti common включает
   разрушающие exec/file/upload). Wapiti ставится отдельно: pip install wapiti3.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

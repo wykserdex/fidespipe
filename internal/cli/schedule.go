@@ -10,17 +10,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/cron"
-	"github.com/wykserdex/wedra/internal/execution"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/guidirs"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/cron"
+	"github.com/wykserdex/fidespipe/internal/execution"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/guidirs"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
-// RunSchedule — wedra schedule [--pipelines=dir] [--runs-dir=dir]
+// RunSchedule — fidespipe schedule [--pipelines=dir] [--runs-dir=dir]
 // Сканирует пайплайны с schedule и показывает next_run
 func RunSchedule(args []string) {
 	dirs, _, err := guidirs.Parse(args, guidirs.Default())
@@ -65,7 +65,7 @@ func RunSchedule(args []string) {
 	}
 }
 
-// RunDaemon — wedra daemon [--pipelines=dir] [--runs-dir=dir]
+// RunDaemon — fidespipe daemon [--pipelines=dir] [--runs-dir=dir]
 // Тикает каждую минуту, запускает due пайплайны
 func RunDaemon(args []string) {
 	dirs, _, err := guidirs.Parse(args, guidirs.Default())
@@ -83,11 +83,11 @@ func RunDaemon(args []string) {
 	// Адрес для ссылки и адрес слушателя — разные вещи: слушатель может быть
 	// на 127.0.0.1 (за обратным прокси), а в ссылке может стоять публичный
 	// адрес, иначе человек её не откроет.
-	approveListen := strings.TrimSpace(os.Getenv("WEDRA_APPROVE_LISTEN"))
+	approveListen := strings.TrimSpace(os.Getenv("FIDESPIPE_APPROVE_LISTEN"))
 	if approveListen == "" {
 		approveListen = "127.0.0.1:8766"
 	}
-	approveURL := strings.TrimSpace(os.Getenv("WEDRA_APPROVE_URL"))
+	approveURL := strings.TrimSpace(os.Getenv("FIDESPIPE_APPROVE_URL"))
 	if approveURL == "" {
 		approveURL = "http://" + approveListen
 	}

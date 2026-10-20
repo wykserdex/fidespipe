@@ -18,7 +18,7 @@ fixtures/, собранных скриптом make_elf.py):
                   файла.
 
 Протокол донора в сниппете: exit 0 и JSON в stdout — успех; exit 1 и
-{"wedra_error": "<код>", "wedra_message": "..."} в stdout — доменная ошибка
+{"fidespipe_error": "<код>", "fidespipe_message": "..."} в stdout — доменная ошибка
 (not_elf, bad_file, pyelftools_not_installed, version_unknown).
 
 Выход (stdout JSON): {file, elf_class, elf_type, machine, entry, sections
@@ -68,8 +68,8 @@ import importlib.metadata
 
 
 def bail(code, message):
-    sys.stdout.write(json.dumps({"wedra_error": code,
-                                 "wedra_message": message}))
+    sys.stdout.write(json.dumps({"fidespipe_error": code,
+                                 "fidespipe_message": message}))
     sys.exit(1)
 
 
@@ -201,7 +201,7 @@ def parse_json_blob(text):
 
 
 def donor_error(report):
-    if isinstance(report, dict) and report.get("wedra_error") in DONOR_ERRORS:
+    if isinstance(report, dict) and report.get("fidespipe_error") in DONOR_ERRORS:
         return report
     return None
 
@@ -291,8 +291,8 @@ def main():
         if proc.returncode != 0:
             marker = donor_error(report)
             if marker:
-                return fail(str(marker["wedra_error"]),
-                            str(marker.get("wedra_message") or target))
+                return fail(str(marker["fidespipe_error"]),
+                            str(marker.get("fidespipe_message") or target))
             tail = (proc.stderr or stdout or "").strip().splitlines()
             last = tail[-1] if tail else f"exit {proc.returncode}"
             return fail("tool_failed",
@@ -305,8 +305,8 @@ def main():
 
     marker = donor_error(report)
     if marker:
-        return fail(str(marker["wedra_error"]),
-                    str(marker.get("wedra_message") or target))
+        return fail(str(marker["fidespipe_error"]),
+                    str(marker.get("fidespipe_message") or target))
     if not isinstance(report, dict):
         return fail("bad_report", "неожиданный формат ответа pyelftools",
                     exit_code=2)

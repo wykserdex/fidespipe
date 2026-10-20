@@ -1,4 +1,4 @@
-# Версионирование WEDRA
+# Версионирование Fidespipe
 
 ## Канонические оси
 
@@ -12,7 +12,7 @@
 | MCP wire protocol | MCP server | `2025-06-18` (также `2024-11-05`) | внешний JSON-RPC контракт; ревизия выбирается при `initialize` |
 | Registry source pin | `version` + `commit` | entry-specific | tag источника и immutable SHA |
 
-`format_version` в pipeline — это версия protocol, а не версия WEDRA.
+`format_version` в pipeline — это версия protocol, а не версия Fidespipe.
 
 ## Product version
 
@@ -25,7 +25,7 @@
 релизы: шаг можно откатить, не трогая соседей. Ставка не окупилась, а цена
 оказалась структурной: **Go принимает как версию модуля только SemVer**, и
 тег вида `v0.33c` для него не существует. Из-за этого модуль нельзя было
-поставить командой `go install github.com/wykserdex/wedra/cmd/wedra@latest` —
+поставить командой `go install github.com/wykserdex/fidespipe/cmd/fidespipe@latest` —
 главным каналом распространения Go-CLI после готовых бинарников. Ломать
 экосистему ради удобства внутреннего цикла — неправильный размен, поэтому:
 
@@ -33,7 +33,7 @@
 - уже опубликованные буквенные теги (`v0.32c`, `v0.33c`, …) не переиспользуются
   и не переименовываются: они исторические записи, а не альтернативные версии;
 - `VERSION` проверяется на соответствие SemVer шагом `versions` в
-  `wedra check` и в релизном workflow, так что вернуться к буквам не получится
+  `fidespipe check` и в релизном workflow, так что вернуться к буквам не получится
   случайно.
 
 Отдельно про частоту: буквенный шаг позволял выпускать релиз на каждое
@@ -78,7 +78,7 @@ tag или branch источника, а `commit` — точный SHA для su
    с верхним заголовком», и это не совпадало ни с файлом, ни с проверкой.
 2. В `protocol/CHANGELOG.md` есть раздел `## v<protocol/VERSION> `.
 3. `conformance/manifest.json` называет текущую protocol version.
-4. Шаг `versions` в `wedra check` сверяет `VERSION` с README.md, README.en.md,
+4. Шаг `versions` в `fidespipe check` сверяет `VERSION` с README.md, README.en.md,
    docs/versioning.md и docs/architecture.md, а `verdoc` отвергает `VERSION` не по
    SemVer.
 

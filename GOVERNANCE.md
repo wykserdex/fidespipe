@@ -1,6 +1,6 @@
 # Governance
 
-WEDRA is a young, currently single-maintainer project. This document makes
+Fidespipe is a young, currently single-maintainer project. This document makes
 that limitation explicit instead of presenting a fictional maintainer quorum.
 The repository owner currently holds merge and release authority.
 

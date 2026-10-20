@@ -11,7 +11,7 @@ description: >
   Дона, названного в ТЗ (репозиторий speciallicity/geoiplookup и PyPI-пакет
   geoiplookup), не существует: GitHub отдаёт 404, на PyPI /simple/geoiplookup/
   пусто. Поэтому обёртка зовёт документированный инструмент с этим именем.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

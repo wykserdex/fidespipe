@@ -7,7 +7,7 @@ description: >
   (-f). Устанавливается из git: pip install
   git+https://github.com/laramies/theHarvester.git@4.9.2 (на PyPI — чужой
   squatted-пакет 0.0.1).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

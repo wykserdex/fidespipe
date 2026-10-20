@@ -128,15 +128,15 @@ $script:Ours = @{}
 
 function Ensure-Toolhelp {
     if (-not $script:IsWin) { return }
-    if ('Wedra.Toolhelp' -as [type]) { return }
+    if ('Fidespipe.Toolhelp' -as [type]) { return }
     # -TypeDefinition, а не -MemberDefinition: using-директивы легальны только
-    # на верхнем уровне исходника. Тип тот же — Wedra.Toolhelp.
+    # на верхнем уровне исходника. Тип тот же — Fidespipe.Toolhelp.
     Add-Type -TypeDefinition @'
         using System;
         using System.Collections.Generic;
         using System.Runtime.InteropServices;
 
-        namespace Wedra { public static class Toolhelp {
+        namespace Fidespipe { public static class Toolhelp {
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct PROCESSENTRY32W {
@@ -203,7 +203,7 @@ function Get-Census {
     if ($script:IsWin) {
         try {
             Ensure-Toolhelp
-            foreach ($p in [Wedra.Toolhelp]::Snapshot()) {
+            foreach ($p in [Fidespipe.Toolhelp]::Snapshot()) {
                 $table[[int]$p.Pid] = [pscustomobject]@{
                     Pid = [int]$p.Pid; Ppid = [int]$p.Ppid
                     Name = $p.Name; Cmd = ''

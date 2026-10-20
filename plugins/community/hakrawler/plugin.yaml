@@ -7,7 +7,7 @@ description: >
   передаётся в stdin (как просит сам инструмент), результат читается из stdout
   в режиме -json. Ставится отдельно: go install
   github.com/hakluke/hakrawler@latest.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

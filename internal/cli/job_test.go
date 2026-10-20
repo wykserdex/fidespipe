@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/testjob"
+	"github.com/wykserdex/fidespipe/internal/testjob"
 )
 
 // TestMain вводит тестовый бинарь в Job Object с KILL_ON_JOB_CLOSE до старта

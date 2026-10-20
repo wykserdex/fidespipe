@@ -1,6 +1,6 @@
 # Развёртывание на сервере
 
-Два способа поставить WEDRA на машину без человека за терминалом: контейнер
+Два способа поставить Fidespipe на машину без человека за терминалом: контейнер
 и юнит systemd. Оба решают одну задачу — **чтобы планировщик работал после
 перезагрузки, а гейт можно было одобрить без доступа к консоли**.
 
@@ -10,50 +10,50 @@
 недоверенный плагин и вернёт `sandbox_unavailable`. Поэтому в образе
 `bubblewrap` стоит обязательно, а в юните нужно доустановить его на хосте.
 
-**Файл доверия — это политика, а не настройка.** `wedra-trust.yaml` решает,
+**Файл доверия — это политика, а не настройка.** `fidespipe-trust.yaml` решает,
 какому коду можно запускаться, и читается он СЛЕДСТВЕННО:
 
 1. `--trust-config=…`, если такой флаг есть у команды;
-2. `WEDRA_TRUST_CONFIG`;
+2. `FIDESPIPE_TRUST_CONFIG`;
 3. файл рядом с бинарником.
 
 Файл из рабочего каталога **игнорируется намеренно** — иначе клон репозитория
-с чужим `wedra-trust.yaml` молча расширял бы доверие. Пустой файл означает
+с чужим `fidespipe-trust.yaml` молча расширял бы доверие. Пустой файл означает
 fail-closed: внешний код не запускается вовсе.
 
 **Каталоги задаются флагами, а не переменными окружения.** `--plugins=`,
-`--pipelines=`, `--runs-dir=`. Переменных вида `WEDRA_PLUGINS_DIR` в проекте
+`--pipelines=`, `--runs-dir=`. Переменных вида `FIDESPIPE_PLUGINS_DIR` в проекте
 нет, и в образе они бы просто не подействовали.
 
 ## Docker
 
 ```bash
-docker build -t wedra:local .
-docker build -t wedra:local --target gui .      # с консолью
+docker build -t fidespipe:local .
+docker build -t fidespipe:local --target gui .      # с консолью
 ```
 
-Тома: `/data` (плагины, пайплайны, журнал ранов) и `/etc/wedra` (файл
+Тома: `/data` (плагины, пайплайны, журнал ранов) и `/etc/fidespipe` (файл
 доверия).
 
 ```bash
-docker volume create wedra-data
-docker run -d --name wedra \
-    -v wedra-data:/data \
-    -v /etc/wedra:/etc/wedra:ro \
+docker volume create fidespipe-data
+docker run -d --name fidespipe \
+    -v fidespipe-data:/data \
+    -v /etc/fidespipe:/etc/fidespipe:ro \
     -p 127.0.0.1:8766:8766 \
     --restart unless-stopped \
-    wedra:local
+    fidespipe:local
 ```
 
 По умолчанию образ запускает **планировщик**. Консоль — отдельный образ:
 
 ```bash
-docker run -d --name wedra-gui \
-    -v wedra-data:/data \
-    -v /etc/wedra:/etc/wedra:ro \
+docker run -d --name fidespipe-gui \
+    -v fidespipe-data:/data \
+    -v /etc/fidespipe:/etc/fidespipe:ro \
     -p 127.0.0.1:8765:8765 \
     --restart unless-stopped \
-    wedra:local gui --listen 0.0.0.0:8765 --no-session
+    fidespipe:local gui --listen 0.0.0.0:8765 --no-session
 ```
 
 ### Осторожно с `--no-session`
@@ -65,24 +65,24 @@ docker run -d --name wedra-gui \
 - `--allow-remote` вместе с `--public-host=имя[:порт]` — иначе запросы
   отвергаются все;
 - сессию лучше оставить включённой: одноразовый код печатается в журнал
-  контейнера (`docker logs wedra-gui`).
+  контейнера (`docker logs fidespipe-gui`).
 
 ### Ссылки одобрения в контейнере
 
 Демон печатает подписанную ссылку в журнал:
 
 ```
-docker logs wedra 2>&1 | grep 'откройте'
+docker logs fidespipe 2>&1 | grep 'откройте'
 ```
 
-Ссылка указывает на `WEDRA_APPROVE_URL` (по умолчанию `http://127.0.0.1:8766`).
+Ссылка указывает на `FIDESPIPE_APPROVE_URL` (по умолчанию `http://127.0.0.1:8766`).
 Если человек открывает её с другой машины, этот адрес должен быть достижим
 извне:
 
 ```bash
-docker run -d --name wedra \
-    -e WEDRA_APPROVE_URL=https://wedra.example.com \
-    -e WEDRA_APPROVE_LISTEN=0.0.0.0:8766 \
+docker run -d --name fidespipe \
+    -e FIDESPIPE_APPROVE_URL=https://fidespipe.example.com \
+    -e FIDESPIPE_APPROVE_LISTEN=0.0.0.0:8766 \
     ...
 ```
 
@@ -91,30 +91,30 @@ docker run -d --name wedra \
 
 ## systemd
 
-Файлы: `deploy/systemd/wedra.service` (планировщик) и
-`deploy/systemd/wedra-gui.service` (консоль).
+Файлы: `deploy/systemd/fidespipe.service` (планировщик) и
+`deploy/systemd/fidespipe-gui.service` (консоль).
 
 ```bash
-sudo useradd --system --home-dir /var/lib/wedra --shell /usr/sbin/nologin wedra
-sudo mkdir -p /var/lib/wedra/{plugins,pipelines,var/runs} /etc/wedra
-sudo chown -R wedra:wedra /var/lib/wedra
-sudo cp deploy/systemd/wedra.service deploy/systemd/wedra-gui.service /etc/systemd/system/
+sudo useradd --system --home-dir /var/lib/fidespipe --shell /usr/sbin/nologin fidespipe
+sudo mkdir -p /var/lib/fidespipe/{plugins,pipelines,var/runs} /etc/fidespipe
+sudo chown -R fidespipe:fidespipe /var/lib/fidespipe
+sudo cp deploy/systemd/fidespipe.service deploy/systemd/fidespipe-gui.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now wedra wedra-gui
+sudo systemctl enable --now fidespipe fidespipe-gui
 ```
 
-Юниты ожидают готовую развёртку: бинарь в `/usr/local/bin/wedra`, данные в
-`/var/lib/wedra`, файл доверия в `/etc/wedra/wedra-trust.yaml`.
+Юниты ожидают готовую развёртку: бинарь в `/usr/local/bin/fidespipe`, данные в
+`/var/lib/fidespipe`, файл доверия в `/etc/fidespipe/fidespipe-trust.yaml`.
 
-Переменные окружения — в `/etc/wedra/wedra.env` (образец:
-`deploy/systemd/wedra.env.example`); подключается в юните строкой
-`EnvironmentFile=-/etc/wedra/wedra.env`.
+Переменные окружения — в `/etc/fidespipe/fidespipe.env` (образец:
+`deploy/systemd/fidespipe.env.example`); подключается в юните строкой
+`EnvironmentFile=-/etc/fidespipe/fidespipe.env`.
 
 ### Что ужестоено в юнитах
 
 - `NoNewPrivileges` — запрет setuid-поднятия. **Пользовательским пространствам
   bubblewrap он не мешает**: unprivileged userns это отдельный механизм.
-- `ProtectSystem=full` + `ReadWritePaths=/var/lib/wedra` — система read-only,
+- `ProtectSystem=full` + `ReadWritePaths=/var/lib/fidespipe` — система read-only,
   писать можно только в данные.
 - `ProtectHome=read-only` — домашний каталог на чтение.
 - `PrivateTmp` — свой `/tmp`.
@@ -131,10 +131,10 @@ sudo systemctl enable --now wedra wedra-gui
 ## Что проверить после установки
 
 ```bash
-wedra doctor                 # что сломано в окружении
-wedra check                  # полный гейт проекта
-systemctl status wedra       # планировщик жив
-journalctl -u wedra -n 50    # что он делает
+fidespipe doctor                 # что сломано в окружении
+fidespipe check                  # полный гейт проекта
+systemctl status fidespipe       # планировщик жив
+journalctl -u fidespipe -n 50    # что он делает
 ```
 
 И отдельно — **что демон действительно тикает**: после старта он должен создать

@@ -10,7 +10,7 @@ description: >
   JoomScan — инструмент на Perl: донор объявлен в манифесте и ставится вместе
   с плагином (OWASP/joomscan, закреплённый коммит, проверка sha256). Нужен
   интерпретатор perl.
-author: "community · wedra showcase (web security)"
+author: "community · fidespipe showcase (web security)"
 
 runtime:
   type: python

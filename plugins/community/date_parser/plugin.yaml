@@ -2,7 +2,7 @@ id: date_parser
 version: 0.1.1
 platform_api: "^0.1"
 description: "Даты ru/en → проверенный ISO 8601; неоднозначный числовой формат требует lang"
-author: "community · wedra showcase"
+author: "community · fidespipe showcase"
 
 runtime:
   type: python

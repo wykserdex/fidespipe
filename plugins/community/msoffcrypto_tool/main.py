@@ -46,7 +46,7 @@ decrypted_size, tool_version}. file — строка оператора, абс�
     ран попадает путь хоста. Поэтому `out` без каталога кладёт файл во
     временный каталог ОС — и, что важнее, НЕ рядом с main.py: запись внутри
     каталога плагина меняет хэш его содержимого, и следующий запуск получил бы
-    отказ «не в allow-list доверия ядра» (вплоть до красных `wedra plugin test`
+    отказ «не в allow-list доверия ядра» (вплоть до красных `fidespipe plugin test`
     на этом же плагине). Каталог с результатом не убираем: файл должен
     дожить до конца прогона, даже если путь к нему никто не узнает.
   * Сам пароль — ни в выводе, ни в сообщениях об ошибках (в тексте ошибок
@@ -93,8 +93,8 @@ import sys
 
 
 def bail(code, message):
-    sys.stdout.write(json.dumps({"wedra_error": code,
-                                 "wedra_message": message}))
+    sys.stdout.write(json.dumps({"fidespipe_error": code,
+                                 "fidespipe_message": message}))
     sys.exit(1)
 
 
@@ -225,7 +225,7 @@ def parse_json_blob(text):
 
 
 def donor_error(report):
-    if isinstance(report, dict) and report.get("wedra_error") in DONOR_ERRORS:
+    if isinstance(report, dict) and report.get("fidespipe_error") in DONOR_ERRORS:
         return report
     return None
 
@@ -345,11 +345,11 @@ def main():
             # main.py. Причина не в удобстве: запись внутри каталога плагина
             # меняет его хэш содержимого, и следующий же запуск получил бы отказ
             # «не в allow-list доверия ядра» — вплоть до красных
-            # `wedra plugin test` на ровно этом плагине. Каталог не убираем:
+            # `fidespipe plugin test` на ровно этом плагине. Каталог не убираем:
             # путь наружу не отдаётся (см. модульную документацию), а файл
             # должен дожить до конца прогона.
             out_path = os.path.join(
-                tempfile.mkdtemp(prefix="wedra_msoffcrypto_"),
+                tempfile.mkdtemp(prefix="fidespipe_msoffcrypto_"),
                 os.path.basename(out))
 
     cmd = resolve_cmd() + [file_path, out_path]
@@ -377,8 +377,8 @@ def main():
         if proc.returncode != 0:
             marker = donor_error(report)
             if marker:
-                return fail(str(marker["wedra_error"]),
-                            str(marker.get("wedra_message") or target))
+                return fail(str(marker["fidespipe_error"]),
+                            str(marker.get("fidespipe_message") or target))
             tail = (proc.stderr or proc.stdout or "").strip().splitlines()
             last = tail[-1] if tail else "exit %d" % proc.returncode
             return fail("tool_failed",
@@ -393,8 +393,8 @@ def main():
 
     marker = donor_error(report)
     if marker:
-        return fail(str(marker["wedra_error"]),
-                    str(marker.get("wedra_message") or target))
+        return fail(str(marker["fidespipe_error"]),
+                    str(marker.get("fidespipe_message") or target))
     if not isinstance(report, dict):
         return fail("bad_report", "неожиданный формат ответа msoffcrypto-tool",
                     exit_code=2)

@@ -2,7 +2,7 @@
 """Mock донора lief (паттерн C) для контракт-тестов — без пакета lief.
 
 main.py запускает `<LIEF_BIN> <путь к файлу>`; мок печатает в stdout тот же
-JSON, что печатает SNIPPET из main.py (с маркером @@wedra-lief@@ перед ним):
+JSON, что печатает SNIPPET из main.py (с маркером @@fidespipe-lief@@ перед ним):
 format, machine, entrypoint, imagebase, is_pie, has_nx, virtual_size,
 sections[], libraries[], version.
 
@@ -22,7 +22,7 @@ import os
 import sys
 import time
 
-MARK = "@@wedra-lief@@"
+MARK = "@@fidespipe-lief@@"
 
 if os.environ.get("MOCK_SLEEP"):
     time.sleep(float(os.environ["MOCK_SLEEP"]))
@@ -31,16 +31,16 @@ target = sys.argv[1] if len(sys.argv) > 1 else ""
 print("lief mock: разбираю %s" % target, file=sys.stderr)
 
 if os.environ.get("MOCK_UNSUPPORTED") == "1":
-    print(json.dumps({"wedra_error": "unsupported_format",
-                      "wedra_message": "файл не распознан как PE, ELF или Mach-O"}))
+    print(json.dumps({"fidespipe_error": "unsupported_format",
+                      "fidespipe_message": "файл не распознан как PE, ELF или Mach-O"}))
     sys.exit(1)
 if os.environ.get("MOCK_BAD_FILE") == "1":
-    print(json.dumps({"wedra_error": "bad_file",
-                      "wedra_message": "LIEF не смог разобрать файл: corrupted section table"}))
+    print(json.dumps({"fidespipe_error": "bad_file",
+                      "fidespipe_message": "LIEF не смог разобрать файл: corrupted section table"}))
     sys.exit(1)
 if os.environ.get("MOCK_NO_MODULE") == "1":
-    print(json.dumps({"wedra_error": "lief_not_installed",
-                      "wedra_message": "пакет lief не импортируется: No module named 'lief'"}))
+    print(json.dumps({"fidespipe_error": "lief_not_installed",
+                      "fidespipe_message": "пакет lief не импортируется: No module named 'lief'"}))
     sys.exit(1)
 if os.environ.get("MOCK_NO_REPORT") == "1":
     sys.exit(0)

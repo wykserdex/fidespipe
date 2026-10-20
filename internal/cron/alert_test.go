@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Претензия «тестов на алерты: 0» из ревью была верной: fireAlert состоял из

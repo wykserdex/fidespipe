@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 const maxJournalPayloadSize = 16 << 20

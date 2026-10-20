@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // TestWindowsSandboxIsolates — враждебная проверка изолятора на Windows.

@@ -6,7 +6,7 @@ description: >
   ASN, контакты. Обёртка над CLI ipwhois: гоняет `ipwhois_cli --addr <ip> --json`
   и отдаёт разобранный ответ инструмента. Инструмент ставится отдельно:
   pip install ipwhois (скрипт ipwhois_cli кладётся в Scripts вашего окружения).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

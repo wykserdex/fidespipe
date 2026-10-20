@@ -9,7 +9,7 @@ description: >
   env — учётные данные лежат в ~/.malfrats/ghunt/creds.m. Плагин читает
   GHUNT_TOKEN и только пробрасывает переменную в дочерний процесс, не требуя её
   (в объявленных secrets — по факту чтения плагином, не по факту чтения донором).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

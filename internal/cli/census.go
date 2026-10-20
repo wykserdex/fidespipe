@@ -1,6 +1,6 @@
 package cli
 
-// Режим census: `wedra check --census`.
+// Режим census: `fidespipe check --census`.
 //
 // Обычный `go test ./...` на Windows-раннере ведёт себя плохо: пакет, который
 // завис, тянет за собой весь набор, и шаг молчит до джобового таймаута. Здесь
@@ -156,11 +156,11 @@ func tailOf(path string, lines int) string {
 }
 
 // pkgShortName убирает домен и владельца из пути пакета, оставляя имя модуля:
-// github.com/wykserdex/wedra/internal/mcp → wedra/internal/mcp.
+// github.com/wykserdex/fidespipe/internal/mcp → fidespipe/internal/mcp.
 //
-// Это не косметика: раньше имя модуля было ровно "wedra", и весь путь пакета уже
+// Это не косметика: раньше имя модуля было ровно "fidespipe", и весь путь пакета уже
 // читался коротко. После переезда на полный путь модуля (нужный, чтобы работал
-// `go install`) имя файла стало "github.com_wykserdex_wedra_internal_mcp" — а имя
+// `go install`) имя файла стало "github.com_wykserdex_fidespipe_internal_mcp" — а имя
 // шага census (`var/census/<пакет>.txt`) человек читает глазами и ищет в нём
 // пакет, а не репозиторий.
 //

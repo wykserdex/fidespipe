@@ -8,7 +8,7 @@ description: >
   нет (404). Донор объявлен в манифесте и ставится вместе с плагином:
   go install github.com/rverton/webanalyze/cmd/webanalyze@v0.4.6.
   Обёртка гоняет `-host <host> -output json -silent` и разбирает JSON из stdout.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

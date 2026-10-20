@@ -9,7 +9,7 @@ description: >
   pip install droopescan. ВНИМАНИЕ: droopescan не перечисляет уязвимости —
   поле vulns в выходе всегда пустое, сопоставление версии с CVE делает
   пользователь.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

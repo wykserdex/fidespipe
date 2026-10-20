@@ -17,7 +17,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 func TestParseArgs(t *testing.T) {
@@ -115,15 +115,15 @@ func TestNormalizeRepo(t *testing.T) {
 		in   string
 		want string
 	}{
-		{in: "https://github.com/Wykserdex/wedra.git", want: "github.com/wykserdex/wedra"},
-		{in: "http://github.com/Wykserdex/wedra", want: "github.com/wykserdex/wedra"},
-		{in: "git@github.com:wykserdex/wedra.git", want: "github.com/wykserdex/wedra"},
-		{in: "https://github.com/wykserdex/wedra/", want: "github.com/wykserdex/wedra"},
-		{in: "  https://github.com/wykserdex/wedra\n", want: "github.com/wykserdex/wedra"},
+		{in: "https://github.com/Wykserdex/fidespipe.git", want: "github.com/wykserdex/fidespipe"},
+		{in: "http://github.com/Wykserdex/fidespipe", want: "github.com/wykserdex/fidespipe"},
+		{in: "git@github.com:wykserdex/fidespipe.git", want: "github.com/wykserdex/fidespipe"},
+		{in: "https://github.com/wykserdex/fidespipe/", want: "github.com/wykserdex/fidespipe"},
+		{in: "  https://github.com/wykserdex/fidespipe\n", want: "github.com/wykserdex/fidespipe"},
 		// userinfo не нормализуется: двоеточие в кредях съедается раньше, чем
 		// в ssh-форме. Такая строка просто не совпадёт с origin — установка
 		// уйдёт в клон, а не объявит локальный checkout «тем же репозиторием».
-		{in: "https://user:token@github.com/wykserdex/wedra", want: "user/token@github.com/wykserdex/wedra"},
+		{in: "https://user:token@github.com/wykserdex/fidespipe", want: "user/token@github.com/wykserdex/fidespipe"},
 		{in: "", want: ""},
 	}
 	for _, tt := range tests {

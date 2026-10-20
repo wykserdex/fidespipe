@@ -32,7 +32,7 @@ const (
 	defaultPortHTTPS = "443"
 )
 
-// ListenOptions — ровно то, что задал человек флагами `wedra gui`.
+// ListenOptions — ровно то, что задал человек флагами `fidespipe gui`.
 type ListenOptions struct {
 	// Addr — host:port для прослушивания ("127.0.0.1:8765"; порт 0 — любой свободный).
 	Addr string

@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // Конфиг доверия не должен молча приходить из рабочего каталога: этот каталог
 // задаёт не оператор, а тот, кто положил сюда пайплайн. Чужой клон репозитория
-// с приложенным wedra-trust.yaml проходит проверки N3 (владелец — пользователь,
+// с приложенным fidespipe-trust.yaml проходит проверки N3 (владелец — пользователь,
 // права 0644) и расширяет allow-list, то есть выдаёт доверие оператора.
 func TestTrustConfigPathIgnoresWorkingDir(t *testing.T) {
 	dir := t.TempDir()
@@ -35,7 +35,7 @@ func TestTrustConfigPathIgnoresWorkingDir(t *testing.T) {
 
 // Явный путь оператора сильнее всего: и флага, и переменной окружения.
 func TestTrustConfigPathOverrideWins(t *testing.T) {
-	t.Setenv("WEDRA_TRUST_CONFIG", filepath.Join(t.TempDir(), "from-env.yaml"))
+	t.Setenv("FIDESPIPE_TRUST_CONFIG", filepath.Join(t.TempDir(), "from-env.yaml"))
 	if got := trustConfigPath("from-flag.yaml"); got != "from-flag.yaml" {
 		t.Fatalf("trustConfigPath(override) = %q", got)
 	}
@@ -45,16 +45,16 @@ func TestTrustConfigPathOverrideWins(t *testing.T) {
 // другого языка, обёртка поверх бинаря.
 func TestTrustConfigPathFromEnv(t *testing.T) {
 	envPath := filepath.Join(t.TempDir(), "from-env.yaml")
-	t.Setenv("WEDRA_TRUST_CONFIG", envPath)
+	t.Setenv("FIDESPIPE_TRUST_CONFIG", envPath)
 	if got := trustConfigPath(""); got != envPath {
-		t.Fatalf("trustConfigPath(\"\") = %q, ожидался %q из WEDRA_TRUST_CONFIG", got, envPath)
+		t.Fatalf("trustConfigPath(\"\") = %q, ожидался %q из FIDESPIPE_TRUST_CONFIG", got, envPath)
 	}
 }
 
 // Пустой путь = «конфига нет», а не путь в текущий каталог. Иначе
 // LoadTrustConfig снова уехал бы в чужой cwd.
 func TestTrustConfigPathIsAbsoluteOrEmpty(t *testing.T) {
-	t.Setenv("WEDRA_TRUST_CONFIG", "")
+	t.Setenv("FIDESPIPE_TRUST_CONFIG", "")
 	t.Chdir(t.TempDir())
 	got := trustConfigPath("")
 	if got == "" {

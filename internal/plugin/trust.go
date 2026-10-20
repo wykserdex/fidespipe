@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Политика доверия к коду плагина. Плагин приходит извне (community registry,

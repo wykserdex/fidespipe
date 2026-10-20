@@ -53,7 +53,7 @@ func renderFiles(skel skeleton, res Result) []generatedFile {
 // ответа) повторяет шаблон internal/core/plugincreate.go: два генератора
 // обязаны выглядеть родными, иначе человек, читавший один, не узнает другой.
 const mainPyTemplate = `#!/usr/bin/env python3
-"""{{ID}} — адаптер плагина WEDRA для чужого Python-проекта.
+"""{{ID}} — адаптер плагина Fidespipe для чужого Python-проекта.
 
 СГЕНЕРИРОВАНО ИМПОРТЁРОМ. Это СКЕЛЕТ, а не работающий плагин: он умеет
 поставить модуль донора на sys.path и загрузить из него функцию, но НЕ умеет
@@ -86,7 +86,7 @@ import sys
 
 # ── что записал импортёр ────────────────────────────────────────────────────
 # DONOR_ROOT — каталог проекта-донора, который добавляется в sys.path.
-# Он переопределяется переменной окружения WEDRA_DONOR_ROOT: путь к каталогу
+# Он переопределяется переменной окружения FIDESPIPE_DONOR_ROOT: путь к каталогу
 # у каждого своя, а хранить его в манифесте нельзя (схема не имеет такого
 # поля), и зашитый абсолютный путь с чужой машины — тоже враньё, поэтому в
 # этом файле он честно помечен как «записан при генерации».
@@ -131,13 +131,13 @@ def donor_root():
     «src» значил бы совсем другое. Тихий переход в cwd дал бы обрывок чужого
     пакета вместо понятного отказа.
     """
-    root = os.environ.get("WEDRA_DONOR_ROOT") or DONOR_ROOT
+    root = os.environ.get("FIDESPIPE_DONOR_ROOT") or DONOR_ROOT
     if not root:
         return None, ("каталог донора не задан: впишите DONOR_ROOT в этот файл "
-                      "или задайте WEDRA_DONOR_ROOT при запуске")
+                      "или задайте FIDESPIPE_DONOR_ROOT при запуске")
     if not os.path.isabs(root):
         return None, ("каталог донора %s записан относительным, а плагин запускается из своей "
-                      "папки: укажите абсолютный путь в DONOR_ROOT или через WEDRA_DONOR_ROOT" % root)
+                      "папки: укажите абсолютный путь в DONOR_ROOT или через FIDESPIPE_DONOR_ROOT" % root)
     return root, None
 
 
@@ -240,7 +240,7 @@ func renderMainPy(skel skeleton) string {
 // не проверяет работу донора: вызова нет, и тест, который бы его проверял,
 // был бы написанием несуществующего ожидания.
 func renderTests() string {
-	return `# Контракт-тесты сгенерированного скелета. Прогон: wedra plugin test <эта папка>
+	return `# Контракт-тесты сгенерированного скелета. Прогон: fidespipe plugin test <эта папка>
 #
 # Здесь ровно три кейса, и все три проверяют СКЕЛЕТ, а не донора: вызова
 # функции донора в адаптере ещё нет, и тест, ждущий её ответа, был бы
@@ -271,7 +271,7 @@ tests:
       # и различать их должен текст сообщения, а не этот тест.
 
 # Полезные матчеры: { present: true } { absent: true } { contains: "..." } { type: "array" }
-# env: { KEY: "value" } — переменные на время теста (WEDRA_DONOR_ROOT здесь и
+# env: { KEY: "value" } — переменные на время теста (FIDESPIPE_DONOR_ROOT здесь и
 # пригодится: указать плагину каталог донора, не переписывая файл)
 # input_raw: "{oops"   — сырой stdin, для тестов битого JSON (ожидайте exit 2)
 `
@@ -331,11 +331,11 @@ func renderReadme(skel skeleton, res Result) string {
 	if skel.donorRoot != "" {
 		b.WriteString("В main.py записан `DONOR_ROOT` = " + skel.donorRoot + " — путь, который был ")
 		b.WriteString("у донора в момент генерации. Если проект лежит в другом месте, задайте ")
-		b.WriteString("переменную окружения WEDRA_DONOR_ROOT или поправьте константу вручную; ")
+		b.WriteString("переменную окружения FIDESPIPE_DONOR_ROOT или поправьте константу вручную; ")
 		b.WriteString("относительный путь плагин не принимает.\n\n")
 	} else {
 		b.WriteString("Каталог донора неизвестен: впишите `DONOR_ROOT` в main.py (абсолютный путь ")
-		b.WriteString("к каталогу, где лежит пакет) или задайте WEDRA_DONOR_ROOT при запуске.\n\n")
+		b.WriteString("к каталогу, где лежит пакет) или задайте FIDESPIPE_DONOR_ROOT при запуске.\n\n")
 	}
 	if skel.donorEntry != "" {
 		b.WriteString("Точка входа донора: " + skel.donorEntry + ". ")
@@ -348,8 +348,8 @@ func renderReadme(skel skeleton, res Result) string {
 	b.WriteString("# 1. написать вызов донора в main.py вместо отказа\n")
 	b.WriteString("# 2. переименовать порты в plugin.yaml под реальные данные\n")
 	b.WriteString("# 3. и только потом — прогон:\n")
-	b.WriteString("wedra plugin test " + skel.id + "       # контракт-тесты\n")
-	b.WriteString("wedra plugin validate " + skel.id + "   # проверка манифеста\n")
+	b.WriteString("fidespipe plugin test " + skel.id + "       # контракт-тесты\n")
+	b.WriteString("fidespipe plugin validate " + skel.id + "   # проверка манифеста\n")
 	b.WriteString(readmeFence + "\n\n")
 	b.WriteString("Протокол и правила контракта: protocol/v0.2/PROTOCOL.md в корне репозитория.\n")
 	return b.String()

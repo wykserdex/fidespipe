@@ -9,7 +9,7 @@ description: >
   отчёт только текстовый в stdout. Эксплуатация (--os-cmd/--os-shell/
   --upload/--download/--bind-shell) не включается никогда — только детект.
   Инструмент ставится отдельно из исходников (см. README плагина).
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

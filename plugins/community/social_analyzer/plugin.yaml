@@ -7,7 +7,7 @@ description: >
   гоняет --output json, разбирает машинный JSON из stdout, а если он не
   распознан — текстовые строки «[*] Found: …». Ставится отдельно:
   pip install social-analyzer.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

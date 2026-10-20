@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Аргументы bwrap проверяются без запуска: на CI-раннерах user namespaces могут
@@ -103,7 +103,7 @@ func TestLinuxSandboxBlocksPluginDirWrite(t *testing.T) {
 // Сеть изолируется ВСЕГДА. Это регрессия на дыру шире, чем «нефильтрованный
 // egress»: при объявленном any_host песочница раньше делила netns с хостом, и
 // недоверенный плагин доставал сервисы хоста на 127.0.0.1, включая HTTP API
-// WEDRA. Теперь netns отдельный всегда, а выход наружу (если объявлен) даёт
+// Fidespipe. Теперь netns отдельный всегда, а выход наружу (если объявлен) даёт
 // userspace-стек — см. attach.
 func TestLinuxSandboxAlwaysIsolatesNetwork(t *testing.T) {
 	cases := []struct {

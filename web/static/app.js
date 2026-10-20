@@ -1,4 +1,4 @@
-// v0.22 — консоль WEDRA: раны, live-терминал, контекст, DAG.
+// v0.22 — консоль Fidespipe: раны, live-терминал, контекст, DAG.
 // Без внешних зависимостей (офлайн: всё встроено).
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"'`]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
@@ -32,8 +32,8 @@ async function api(path, opts = {}) {
   const body = ct.includes('json') ? await r.json() : await r.text();
   if (!r.ok) {
     // H4: 401 — нет сессии человека. Cookie ставится обменом одноразового кода
-    // из терминала wedra; показываем поле ввода, а не текст в консоли.
-    if (r.status === 401) { sessionOverlay(); throw new Error('нет сессии: нужен одноразовый код из терминала wedra'); }
+    // из терминала fidespipe; показываем поле ввода, а не текст в консоли.
+    if (r.status === 401) { sessionOverlay(); throw new Error('нет сессии: нужен одноразовый код из терминала fidespipe'); }
     // 400 {issues} — валидация до запуска: показываем коды, а не сырой JSON
     if (body && Array.isArray(body.issues)) {
       const errs = body.issues.filter(i => i.severity === 'error');
@@ -46,26 +46,26 @@ async function api(path, opts = {}) {
 
 // ── H4: сессия человека ──────────────────────────────────────────────────
 // Всё под /api/* (кроме /api/health) требует cookie. Cookie выдаётся обменом
-// ОДНОРАЗОВОГО кода, напечатанного в терминале, где запущен wedra. Пока cookie
+// ОДНОРАЗОВОГО кода, напечатанного в терминале, где запущен fidespipe. Пока cookie
 // нет, страница показывает поле ввода кода вместо пустых списков: тот же путь,
-// что и у `wedra gui --open` (там код едет в ссылке ?c= и ставит cookie сразу).
+// что и у `fidespipe gui --open` (там код едет в ссылке ?c= и ставит cookie сразу).
 function sessionOverlay() {
-  if (document.getElementById('wedra-session-box')) return;
+  if (document.getElementById('fidespipe-session-box')) return;
   const box = document.createElement('div');
-  box.id = 'wedra-session-box';
-  // стили — в index.html (#wedra-session-box): разметка не тащит цвета в JS
+  box.id = 'fidespipe-session-box';
+  // стили — в index.html (#fidespipe-session-box): разметка не тащит цвета в JS
   box.innerHTML =
     '<div class="sbox">' +
-    '<h2>Вход в WEDRA</h2>' +
-    '<p>Код входа одноразовый и напечатан в терминале, где запущен wedra. Он нужен один раз: ' +
+    '<h2>Вход в Fidespipe</h2>' +
+    '<p>Код входа одноразовый и напечатан в терминале, где запущен fidespipe. Он нужен один раз: ' +
     'обменяется на cookie, и страница перезагрузится сама.</p>' +
-    '<input id="wedra-code" placeholder="XXXX-XXXX-XXXX" autocomplete="off"/>' +
-    '<div id="wedra-code-err" class="serr"></div>' +
-    '<button id="wedra-code-go">Войти</button>' +
+    '<input id="fidespipe-code" placeholder="XXXX-XXXX-XXXX" autocomplete="off"/>' +
+    '<div id="fidespipe-code-err" class="serr"></div>' +
+    '<button id="fidespipe-code-go">Войти</button>' +
     '</div>';
   document.body.appendChild(box);
-  const input = box.querySelector('#wedra-code');
-  const err = box.querySelector('#wedra-code-err');
+  const input = box.querySelector('#fidespipe-code');
+  const err = box.querySelector('#fidespipe-code-err');
   const submit = async () => {
     const code = input.value.trim();
     if (!code) return;
@@ -78,14 +78,14 @@ function sessionOverlay() {
     err.textContent = d.error || 'код не подошёл';
     input.select();
   };
-  box.querySelector('#wedra-code-go').onclick = submit;
+  box.querySelector('#fidespipe-code-go').onclick = submit;
   input.onkeydown = e => { if (e.key === 'Enter') submit(); };
   input.focus();
 }
 
-// wedraSession — можно ли работать. Сессия выключена (--no-session) или уже
+// fidespipeSession — можно ли работать. Сессия выключена (--no-session) или уже
 // есть — сразу true; иначе показываем поле кода и ждём перезагрузки.
-async function wedraSession() {
+async function fidespipeSession() {
   let st = null;
   try { st = await (await fetch('/api/session')).json(); } catch (e) { return true; }
   if (!st || !st.required || st.authenticated) return true;
@@ -109,7 +109,7 @@ async function wedraSession() {
 
 // Последний открытый пайплайн: помним между сессиями. Ключ с версией схемы,
 // иначе смена формата сделала бы старое значение нечитаемым молча.
-const LAST_PIPELINE_KEY = 'wedra.lastPipeline.v1';
+const LAST_PIPELINE_KEY = 'fidespipe.lastPipeline.v1';
 
 function rememberPipeline(file) {
   if (!file) return;
@@ -237,7 +237,7 @@ async function saveSchedule(file, yaml, sched) {
 
 // enterLastPipeline — увести в редактор последнего пайплайна.
 //
-// Переход идёт через sessionStorage 'wedra.open': это тот же способ, которым
+// Переход идёт через sessionStorage 'fidespipe.open': это тот же способ, которым
 // режим артефактов открывает собранный пайплайн в редакторе (см.
 // editor/app.js), то есть второй способ открытия не появляется.
 //
@@ -247,7 +247,7 @@ async function saveSchedule(file, yaml, sched) {
 function enterLastPipeline() {
   const file = lastPipeline();
   if (file && state.pipelines.some(p => p.file === file)) {
-    try { sessionStorage.setItem('wedra.open', file); } catch (e) { /* приватный режим */ }
+    try { sessionStorage.setItem('fidespipe.open', file); } catch (e) { /* приватный режим */ }
     location.href = '/editor/';
     return;
   }
@@ -270,33 +270,33 @@ function enterLastPipeline() {
 // CLI этот список надо синхронизировать — копия, автопоиска здесь быть не может.
 const CLI_COMMANDS = [
   ['Сценарии', [
-    'wedra pipeline run <file.yaml> [--yes] [--resume=<run_id>]',
-    'wedra pipeline install <name|file.yaml|url>',
-    'wedra pipeline validate <file.yaml> [--json]',
-    'wedra pipeline plan <file.yaml>',
-    'wedra pipeline lint <file.yaml>',
+    'fidespipe pipeline run <file.yaml> [--yes] [--resume=<run_id>]',
+    'fidespipe pipeline install <name|file.yaml|url>',
+    'fidespipe pipeline validate <file.yaml> [--json]',
+    'fidespipe pipeline plan <file.yaml>',
+    'fidespipe pipeline lint <file.yaml>',
   ]],
   ['Плагины', [
-    'wedra plugin install <name>[@version]',
-    'wedra plugin validate <dir>',
-    'wedra plugin test <dir> [--conformance]',
-    'wedra plugin create <dir>',
-    'wedra plugin inspect <dir>',
-    'wedra plugin search <query>',
-    'wedra plugin list',
+    'fidespipe plugin install <name>[@version]',
+    'fidespipe plugin validate <dir>',
+    'fidespipe plugin test <dir> [--conformance]',
+    'fidespipe plugin create <dir>',
+    'fidespipe plugin inspect <dir>',
+    'fidespipe plugin search <query>',
+    'fidespipe plugin list',
   ]],
   ['Прогоны и консоль', [
-    'wedra runs list [var/runs]',
-    'wedra runs show <run_id> [var/runs]',
-    'wedra runs resume <run_id> <pipeline.yaml>',
-    'wedra gui [--listen 127.0.0.1:8765] [--open]',
-    'wedra approve <run_id> <step_id>',
+    'fidespipe runs list [var/runs]',
+    'fidespipe runs show <run_id> [var/runs]',
+    'fidespipe runs resume <run_id> <pipeline.yaml>',
+    'fidespipe gui [--listen 127.0.0.1:8765] [--open]',
+    'fidespipe approve <run_id> <step_id>',
   ]],
   ['Диагностика', [
-    'wedra doctor [--json] [--plugins=<dir>]',
-    'wedra check [--list|--fast|--census]',
-    'wedra demo [--runs-dir=<dir>]',
-    'wedra mcp --plugins=<dir>',
+    'fidespipe doctor [--json] [--plugins=<dir>]',
+    'fidespipe check [--list|--fast|--census]',
+    'fidespipe demo [--runs-dir=<dir>]',
+    'fidespipe mcp --plugins=<dir>',
   ]],
 ];
 const CLI_DOCS = [
@@ -326,13 +326,13 @@ function wireRail() {
   on('#mode-editor', () => {
     const file = state.currentPipe || lastPipeline();
     if (file) {
-      try { sessionStorage.setItem('wedra.open', file); } catch (e) { /* приватный */ }
+      try { sessionStorage.setItem('fidespipe.open', file); } catch (e) { /* приватный */ }
     }
     location.href = '/editor/';
   });
   on('#rail-new', () => {
     setTab('pipelines');
-    try { sessionStorage.setItem('wedra.open', ''); } catch (e) { /* приватный */ }
+    try { sessionStorage.setItem('fidespipe.open', ''); } catch (e) { /* приватный */ }
     location.href = '/editor/';
   });
   // Помощь и «Что нового» — настоящие панели, см. CLI_COMMANDS выше.
@@ -345,7 +345,7 @@ function wireRail() {
       + '</div>').join('')
       + '<div class="hb-g"><b>Документация в репозитории</b>'
       + CLI_DOCS.map(p => `<span class="hb-path">${esc(p)}</span>`).join('')
-      + '<p class="pf-hint">Полный список с флагами — <code>wedra --help</code> '
+      + '<p class="pf-hint">Полный список с флагами — <code>fidespipe --help</code> '
       + 'в терминале.</p></div>';
   }));
   on('#rail-whatsnew', () => wireSheet('#newsbox', () => {
@@ -456,7 +456,7 @@ function setRailCounts(pipelines, plugins) {
 // ── header ───────────────────────────────────────────────────────────────
 async function init() {
   // H4: без сессии /api/* закрыт, поэтому сначала вход, потом интерфейс
-  if (!await wedraSession()) return;
+  if (!await fidespipeSession()) return;
   try {
     const h = await api('/api/health');
     $('#ver').textContent = 'v' + h.version;
@@ -702,8 +702,8 @@ async function runPreset(file) {
   const sel = $('#run-select');
   if (sel && ![...sel.options].some(o => o.value === file)) {
     // файла нет рядом — честно говорим, вместо того чтобы молча ничего не
-    // сделать: пресет из реестра ставится через `wedra pipeline install`.
-    $('#run-status').textContent = `файла ${file} нет в каталоге пайплайнов — поставь: wedra pipeline install <имя>`;
+    // сделать: пресет из реестра ставится через `fidespipe pipeline install`.
+    $('#run-status').textContent = `файла ${file} нет в каталоге пайплайнов — поставь: fidespipe pipeline install <имя>`;
     return;
   }
   if (sel) sel.value = file;
@@ -1411,7 +1411,7 @@ async function openPipeline(file) {
                 <span class="badge">Telegram: <input id="sched-tg" placeholder="telegram_notifier / @channel" value="${esc(sched && sched.alerts && sched.alerts.on_waiting ? sched.alerts.on_waiting : 'telegram_notifier')}" style="background:transparent;border:none;color:var(--bone);width:140px;font-size:11px"/></span>
                 <span class="badge">Webhook: <input id="sched-hook" placeholder="https://..." value="${esc(sched && sched.alerts && sched.alerts.webhook ? sched.alerts.webhook : '')}" style="background:transparent;border:none;color:var(--bone);width:160px;font-size:11px"/></span>
               </div>
-              <div class="hint">Отправится плагином: ставишь рана в wait → в Telegram прилетит «⏸ {pipeline} ждет апрува · wedra approve {run_id}»</div>
+              <div class="hint">Отправится плагином: ставишь рана в wait → в Telegram прилетит «⏸ {pipeline} ждет апрува · fidespipe approve {run_id}»</div>
             </div>
           </div>
           <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
@@ -1421,7 +1421,7 @@ async function openPipeline(file) {
             <span style="font-size:11px;color:var(--faint)">var/runs у тебя · next: <b id="sched-next2" style="color:var(--acc)">—</b></span>
           </div>
         </div>
-        <div id="sched-solo-hint" style="display:${sched ? 'none' : 'block'};margin-top:10px" class="hint">Соло: жмёшь Запустить руками или <code>wedra pipeline run</code>. Для дебага. Включи «По расписанию» — cron + human_gate + алерты появятся здесь, в YAML добавится блок <code>schedule:</code>.</div>
+        <div id="sched-solo-hint" style="display:${sched ? 'none' : 'block'};margin-top:10px" class="hint">Соло: жмёшь Запустить руками или <code>fidespipe pipeline run</code>. Для дебага. Включи «По расписанию» — cron + human_gate + алерты появятся здесь, в YAML добавится блок <code>schedule:</code>.</div>
       </div>
     </div>
     <div class="card" style="margin-bottom:16px">

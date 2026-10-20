@@ -8,11 +8,11 @@
 #
 # Четыре личности, которые не твои:
 #   opencode <agent@opencode.dev>        — коммит 5e7b0ac
-#   wedra-review <review@wedra.local>    — коммит 8c321e9
+#   fidespipe-review <review@fidespipe.local>    — коммит 8c321e9
 #   wykse <osxhrx@gmail.com>             — три ранних коммита
 #   wykserdex <wykserdex@users.noreply.github.com> — без цифрового префикса,
 #                                            это НЕ тот же адрес, что основной
 opencode <agent@opencode.dev> wykserdex <246888851+wykserdex@users.noreply.github.com>
-wedra-review <review@wedra.local> wykserdex <246888851+wykserdex@users.noreply.github.com>
+fidespipe-review <review@fidespipe.local> wykserdex <246888851+wykserdex@users.noreply.github.com>
 wykse <osxhrx@gmail.com> wykserdex <246888851+wykserdex@users.noreply.github.com>
 wykserdex <wykserdex@users.noreply.github.com> wykserdex <246888851+wykserdex@users.noreply.github.com>

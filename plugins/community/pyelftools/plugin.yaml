@@ -10,7 +10,7 @@ description: >
   (паттерн C). Фикстуры в fixtures/ собраны скриптом make_elf.py и проверены
   тремя независимыми разборщиками: readelf (binutils), pyelftools и LIEF.
   Пин: pip install pyelftools==0.33
-author: "community · wedra showcase (reverse engineering)"
+author: "community · fidespipe showcase (reverse engineering)"
 
 runtime:
   type: python

@@ -1,7 +1,7 @@
-# wedra mcp — контрактный исполнитель для LLM-агентов
+# fidespipe mcp — контрактный исполнитель для LLM-агентов
 
-Агент предлагает план → wedra проверяет до запуска → опасные шаги ждут решения
-человека → wedra исполняет и ведёт журнал. Шаги без заявленных опасных прав
+Агент предлагает план → fidespipe проверяет до запуска → опасные шаги ждут решения
+человека → fidespipe исполняет и ведёт журнал. Шаги без заявленных опасных прав
 (сеть, запись на диск, чтение секретов) выполняются без гейта — иначе правило
 запрещало бы агенту полезную работу.
 
@@ -76,8 +76,8 @@ Esc или запрос оборвался. Без этого отменённы
 ## Запуск
 
 ```bash
-go build -o wedra ./cmd/wedra
-wedra mcp --plugins /abs/path/plugins --workdir /abs/path/project
+go build -o fidespipe ./cmd/fidespipe
+fidespipe mcp --plugins /abs/path/plugins --workdir /abs/path/project
 ```
 
 - `--plugins <dir>` — repeatable, корни плагинов.
@@ -106,14 +106,14 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/path/project
 
 ## Гейты: как человек одобряет шаг агента
 
-`wedra mcp` поднимает **консоль гейтов** — HTTP на `127.0.0.1:<случайный порт>`
+`fidespipe mcp` поднимает **консоль гейтов** — HTTP на `127.0.0.1:<случайный порт>`
 (`--gui-listen=host:port`) с сессией человека. Вход в консоль — по
 **одноразовому коду**: cookie сессии живёт только в памяти процесса, а код
 обменивается на неё один раз.
 
 1. Ран агента доходит до `human_gate` → `get_run` отдаёт `waiting_human` +
    `pending_gate{step,form,actions}`.
-2. wedra открывает браузер человека на `/?run=<id>&c=<код>` (один раз на
+2. fidespipe открывает браузер человека на `/?run=<id>&c=<код>` (один раз на
    гейт). Код обменивается на HttpOnly cookie, после чего redirect без `c`.
    С `--no-open` или `--print-link` ссылка с кодом печатается в stderr
    MCP-процесса (лог клиента): там она живёт 10 минут и обменивается один раз.
@@ -124,12 +124,12 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/path/project
    `gate_decision{source:"gui", session:<хэш>}`, ран продолжается.
 
 `--gui-listen` на не-loopback адресе отвергается: внешний доступ к решениям
-человека должен быть сказан явно (`wedra gui --allow-remote --public-host=…`).
+человека должен быть сказан явно (`fidespipe gui --allow-remote --public-host=…`).
 
 Модель угроз: код/cookie защищают от агента и любых процессов, которые умеют
 только слать HTTP на локальный порт. Они не защищают от процесса, который
 читает stderr MCP-клиента, экран или профиль браузера того же пользователя.
-Для этого нужна отдельная ОС-учётка или `wedra approve` в TTY: команда лишь
+Для этого нужна отдельная ОС-учётка или `fidespipe approve` в TTY: команда лишь
 подтверждает намерение человека и показывает защищённый API-вызов; окончательное
 решение всё равно отправляет человек из GUI/API с сессией.
 
@@ -140,11 +140,11 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/path/project
 ## Гейт через диалог клиента (`elicitation/create`)
 
 Ревизия 2025-06-18 даёт серверу стандартный способ спросить человека через
-интерфейс клиента. С флагом `--gate-elicitation` wedra показывает форму гейта
+интерфейс клиента. С флагом `--gate-elicitation` fidespipe показывает форму гейта
 диалогом MCP-клиента, а не только в собственной консоли:
 
 ```bash
-wedra mcp --plugins /abs/path/plugins --workdir /abs/project --gate-elicitation
+fidespipe mcp --plugins /abs/path/plugins --workdir /abs/project --gate-elicitation
 ```
 
 Условия, при которых гейт идёт этим путём (все три обязательны):
@@ -156,7 +156,7 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/project --gate-elicitation
 Не выполнено хоть одно — работает консоль, а без консоли ран отклоняется
 (`E_NO_HUMAN_CHANNEL`), как и раньше.
 
-Почему флаг, а не «включено, если клиент умеет». wedra **не может проверить,
+Почему флаг, а не «включено, если клиент умеет». fidespipe **не может проверить,
 что за клиентом сидит человек**: автономный хост вправе ответить сам. Доверие
 каналу выдаёт оператор, который знает свой клиент, — а имя решения в журнале
 остаётся честным: `gate_decision{source:"mcp_elicitation"}` отличается и от
@@ -183,7 +183,7 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/project --gate-elicitation
 
 Решения гейтов через MCP **агенту недоступны никогда**: у агента нет инструмента
 одобрения, он лишь передаёт запрос человека. `get_run` в `waiting_human`
-возвращает «попросите пользователя одобрить шаг X в окне wedra» (а с
+возвращает «попросите пользователя одобрить шаг X в окне fidespipe» (а с
 `--gate-elicitation` человек видит диалог прямо в клиенте — см. ниже).
 Для раннов из MCP `AllowAutoApprove=false` всегда, независимо от YAML.
 
@@ -218,7 +218,7 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/project --gate-elicitation
 Выключен по умолчанию, включается флагом при запуске:
 
 ```bash
-wedra mcp --plugins /abs/path/plugins --workdir /abs/path/project --allow-agent-exec
+fidespipe mcp --plugins /abs/path/plugins --workdir /abs/path/project --allow-agent-exec
 ```
 
 | Флаг | Что разрешает |
@@ -271,24 +271,24 @@ wedra mcp --plugins /abs/path/plugins --workdir /abs/path/project --allow-agent-
 Claude Desktop (`claude_desktop_config.json`):
 
 ```json
-{"mcpServers": {"wedra": {"command": "wedra", "args": ["mcp", "--plugins", "/abs/path/plugins", "--workdir", "/abs/path/project"]}}}
+{"mcpServers": {"fidespipe": {"command": "fidespipe", "args": ["mcp", "--plugins", "/abs/path/plugins", "--workdir", "/abs/path/project"]}}}
 ```
 
 Claude Code (`.mcp.json` или `--mcp-config`):
 
 ```json
-{"mcpServers": {"wedra": {"command": "wedra", "args": ["mcp", "--plugins", "/abs/path/plugins", "--workdir", "/abs/path/project"]}}}
+{"mcpServers": {"fidespipe": {"command": "fidespipe", "args": ["mcp", "--plugins", "/abs/path/plugins", "--workdir", "/abs/path/project"]}}}
 ```
 
 Cursor (`~/.cursor/mcp.json`):
 
 ```json
-{"mcpServers": {"wedra": {"command": "wedra", "args": ["mcp", "--plugins", "/abs/path/plugins", "--workdir", "/abs/path/project"]}}}
+{"mcpServers": {"fidespipe": {"command": "fidespipe", "args": ["mcp", "--plugins", "/abs/path/plugins", "--workdir", "/abs/path/project"]}}}
 ```
 
 Проверка через MCP Inspector:
 
 ```bash
-npx @modelcontextprotocol/inspector wedra mcp --plugins ./plugins --workdir .
+npx @modelcontextprotocol/inspector fidespipe mcp --plugins ./plugins --workdir .
 # initialize → tools/list → validate → run → get_run
 ```

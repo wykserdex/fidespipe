@@ -8,7 +8,7 @@ description: >
   инструмента нет). Требуется API-ключ Hunter — его читает сам инструмент из
   env HUNTER_API_KEY, плагин ключ не проверяет. Ставится отдельно:
   pip install emailfinder.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

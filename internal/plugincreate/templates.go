@@ -183,7 +183,7 @@ func TemplateNames() []string {
 // CLI и интерфейсом.
 func ListTemplates() string {
 	var b strings.Builder
-	b.WriteString("Шаблоны `wedra plugin create --template=<имя>`:\n\n")
+	b.WriteString("Шаблоны `fidespipe plugin create --template=<имя>`:\n\n")
 	ts := templateRegistry()
 	for _, t := range ts {
 		params := "без параметров"
@@ -213,7 +213,7 @@ func patternOr(opts CreateOptions, def string) string {
 
 // sharedPrelude — общая часть Python-тела: протокол конверта и ok/fail.
 // Дублируется в каждом шаблоне намеренно: у сгенерированного плагина не должно
-// быть зависимостей и импортов из репозитория WEDRA.
+// быть зависимостей и импортов из репозитория Fidespipe.
 const sharedPrelude = `def ok(output):
     print(json.dumps({"status": "ok", "output": output}, ensure_ascii=False))
     return 0
@@ -246,7 +246,7 @@ func manifestFor(id, desc, author, inputYaml, outputYaml string) string {
 	if author == "" {
 		authorLine = "author: " + yamlQuote("TODO")
 	}
-	return `# Сгенерировано: wedra plugin create --template
+	return `# Сгенерировано: fidespipe plugin create --template
 # Контракт с ядром: protocol/v0.2/PROTOCOL.md
 id: ` + id + `
 version: 0.1.0
@@ -464,7 +464,7 @@ if __name__ == "__main__":
 # Параметры заданы свои, поэтому точный результат подмены генератор
 # вычислить не мог: неизвестно, что совпадёт с вашей регуляркой. Проверка
 # выше поэтому проверяет только форму. Ужестотите её:
-#   wedra plugin test ` + id + `
+#   fidespipe plugin test ` + id + `
 # и подставьте в поле text ожидаемую строку, а в replacements — число.
 `
 	}
@@ -581,7 +581,7 @@ if __name__ == "__main__":
 		tail = `
 # Своя регулярка: генератор не знает, что с ней совпадёт, поэтому проверка
 # выше смотрит только на форму ответа. Добавьте свой случай с числами:
-#   wedra plugin test ` + id + `
+#   fidespipe plugin test ` + id + `
 `
 	}
 	tests := `# Контракт-тесты (--template=line-filter).
@@ -737,7 +737,7 @@ def main():
         import smtplib; from email.mime.text import MIMEText
         port = int(os.environ.get("SMTP_PORT") or "587")
         user = os.environ.get("SMTP_USER"); pwd = os.environ.get("SMTP_PASS")
-        msg = MIMEText(body); msg["Subject"]=subj; msg["From"]=user or "noreply@wedra.local"; msg["To"]=to
+        msg = MIMEText(body); msg["Subject"]=subj; msg["From"]=user or "noreply@fidespipe.local"; msg["To"]=to
         s = smtplib.SMTP(host, port, timeout=10); s.starttls()
         if user and pwd: s.login(user, pwd)
         s.send_message(msg); s.quit()
@@ -905,8 +905,8 @@ func compileCheck(pat string) (string, error) {
 func generatedReadme(id, desc, body, tail string) string {
 	return "# " + id + "\n\n" + desc + "\n\n" + body + "\n\n## Цикл разработки\n\n" +
 		"```bash\n" +
-		"wedra plugin test " + id + "        # контракт-тесты\n" +
-		"wedra plugin validate " + id + "    # проверка манифеста\n" +
+		"fidespipe plugin test " + id + "        # контракт-тесты\n" +
+		"fidespipe plugin validate " + id + "    # проверка манифеста\n" +
 		"```\n" + tail +
 		"\nПлагин ничего не заявляет в permissions: ни сети, ни файлов, ни секретов.\n"
 }

@@ -14,7 +14,7 @@ description: >
   Второй пин обязателен: py-altdns 1.0.2 импортирует `tldextract.tldextract.LOG`,
   а в tldextract 5.0 этот символ удалён, и донор падает на ImportError ещё до
   argparse (проверено на tldextract 5.4.0: exit 1, traceback).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

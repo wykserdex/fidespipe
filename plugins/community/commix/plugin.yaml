@@ -9,7 +9,7 @@ description: >
   включается никогда — только детект и JSON-репорт (--report-json). Нужен
   commix из ветки master (см. README плагина): --report-json появился после
   последнего тега v4.1, релиз 4.2 не вышел.
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

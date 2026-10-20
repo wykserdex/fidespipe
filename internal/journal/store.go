@@ -16,7 +16,7 @@ func DefaultRunsDir() string {
 }
 
 // DefaultRunsDirAt — каталог прогонов по умолчанию относительно base: это
-// base/var/runs, а если такого каталога нет — base/runs. Вне репозитория WEDRA
+// base/var/runs, а если такого каталога нет — base/runs. Вне репозитория Fidespipe
 // каталога var/ обычно не существует, и без фолбэка ран писался в runs/, пока
 // команды чтения искали строго var/runs.
 //

@@ -14,7 +14,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/runctx"
+	"github.com/wykserdex/fidespipe/internal/runctx"
 )
 
 // Контракт режимов проверяется на любой платформе, потому что на Windows

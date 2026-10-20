@@ -20,7 +20,7 @@
   `recon/domains-hosts/ssl_san`, `recon/domains-hosts/mx_spf_ip`,
   `recon/ports-hosts/ssl_scan`. Модули с `required_keys` (shodan, github, censys,
   hibp и т.п.) по умолчанию не берутся.
-- **Воркспейс.** Прогон идёт в `~/.recon-ng/workspaces/wedra_<hash цели>`, он
+- **Воркспейс.** Прогон идёт в `~/.recon-ng/workspaces/fidespipe_<hash цели>`, он
   создаётся на каждый запуск и удаляется после — состояние не копится. Поэтому
   в манифесте `filesystem: readwrite`.
 - **Отчёт.** Модуль `reporting/json` пишет `results.json`; плагин задаёт ему

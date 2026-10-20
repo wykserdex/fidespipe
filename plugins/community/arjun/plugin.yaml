@@ -6,7 +6,7 @@ description: >
   Обёртка над CLI arjun: работает только по одной явно заданной цели, JSON-репорт
   (-oJ) разбирается в список найденных параметров. Arjun ставится отдельно:
   pip install arjun.
-author: "community · wedra showcase (web security)"
+author: "community · fidespipe showcase (web security)"
 
 runtime:
   type: python

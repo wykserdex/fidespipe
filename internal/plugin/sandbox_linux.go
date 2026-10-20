@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // Linux backend: bubblewrap. Требует непривилегированных user namespaces.
@@ -28,7 +28,7 @@ import (
 // Раньше netns добавлялся только когда плагин сеть не объявлял, и объявленный
 // any_host получал сетевой namespace ХОСТА целиком. Это была дыра шире, чем
 // «нефильтрованный egress»: недоверенный плагин доставал сервисы хоста на
-// 127.0.0.1, включая собственный HTTP API WEDRA.
+// 127.0.0.1, включая собственный HTTP API Fidespipe.
 //
 // Плагину с any_host выход наружу даёт userspace-сетевой стек (slirp4netns):
 // tap0 внутри netns песочницы, трафик NAT-ится на хосте. Измерено: хостовый
@@ -46,8 +46,8 @@ const (
 	slirpGuestDNS = "10.0.2.3"
 	// netGateName — файл-воротце в scratch. Плагин не стартует, пока файл не
 	// появится: иначе он успевает позвонить до того, как tap0 поднят.
-	netGateName   = ".wedra-net-gate"
-	netResolvName = ".wedra-resolv.conf"
+	netGateName   = ".fidespipe-net-gate"
+	netResolvName = ".fidespipe-resolv.conf"
 	// netAttachTimeout — сколько ждём pid в новом netns и tap0. Проба хоста
 	// упала на RTM_NEWADDR; здесь падать нечему, кроме отсутствия tap0.
 	netAttachTimeout = 10 * time.Second
@@ -150,7 +150,7 @@ func (n *linuxNetSetup) attach(cmd *exec.Cmd) (func(), error) {
 }
 
 // cappedWriter4 — сбор вывода slirp4netns с потолком, чтобы его нельзя было
-// залить память процесса WEDRA.
+// залить память процесса Fidespipe.
 type cappedWriter4 struct {
 	buf  bytes.Buffer
 	cap  int
@@ -237,10 +237,10 @@ func sandboxArgsUnchecked(m *pipeline.Manifest, argv []string, scratch string) [
 		// умеет создавать файл поверх симлинка ("Can't create file").
 		args = append(args, "--bind", filepath.Join(dir, netResolvName), hostResolvTarget())
 		args = append(args, "--")
-		// Ворота: плагин не стартует, пока WEDRA не поднимет tap0. Скрипт
+		// Ворота: плагин не стартует, пока Fidespipe не поднимет tap0. Скрипт
 		// передаётся отдельным аргументом: слитая в одну строку команда была бы
 		// для bwrap именем программы ("execvp ...: No such file or directory").
-		args = append(args, "/bin/sh", "-c", netGateScript, "wedra-netgate", filepath.Join(dir, netGateName))
+		args = append(args, "/bin/sh", "-c", netGateScript, "fidespipe-netgate", filepath.Join(dir, netGateName))
 		args = append(args, argv...)
 		return args
 	}

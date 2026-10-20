@@ -47,7 +47,7 @@ func TestPipelineTraversalBlocked(t *testing.T) {
 	}
 
 	// PUT ..%2f..%2f..%2fpwned.yaml — раньше 200 и файл появлялся
-	pwned := "pwned-wedra-test.yaml"
+	pwned := "pwned-fidespipe-test.yaml"
 	req, _ = http.NewRequest("PUT", "http://127.0.0.1:8765/api/pipelines/..%2f..%2f..%2f..%2f..%2f"+pwned,
 		bytes.NewReader([]byte("format_version: \"0.2\"\npipeline:\n  name: x\n  steps: []\n")))
 	rec = httptest.NewRecorder()

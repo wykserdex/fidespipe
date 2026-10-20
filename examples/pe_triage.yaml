@@ -16,10 +16,10 @@ format_version: "0.2"
 # по локальному файлу (проверено запуском настоящего pefile с заблокированными
 # socket.connect/connect_ex/create_connection/getaddrinfo/gethostbyname).
 #
-# Запуск:  ./wedra run examples/pe_triage.yaml --yes
+# Запуск:  ./fidespipe run examples/pe_triage.yaml --yes
 # Плагин из локальной правки не входит во встроенный allow-list (доверие — по
 # хэшу содержимого), поэтому ран откажет и назовёт ожидаемую запись вида
-# pefile@sha256:... — её и вносят в конфиг оператора (WEDRA_TRUST_CONFIG).
+# pefile@sha256:... — её и вносят в конфиг оператора (FIDESPIPE_TRUST_CONFIG).
 
 pipeline:
   name: pe_triage

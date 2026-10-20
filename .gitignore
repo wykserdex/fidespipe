@@ -5,13 +5,13 @@
 /var/check/
 /var/census/
 /pipelines/
-/wedra
-/wedragui
+/fidespipe
+/fidespipegui
 /orchestrator
 __pycache__/
 *.pyc
 **/testdata/**/_counter
-**/.wedra
+**/.fidespipe
 /tmp/
 *.zip
 *.exe

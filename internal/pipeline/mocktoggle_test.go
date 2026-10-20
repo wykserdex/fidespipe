@@ -26,7 +26,7 @@ func manifestWithSecrets(secrets ...string) *Manifest {
 
 func TestValidateManifestRejectsTestToggleAsSecret(t *testing.T) {
 	cases := []string{
-		"LLM_MOCK", "MOCK", "WEDRA_MOCK", "HTTP_PROBE_FAKE",
+		"LLM_MOCK", "MOCK", "FIDESPIPE_MOCK", "HTTP_PROBE_FAKE",
 		"STUB", "DUMMY", "LLM_SIM", "PLUGIN_TEST_MODE", "SOME_STUB",
 	}
 	for _, name := range cases {

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 func TestRunStepLoopMaxIterations(t *testing.T) {

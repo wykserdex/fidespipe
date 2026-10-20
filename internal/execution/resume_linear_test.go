@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // writeFlakyPlugin — плагин, который ПАДАЕТ в первый запуск и проходит во

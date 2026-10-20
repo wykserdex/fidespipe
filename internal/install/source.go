@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // sourceKind — откуда взяты байты плагина. Нужен для тестов: выбор источника
@@ -83,7 +83,7 @@ func SourceDir(entry registry.Entry, localRegistryDir, version, localSource stri
 	case sourceRegistryDir:
 		return plan.dir, "", nil
 	default:
-		tmp, err := os.MkdirTemp("", "wedra-plugin-*")
+		tmp, err := os.MkdirTemp("", "fidespipe-plugin-*")
 		if err != nil {
 			return "", "", err
 		}

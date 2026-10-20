@@ -3,10 +3,10 @@ package mcp
 import (
 	"context"
 	"fmt"
-	"github.com/wykserdex/wedra/internal/execution"
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/execution"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 	"math"
 	"os"
 	"path/filepath"
@@ -220,7 +220,7 @@ func (s *Server) toolRun(call *inflightCall, args map[string]interface{}) (strin
 	if hasGate && s.human == nil && !s.elicitGateAvailable() {
 		return "", false, &RPCError{Code: -32000,
 			Message: "в пайплайне есть human_gate, а канала к человеку нет: нет консоли гейтов " +
-				"(wedra mcp запущен с --no-gui) и нет elicitation (нужны --gate-elicitation и клиент, " +
+				"(fidespipe mcp запущен с --no-gui) и нет elicitation (нужны --gate-elicitation и клиент, " +
 				"который объявил поддержку elicitation) — одобрить гейт некому",
 			Data: map[string]string{"code": "E_NO_HUMAN_CHANNEL"}}
 	}

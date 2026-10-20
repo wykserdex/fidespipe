@@ -1,6 +1,6 @@
 package core
 
-import cf "github.com/wykserdex/wedra/internal/conformance"
+import cf "github.com/wykserdex/fidespipe/internal/conformance"
 
 type ConformanceCheck = cf.ConformanceCheck
 type ConformanceReport = cf.ConformanceReport

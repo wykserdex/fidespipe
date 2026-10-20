@@ -10,7 +10,7 @@ description: >
   Наружу не отдаются: время сборки (FileHeader.TimeDateStamp), PDB-путь и
   отладочная информация (IMAGE_DIRECTORY_ENTRY_DEBUG), imphash, остальные
   каталоги PE. Пин: pip install pefile==2024.8.26
-author: "community · wedra showcase (reverse engineering)"
+author: "community · fidespipe showcase (reverse engineering)"
 
 runtime:
   type: python

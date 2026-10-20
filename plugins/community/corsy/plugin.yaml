@@ -9,7 +9,7 @@ description: >
   передаётся через -u. Свой список Origin задать нельзя — Corsy v1.0-beta
   проверяет свой фиксированный набор (input origins только валидируется).
   Инструмент ставится отдельно из исходников (см. README плагина).
-author: "community · wedra showcase (AppSec)"
+author: "community · fidespipe showcase (AppSec)"
 
 runtime:
   type: python

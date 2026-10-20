@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 func TestRunInstallsAndReportsResult(t *testing.T) {

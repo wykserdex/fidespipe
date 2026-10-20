@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 )
 
 // doctorFixture кладёт плагин с заданными манифестом и кодом и возвращает
@@ -97,7 +97,7 @@ func stubIndexLookup(t *testing.T, state indexState) {
 // Имя, которого заведомо нет на PyPI: с префиксом, который не может совпасть
 // с настоящим пакетом. Донар при этом НЕ установлен локально — иначе проверка
 // прошла бы не по той ветке.
-const absentDonor = "wedra-nonexistent-donor-xyz"
+const absentDonor = "fidespipe-nonexistent-donor-xyz"
 
 // Дефект, найденный измерением: проба интерпретатора отвечает на вопрос
 // «установлен ли пакет здесь», а не «существует ли он на PyPI». Ветка
@@ -203,7 +203,7 @@ func TestDoctorReadyWhenNothingIsNeeded(t *testing.T) {
 // которых наверняка нет на машине, в нём быть не должно — значит проверка
 // «отсутствует» обязана сработать. Ничего не устанавливаем.
 func TestDoctorReportsMissingDependency(t *testing.T) {
-	const absent = "wedra_absent_pkg_doctor_probe"
+	const absent = "fidespipe_absent_pkg_doctor_probe"
 	root := doctorFixture(t, map[string]string{
 		"needy/plugin.yaml": doctorManifestText("needy", "Плагин с зависимостью",
 			[]string{absent + "==9.9.9"}),
@@ -240,7 +240,7 @@ func TestDoctorReportsMissingExternalTool(t *testing.T) {
 	stubIndexLookup(t, indexPresent)
 	root := doctorFixture(t, map[string]string{
 		"donor/plugin.yaml": doctorManifestText("donor",
-			"Обёртка над CLI. Ставится отдельно: pip install wedra-absent-tool.", nil),
+			"Обёртка над CLI. Ставится отдельно: pip install fidespipe-absent-tool.", nil),
 		"donor/main.py": "import json\nprint(json.dumps({'status': 'ok', 'output': {'value': 'x'}}))\n",
 	})
 	// PATH оставляем с интерпретатором, но без донора: если убрать и его, то
@@ -258,13 +258,13 @@ func TestDoctorReportsMissingExternalTool(t *testing.T) {
 		t.Fatalf("найдено плагинов %d, ждали 1", rep.Total)
 	}
 	p := doctorOne(t, root)
-	if p.Donor != "wedra-absent-tool" {
-		t.Fatalf("донер = %q, ждали wedra-absent-tool", p.Donor)
+	if p.Donor != "fidespipe-absent-tool" {
+		t.Fatalf("донер = %q, ждали fidespipe-absent-tool", p.Donor)
 	}
 	if p.Status != StatusNeedsExternalTool {
 		t.Errorf("статус = %q, ждали %q", p.Status, StatusNeedsExternalTool)
 	}
-	if p.Install != "pip install wedra-absent-tool" {
+	if p.Install != "pip install fidespipe-absent-tool" {
 		t.Errorf("команда = %q", p.Install)
 	}
 	if rep.NeedsDonor != 1 {
@@ -659,8 +659,8 @@ func TestDoctorDonorMatchingRequiresIsNotExternalTool(t *testing.T) {
 	// так: `pip install exifread` в описании и `exifread==3.5.1` в requires.
 	root := doctorFixture(t, map[string]string{
 		"exif/plugin.yaml": doctorManifestText("exif",
-			"Обёртка над библиотекой. Ставится отдельно: pip install wedra-absent-exif-pkg.",
-			[]string{"wedra-absent-exif-pkg==1.0"}),
+			"Обёртка над библиотекой. Ставится отдельно: pip install fidespipe-absent-exif-pkg.",
+			[]string{"fidespipe-absent-exif-pkg==1.0"}),
 		"exif/main.py": "import json\nprint(json.dumps({'status': 'ok', 'output': {'value': 'x'}}))\n",
 	})
 	rep := Run(root)
@@ -794,7 +794,7 @@ func TestDoctorValidatorStillRejectsPin(t *testing.T) {
 // ПРОВЕРЕН, а не попасть в unverified_donors. Раньше он попадал именно туда:
 // имя `pefile==2024.8.26` не проходило проверку, донор становился «неизвестным».
 func TestDoctorPinnedDonorIsNotUnverified(t *testing.T) {
-	const pkg = "wedra_absent_pinned_donor"
+	const pkg = "fidespipe_absent_pinned_donor"
 	root := doctorFixture(t, map[string]string{
 		"pinned/plugin.yaml": doctorManifestText("pinned",
 			"Плагин. Пин: pip install "+pkg+"==1.2.3", []string{pkg + "==1.2.3"}),

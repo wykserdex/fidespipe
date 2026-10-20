@@ -30,8 +30,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 const (
@@ -44,7 +44,7 @@ const (
 	// брать пины из локальной истории и НЕ ходить за плагином в сеть. Репозиторий
 	// теста офлайновый, поэтому источник недостижим — если генератор однажды
 	// начнёт его клонировать, тест упадёт на отсутствии сети, а не пройдёт.
-	fixtureSource = "https://example.invalid/wedra.git"
+	fixtureSource = "https://example.invalid/fidespipe.git"
 	// digestPrefix — форма ContentDigest. Хэш, который не начинается с него, —
 	// это уже не хэш, и засев с таким «доверием» опаснее его отсутствия.
 	digestPrefix = "sha256:"
@@ -340,7 +340,7 @@ type generatorRun struct {
 func runGenerator(t *testing.T, repo string) generatorRun {
 	t.Helper()
 	cmd := exec.Command("go", "run", "./internal/plugin/cmd/genseed", "-repo", repo)
-	cmd.Dir = wedraRoot(t)
+	cmd.Dir = fidespipeRoot(t)
 	var outBuf, errBuf strings.Builder
 	cmd.Stdout = &outBuf
 	cmd.Stderr = &errBuf
@@ -423,8 +423,8 @@ func osReasonString(msg, rel string) string {
 	return strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(tail), ":"))
 }
 
-// wedraRoot — корень этого репозитория (где go.mod), а не фикстуры.
-func wedraRoot(t *testing.T) string {
+// fidespipeRoot — корень этого репозитория (где go.mod), а не фикстуры.
+func fidespipeRoot(t *testing.T) string {
 	t.Helper()
 	dir, err := os.Getwd()
 	if err != nil {

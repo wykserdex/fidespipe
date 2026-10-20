@@ -1,11 +1,11 @@
 package cli
 
-// Регрессия: `wedra pipeline install <пресет>` нормализует пресет через
+// Регрессия: `fidespipe pipeline install <пресет>` нормализует пресет через
 // yaml.Marshal и писал YAML, который сам же затем не мог прочитать.
 //
-//	> wedra pipeline install when_demo --registry=./registry.yaml
+//	> fidespipe pipeline install when_demo --registry=./registry.yaml
 //	  ■ пресет "when_demo" готов: examples/when_demo.yaml --yes
-//	> wedra pipeline validate examples/when_demo.yaml
+//	> fidespipe pipeline validate examples/when_demo.yaml
 //	  YAML ошибка: YAML: when: path обязателен
 //
 // Причина была в асимметрии маршалинга и парсинга (omitempty у Step.When и
@@ -33,7 +33,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
 )
 
 // registryPresetFixture — пресет со всеми полями, на которых маршалинг ядра
@@ -100,7 +100,7 @@ func TestInstallPipelinePresetWritesFileCoreCanRead(t *testing.T) {
 		t.Fatalf("установка пресета: %v", err)
 	}
 
-	// Ровно то, что делает `wedra pipeline validate <file>`.
+	// Ровно то, что делает `fidespipe pipeline validate <file>`.
 	installed, err := pipeline.LoadPipelineFile(result.OutFile)
 	if err != nil {
 		t.Fatalf("ядро не читает собственный установленный файл: %v", err)

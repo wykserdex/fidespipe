@@ -6,10 +6,10 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/wykserdex/wedra/internal/common"
-	"github.com/wykserdex/wedra/internal/journal"
-	"github.com/wykserdex/wedra/internal/pipeline"
-	"github.com/wykserdex/wedra/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/common"
+	"github.com/wykserdex/fidespipe/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/pipeline"
+	"github.com/wykserdex/fidespipe/internal/plugin"
 	"math"
 	"net"
 	"os"
@@ -182,7 +182,7 @@ func (s *Server) toolGetRun(args map[string]interface{}) (string, bool, *RPCErro
 			out["pending_gate"] = map[string]interface{}{
 				"step": lastWait["step"], "form": lastWait["form"], "actions": lastWait["actions"],
 			}
-			hint := "попросите пользователя одобрить шаг в окне wedra (у агента нет инструмента одобрения)"
+			hint := "попросите пользователя одобрить шаг в окне fidespipe (у агента нет инструмента одобрения)"
 			if s.human != nil {
 				if u := s.human.PublicURL(runID); u != "" {
 					hint += "; консоль: " + u + " (вкладка уже открыта у человека)"
@@ -328,7 +328,7 @@ func (s *Server) toolExecPlugin(call *inflightCall, args map[string]interface{})
 		}
 		timeout = t
 	}
-	extraEnv := []string{"WEDRA_NETWORK=deny"}
+	extraEnv := []string{"FIDESPIPE_NETWORK=deny"}
 	// Именно ExecWithEnvCtx, а не ExecWithEnv: политика обязана дойти до
 	// enforceTrust. ExecWithEnv подставляет context.Background(), то есть
 	// нулевую политику, и флаги --allow/--deny-untrusted-plugins не влияли
@@ -444,7 +444,7 @@ func (s *Server) writeAuditFile(name string, record map[string]interface{}) erro
 // принадлежит протоколу (cli/mcp.go перенаправляет os.Stdout в stderr), поэтому
 // лог всегда в stderr и никогда не попадает в JSON-RPC.
 func (s *Server) logf(format string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "wedra mcp: "+format+"\n", args...)
+	fmt.Fprintf(os.Stderr, "fidespipe mcp: "+format+"\n", args...)
 }
 
 // auditUntrusted — что писать в журнал аудита как "untrusted".

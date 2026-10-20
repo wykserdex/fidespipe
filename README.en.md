@@ -1,12 +1,12 @@
-# WEDRA
+# Fidespipe
 
 [Русский](README.md) | English
 
-WEDRA is a local platform for running other people's tools: a contract, trust, a
+Fidespipe is a local platform for running other people's tools: a contract, trust, a
 run journal, and a human in the loop.
 
 Platform, not "another orchestrator". An orchestrator runs chains; a **platform
-sets the contract that chains can be run on top of**. WEDRA has one contract: a
+sets the contract that chains can be run on top of**. Fidespipe has one contract: a
 plugin is a separate process, JSON in, JSON out, with a declared protocol
 version that is versioned separately from the application. Everything else is
 built on top of it, and anyone can write it:
@@ -25,7 +25,7 @@ Running several CLIs in a row and gluing their output together by hand is what
 the platform does *inside*, and that is the smaller half of what it gives you.
 What matters is what a plain `bash` script cannot do:
 
-| | what WEDRA gives you |
+| | what Fidespipe gives you |
 |---|---|
 | **A contract at the boundary** | plugin inputs and outputs are checked **before** the run; a broken manifest does not blow up halfway down a chain |
 | **A run journal** | every run stays on disk: events, context, artifacts; a broken run can be resumed where it stopped |
@@ -34,7 +34,7 @@ What matters is what a plain `bash` script cannot do:
 | **Trust by content hash** | "id@sha256:…": edit the file, lose the trust; the plugin's name earns nothing |
 | **A scheduler** | a local daemon with a **durable queue**: a slot that ran once never runs twice; interrupted work is not silently replayed |
 | **A catalog with donors** | 100 plugins, a store that installs them, and typed recipes for Go programs, binaries and scripts with a sha256 check |
-| **A writing tool** | a browser editor for plugins, and `wedra plugin import` — reading an external Python project into a ready plugin |
+| **A writing tool** | a browser editor for plugins, and `fidespipe plugin import` — reading an external Python project into a ready plugin |
 | **Agents** | MCP: an agent may propose a plan and run a chain, while the decision stays with a person |
 | **Deployment** | Docker and systemd, for a server where chains run on a schedule |
 
@@ -51,7 +51,7 @@ ceiling on waiting for a gate, and Docker and systemd. See the
 
 - Product version: `0.34.0` from [`VERSION`](VERSION)
 - Pipeline/plugin protocol: `0.2` from [`protocol/VERSION`](protocol/VERSION)
-- Primary CLI: `wedra`
+- Primary CLI: `fidespipe`
 - Compatibility CLI: `tool` (legacy surface; do not add new behavior there)
 
 The product version and protocol version are independent. See the
@@ -60,12 +60,12 @@ The product version and protocol version are independent. See the
 ## Build and run
 
 ```bash
-go build -o wedra ./cmd/wedra
-./wedra version
-./wedra plugin list
-./wedra pipeline validate examples/email_check.yaml
-./wedra pipeline run examples/gate_demo.yaml
-./wedra runs list
+go build -o fidespipe ./cmd/fidespipe
+./fidespipe version
+./fidespipe plugin list
+./fidespipe pipeline validate examples/email_check.yaml
+./fidespipe pipeline run examples/gate_demo.yaml
+./fidespipe runs list
 ```
 
 Building from source needs Go 1.26 or newer. That floor is the `go` directive in
@@ -104,17 +104,17 @@ change the hash and the plugin would stop being trusted at the very moment it
 was installed.
 
 The numbers above are a property of the catalog. The state of any given machine is
-measured, not asserted: `wedra doctor` recomputes every plugin with the same Python
-that runs WEDRA itself, and prints how many are ready and what to install. It
+measured, not asserted: `fidespipe doctor` recomputes every plugin with the same Python
+that runs Fidespipe itself, and prints how many are ready and what to install. It
 installs nothing and runs nothing.
 
 **About the word "community":** all 100 plugins are currently written
 by the repository owner and live in that same repository — all 100 registry
-entries carry the same `source`, `https://github.com/wykserdex/wedra`, with no
+entries carry the same `source`, `https://github.com/wykserdex/fidespipe`, with no
 outside sources and no third-party authors. "Community" means shipped outside the
 core, that is, everything not in the maintained `plugins/official/` set — not
 "written by someone else". The `author` field in the manifests is still a
-placeholder (`community`, `community · wedra showcase (OSINT)`, `external
+placeholder (`community`, `community · fidespipe showcase (OSINT)`, `external
 author #4 …`) rather than a person's name; the `official` manifests do not have
 that field at all.
 
@@ -122,13 +122,13 @@ The primary CLI supports pipeline validation and execution, plugin registry
 operations, resume, the local GUI, and an MCP stdio adapter. Plugin manifests
 declare their own component version and protocol compatibility separately.
 
-## What WEDRA does not do
+## What Fidespipe does not do
 
 The positioning is written plainly, because the disappointment usually comes from
 this list rather than from the feature set.
 
-- **The scheduler is local, not cloud.** `wedra schedule` shows the schedule of
-  chains, `wedra daemon` ticks once a minute and starts whatever the cron says
+- **The scheduler is local, not cloud.** `fidespipe schedule` shows the schedule of
+  chains, `fidespipe daemon` ticks once a minute and starts whatever the cron says
   is due, out of a **durable queue**: a slot is claimed before the run, so a
   daemon restart does not run the same slot twice, and work caught in flight by
   the daemon's death is marked interrupted and raises an alert rather than being
@@ -141,23 +141,23 @@ this list rather than from the feature set.
   you: it is a binary, a `plugins/` directory, and journals under `var/runs/`.
   The console listens on `127.0.0.1` by default; exposing it is an explicit
   operator flag (`--listen`, `--allow-remote`), not a mode of operation.
-  External services are not "WEDRA integrations" but ordinary plugins that read
+  External services are not "Fidespipe integrations" but ordinary plugins that read
   your key from the environment.
 - **It does not chase plugin count.** The 100 plugins in the registry are not a
   showcase: 65 run on a bare Python 3, and 35 declare an external donor, which
-  `install` now pulls by itself; 13 more name an installation that `wedra doctor`
+  `install` now pulls by itself; 13 more name an installation that `fidespipe doctor`
   deliberately refuses to vouch for.
   A plugin enters the registry because it passes the conformance gate and
   declares `permissions` honestly, not because it was written.
-  `wedra doctor --json` lists every plugin that needs something installed and
+  `fidespipe doctor --json` lists every plugin that needs something installed and
   the exact command for it.
 - **It does not build cloud orchestration for its own sake.** Orchestration here
   is a DAG inside a single process: steps, `when`, `foreach`, and
   `parallel_group` with a barrier. No distributed scheduler, no queues between
-  machines, no service discovery: everything WEDRA does happens on one machine,
+  machines, no service discovery: everything Fidespipe does happens on one machine,
   in one run.
 
-**What WEDRA does:** a deterministic run of a chain described in YAML, where the
+**What Fidespipe does:** a deterministic run of a chain described in YAML, where the
 decision to continue stays with a person. Steps and bindings are validated
 before the run, and the human is in the loop on `core/human_gate` rather than
 reviewing after the fact.
@@ -167,7 +167,7 @@ reviewing after the fact.
 **What the format version means.** `format_version` in YAML is the version of the
 *format protocol*, not the version of the application. The axes are independent:
 the product version lives in the `VERSION` file, the protocol version lives in
-`protocol/VERSION` and moves rarely. It is checkable: `wedra pipeline validate`
+`protocol/VERSION` and moves rarely. It is checkable: `fidespipe pipeline validate`
 on a file with an unknown `format_version` returns the **error**
 `E_FORMAT_VERSION`, not a warning, and an empty field is the warning
 `W_FORMAT_VERSION_MISSING`. The supported values are listed in code and do not
@@ -182,7 +182,7 @@ The promise rests on things that can be checked rather than believed:
 
 - **Two values, two live formats.** `"0.1"` is not declared legacy: it is
   accepted on equal terms with `"0.2"`, pipelines using it live in `examples/`,
-  and the `pipelines` step (`validate` + `lint` + `plan`) of a full `wedra check`
+  and the `pipelines` step (`validate` + `lint` + `plan`) of a full `fidespipe check`
   runs over them — the same run CI does.
 - **A breaking edit cannot be silent.** Per
   [GOVERNANCE.md](../GOVERNANCE.md), a protocol change requires a public
@@ -203,7 +203,7 @@ would be empty:
   that has already happened (`snapshot_lost`, `E_AGENT_EXEC_AUDIT`). Old YAML does
   not break because of it.
 - **There is no compatibility in the other direction.** Pipeline parsing is
-  strict (`KnownFields(true)` in `internal/pipeline/parser.go`): a WEDRA binary
+  strict (`KnownFields(true)` in `internal/pipeline/parser.go`): a Fidespipe binary
   older than your file refuses to open it rather than ignoring what it does not
   know. An old binary reads old files, not new ones.
 - **Error codes and MCP tool names are not a frozen API.** The gates keep the Go
@@ -221,7 +221,7 @@ would be empty:
 
 Full breakdown with code references: [docs/format-compatibility.md](docs/format-compatibility.md).
 
-The local console (`wedra gui`) shows runs with a timeline, pipelines with a DAG,
+The local console (`fidespipe gui`) shows runs with a timeline, pipelines with a DAG,
 the plugin catalog, and a visual editor:
 
 ![Building a chain and running it: home, editor with linked steps, step properties, the chain as YAML and a run](demo.gif)
@@ -231,8 +231,8 @@ The full console tour is in [`docs/demo.gif`](docs/demo.gif).
 ## Repository layout
 
 ```text
-cmd/wedra/            primary CLI
-cmd/wedragui/         desktop launcher
+cmd/fidespipe/            primary CLI
+cmd/fidespipegui/         desktop launcher
 cmd/tool/             compatibility CLI
 internal/pipeline/    model, parsing, validation, planning
 internal/execution/   runner and resume
@@ -267,7 +267,7 @@ and are not to be reorganized without a public proposal and migration plan.
 
 ## Maintainers and safety
 
-WEDRA is currently maintained by one primary maintainer. The project is
+Fidespipe is currently maintained by one primary maintainer. The project is
 transparent about that risk and uses public proposals, CI gates, immutable
 release tags, and explicit registry admission. See [governance](GOVERNANCE.md)
 and [contributing](CONTRIBUTING.md).

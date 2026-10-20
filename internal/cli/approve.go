@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wykserdex/wedra/internal/gate"
-	"github.com/wykserdex/wedra/internal/journal"
+	"github.com/wykserdex/fidespipe/internal/gate"
+	"github.com/wykserdex/fidespipe/internal/journal"
 )
 
 // isTTY — интерактивный терминал? Shell-инструменты агентов обычно без TTY.
@@ -31,7 +31,7 @@ func shortCode() string {
 	return fmt.Sprintf("%04d", n%10000)
 }
 
-// RunApprove — wedra approve <run> <step> [--server=http://127.0.0.1:8765].
+// RunApprove — fidespipe approve <run> <step> [--server=http://127.0.0.1:8765].
 // Запасной вариант без браузера: только интерактивный TTY + короткий код.
 // Shell-инструменты агентов обычно без TTY — само-аппрув через них закрыт.
 func RunApprove(args []string) {
@@ -52,7 +52,7 @@ func RunApprove(args []string) {
 		}
 	}
 	if len(pos) < 2 {
-		fmt.Println("нужно: wedra approve <run_id> <step_id> [--server=http://127.0.0.1:8765] [--link]")
+		fmt.Println("нужно: fidespipe approve <run_id> <step_id> [--server=http://127.0.0.1:8765] [--link]")
 		fmt.Println("одобрение — только человеком; --link печатает подписанную ссылку, решение принимается по ней")
 		os.Exit(2)
 	}
@@ -66,7 +66,7 @@ func RunApprove(args []string) {
 	}
 	if !isTTY() {
 		fmt.Println("отказ: approve работает только в интерактивном TTY (stdin не терминал)")
-		fmt.Println("попросите пользователя одобрить шаг", stepID, "в окне wedra gui")
+		fmt.Println("попросите пользователя одобрить шаг", stepID, "в окне fidespipe gui")
 		os.Exit(1)
 	}
 	code := shortCode()
@@ -80,7 +80,7 @@ func RunApprove(args []string) {
 	}
 	fmt.Printf("код принят. Отправьте решение человеком через GUI (%s) или API с сессией:\n", server)
 	fmt.Printf("  POST %s/api/runs/%s/gate  {\"action\":\"accept\"}\n", server, runID)
-	fmt.Println("  cookie сессии: откройте адрес GUI и введите одноразовый код из терминала wedra")
+	fmt.Println("  cookie сессии: откройте адрес GUI и введите одноразовый код из терминала fidespipe")
 }
 
 // printApproveLink — напечатать подписанную ссылку одобрения.

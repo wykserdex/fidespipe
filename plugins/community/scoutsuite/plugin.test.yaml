@@ -1,6 +1,6 @@
 # Контракт-тесты scoutsuite (mock CLI scout, без сети, без пакета и без ключей AWS).
 tests:
-  - name: скан aws → находки из scoutsuite_results_wedra.js
+  - name: скан aws → находки из scoutsuite_results_fidespipe.js
     env: { SCOUTSUITE_BIN: "mock_scoutsuite.py" }
     input: { provider: "aws", account: "audit-profile" }
     expect:

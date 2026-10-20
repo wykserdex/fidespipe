@@ -1,6 +1,6 @@
 // Package install — ядро установки плагина, которое можно вызвать не из CLI.
 //
-// Зачем пакет: `wedra plugin install` был единственным входом в установку и
+// Зачем пакет: `fidespipe plugin install` был единственным входом в установку и
 // печатал прогресс в stdout, поэтому вызвать его из HTTP-эндпоинта было
 // нельзя — там нужен результат структурой, а печать уходит мимо ответа и
 // ломает тесты. Ядро вынесено сюда, internal/cli остался обёрткой, которая
@@ -24,9 +24,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wykserdex/wedra/internal/core"
-	"github.com/wykserdex/wedra/internal/plugin"
-	"github.com/wykserdex/wedra/internal/registry"
+	"github.com/wykserdex/fidespipe/internal/core"
+	"github.com/wykserdex/fidespipe/internal/plugin"
+	"github.com/wykserdex/fidespipe/internal/registry"
 )
 
 // DefaultDest — куда ставится плагин, если --dest не задан. Тот же дефолт, что
@@ -87,7 +87,7 @@ type Result struct {
 // установки. Подменяет только deps_test.go.
 var pipInstall = plugin.PipInstall
 
-// ParseArgs — разбор аргументов `wedra plugin install <ref> [--registry=…]
+// ParseArgs — разбор аргументов `fidespipe plugin install <ref> [--registry=…]
 // [--dest=…]`. Чистая функция: ни сети, ни git, ни файлов.
 //
 // Повтор последнего позиционного аргумента побеждает, а неизвестный флаг молча
@@ -270,7 +270,7 @@ func writeDonorToLock(dir, donorPath string) error {
 }
 
 // stageAndCommit — публикация каталога плагина. Порядок прежний и
-// fail-closed: копия во временный каталог рядом с целью → .wedra (lock) →
+// fail-closed: копия во временный каталог рядом с целью → .fidespipe (lock) →
 // core.ValidatePluginDir → прежняя копия в backup → rename. Ни один шаг не
 // деградирует в «best effort»: непрошедший манифест не доходит до rename, а
 // сорванный rename откатывается из backup, и пользователь о нём узнаёт из

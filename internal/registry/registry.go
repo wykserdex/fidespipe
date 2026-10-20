@@ -12,7 +12,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/wykserdex/wedra/internal/common"
+	"github.com/wykserdex/fidespipe/internal/common"
 )
 
 // Registry v0.1 — формат заморозить как протокол.
@@ -20,7 +20,7 @@ import (
 //
 // Плагин/пресет = запись (Entry): source (git-репо), path (подпуть),
 // version (тег/ветка). Установленный плагин живёт в <pluginsDir>/<name>
-// и несёт lock-файл .wedra с версией (для пиннинга из `name@version`).
+// и несёт lock-файл .fidespipe с версией (для пиннинга из `name@version`).
 
 type Entry struct {
 	Source      string `yaml:"source"`      // git-URL (или локальный путь) репозитория
@@ -40,7 +40,7 @@ const (
 	FormatVersion      = "0.1"
 	RegistryFile       = "registry.yaml"
 	AddonsRegistryFile = "registry-addons.yaml"
-	DefaultRegistryURL = "https://github.com/wykserdex/wedra"
+	DefaultRegistryURL = "https://github.com/wykserdex/fidespipe"
 )
 
 // DefaultSource — локальный registry.yaml (или registry-addons.yaml) в CWD,
@@ -140,7 +140,7 @@ func Load(source string) (*Handle, error) {
 	if err := ValidateSource(ref); err != nil {
 		return nil, fmt.Errorf("источник реестра: %w", err)
 	}
-	tmp, err := os.MkdirTemp("", "wedra-registry-*")
+	tmp, err := os.MkdirTemp("", "fidespipe-registry-*")
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +353,7 @@ func NormalizePluginRef(ref string) (name, version string, ok bool) {
 // Локальные пути возвращаются как есть. Реестровые имена ищутся в
 // <pluginsDir>/<name>, затем в <pluginsDir>/official/<name> и
 // <pluginsDir>/community/<name>; flat-layout имеет приоритет.
-// Запрошенная версия (@version) сверяется с lock-файлом .wedra.
+// Запрошенная версия (@version) сверяется с lock-файлом .fidespipe.
 func RefToDir(ref, pluginsDir string) (string, error) {
 	if common.IsBuiltinNamespace(ref) {
 		return "", fmt.Errorf("неизвестный встроенный модуль: %s", ref)
@@ -380,7 +380,7 @@ func RefToDir(ref, pluginsDir string) (string, error) {
 	if ver != "" {
 		installed, ok := InstalledVersion(dir)
 		if !ok {
-			return "", fmt.Errorf("плагин %q: нет lock-файла .wedra, версия неизвестна — перустанови: orchestrator plugin install %s", name, ref)
+			return "", fmt.Errorf("плагин %q: нет lock-файла .fidespipe, версия неизвестна — перустанови: orchestrator plugin install %s", name, ref)
 		}
 		if installed != ver {
 			return "", fmt.Errorf("плагин %q: установлена версия %s, пайплайн требует %s — orchestrator plugin install %s", name, installed, ver, ref)

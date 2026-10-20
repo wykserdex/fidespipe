@@ -9,7 +9,7 @@ description: >
   form / subdomain. Донор объявлен в манифесте и ставится вместе с плагином:
   go install github.com/jaeles-project/gospider@v1.1.6 (на PyPI «gospider» —
   это другой пакет, путать нельзя; версия закреплена, а не latest).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

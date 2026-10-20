@@ -18,7 +18,7 @@ func TestLoadTrustConfigRejectsUnsafeFile(t *testing.T) {
 	newFile := func(t *testing.T, mode os.FileMode) string {
 		t.Helper()
 		dir := t.TempDir()
-		path := filepath.Join(dir, "wedra-trust.yaml")
+		path := filepath.Join(dir, "fidespipe-trust.yaml")
 		if err := os.WriteFile(path, []byte(validTrustBody), 0o600); err != nil {
 			t.Fatal(err)
 		}
@@ -50,7 +50,7 @@ func TestLoadTrustConfigRejectsUnsafeFile(t *testing.T) {
 	}
 	t.Run("симлинк", func(t *testing.T) {
 		real := newFile(t, 0o600)
-		link := filepath.Join(t.TempDir(), "wedra-trust.yaml")
+		link := filepath.Join(t.TempDir(), "fidespipe-trust.yaml")
 		if err := os.Symlink(real, link); err != nil {
 			t.Skipf("симлинки недоступны: %v", err)
 		}
@@ -59,7 +59,7 @@ func TestLoadTrustConfigRejectsUnsafeFile(t *testing.T) {
 		}
 	})
 	t.Run("каталог вместо файла", func(t *testing.T) {
-		dir := filepath.Join(t.TempDir(), "wedra-trust.yaml")
+		dir := filepath.Join(t.TempDir(), "fidespipe-trust.yaml")
 		if err := os.Mkdir(dir, 0o700); err != nil {
 			t.Fatal(err)
 		}
@@ -72,7 +72,7 @@ func TestLoadTrustConfigRejectsUnsafeFile(t *testing.T) {
 		if err := os.Chmod(parent, 0o777); err != nil {
 			t.Fatal(err)
 		}
-		path := filepath.Join(parent, "wedra-trust.yaml")
+		path := filepath.Join(parent, "fidespipe-trust.yaml")
 		if err := os.WriteFile(path, []byte(validTrustBody), 0o600); err != nil {
 			t.Fatal(err)
 		}

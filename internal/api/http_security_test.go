@@ -423,7 +423,7 @@ func TestListenNonLoopbackRequiresExplicitFlag(t *testing.T) {
 		{"localhost без флагов", ListenOptions{Addr: "localhost:8765"}, ""},
 		{"порт 0 без флагов", ListenOptions{Addr: "127.0.0.1:0"}, ""},
 		{"внешний с public-host", ListenOptions{Addr: "0.0.0.0:8765", AllowRemote: true, PublicHosts: []string{"192.168.1.10"}}, ""},
-		{"внешний с именем", ListenOptions{Addr: "0.0.0.0:8765", AllowRemote: true, PublicHosts: []string{"wedra.lan:8765"}}, ""},
+		{"внешний с именем", ListenOptions{Addr: "0.0.0.0:8765", AllowRemote: true, PublicHosts: []string{"fidespipe.lan:8765"}}, ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -509,7 +509,7 @@ func TestOnePageScenarioStillWorks(t *testing.T) {
 	}
 	body, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
-	if resp.StatusCode != 200 || !strings.Contains(string(body), "WEDRA") {
+	if resp.StatusCode != 200 || !strings.Contains(string(body), "Fidespipe") {
 		t.Fatalf("GET / без сессии: code=%d, тело=%q", resp.StatusCode, truncate(string(body)))
 	}
 	resp, err = client.Get(ts.URL + "/editor/")

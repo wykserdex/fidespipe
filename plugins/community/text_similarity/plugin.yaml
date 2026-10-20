@@ -2,7 +2,7 @@ id: text_similarity
 version: 0.1.0
 platform_api: "^0.1"
 description: "Расстояние Левенштейна и нормализованное сходство двух строк + флаг near-duplicate по порогу. Без сети."
-author: "community · волна 3 (plugin-pack wedra)"
+author: "community · волна 3 (plugin-pack fidespipe)"
 
 runtime:
   type: python

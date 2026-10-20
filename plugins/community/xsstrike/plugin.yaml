@@ -8,7 +8,7 @@ description: >
   «Vector for <param>:» (старый формат), «Potentially vulnerable objects found»
   (DOM XSS). Никакого краулинга и никаких чужих хостов — только URL из входа.
   XSStrike ставится отдельно: pip install xsstrike (или git-клон, см. README).
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

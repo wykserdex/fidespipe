@@ -1,6 +1,6 @@
-# Contributing to WEDRA
+# Contributing to Fidespipe
 
-WEDRA is a young project with a public, compatibility-conscious contribution
+Fidespipe is a young project with a public, compatibility-conscious contribution
 process. Read [GOVERNANCE.md](GOVERNANCE.md) before changing protocol,
 registry policy, CLI compatibility, or repository structure.
 
@@ -10,11 +10,11 @@ registry policy, CLI compatibility, or repository structure.
    `go` directive in `go.mod`, and CI builds the floor job on it: a toolchain
    older than the directive refuses to build the module, so the documented
    minimum is always a tested one.
-2. Build the primary CLI with `go build -o wedra ./cmd/wedra`.
+2. Build the primary CLI with `go build -o fidespipe ./cmd/fidespipe`.
 3. Run `go test ./... -count=1` and `go vet ./...`.
 4. Keep generated run data under ignored `var/runs/`; never commit journals,
-   `.wedra` locks, binaries, or local registry state.
-5. Use `wedra` for new documentation and CI checks. `tool` is a compatibility
+   `.fidespipe` locks, binaries, or local registry state.
+5. Use `fidespipe` for new documentation and CI checks. `tool` is a compatibility
    command and should not define new behavior.
 6. Record every product or CI change in [CHANGELOG.md](CHANGELOG.md), in the
    section of the current product version. See "Changelog entries" below — this
@@ -63,7 +63,7 @@ renames until an accepted ADR.
 
 The registry is `registry.yaml` in the repository root, with schema version
 `0.1`. A plugin or preset enters the supported registry only after green CI,
-including `wedra registry validate`.
+including `fidespipe registry validate`.
 
 ### Plugin checklist
 
@@ -93,8 +93,8 @@ including `wedra registry validate`.
    `LLM_MOCK=1`), сеть — только если тестируемая (MX-запись и т.п.).
 3. Локальные проверки:
    ```
-   wedra plugin validate <dir>
-   wedra plugin test <dir>
+   fidespipe plugin validate <dir>
+   fidespipe plugin test <dir>
    ```
 4. **PR**: каталог `plugins/{official,community}/<name>/` + запись в
    `registry.yaml` (`source`, `path`, `version` = тег текущего релиза,
@@ -108,7 +108,7 @@ including `wedra registry validate`.
    - `format_version`, `steps`;
    - `secrets: [KEY]` — все ключи, которые цепочке нужны;
    - `network: deny` — если цепочка сетью пользоваться не должна.
-2. `wedra pipeline validate examples/<name>.yaml` — зелёный.
+2. `fidespipe pipeline validate examples/<name>.yaml` — зелёный.
 3. **PR**: файл + запись пресета в `registry.yaml`.
 
 ### Reviewer checklist

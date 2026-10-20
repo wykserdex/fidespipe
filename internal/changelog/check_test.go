@@ -7,7 +7,7 @@ import (
 
 // TestCheckAcceptsNormalChangelog — обычный файл обязан проходить.
 func TestCheckAcceptsNormalChangelog(t *testing.T) {
-	text := `# Changelog — WEDRA
+	text := `# Changelog — Fidespipe
 
 ## Unreleased
 
@@ -32,7 +32,7 @@ func TestCheckAcceptsNormalChangelog(t *testing.T) {
 // оказались без раздела версии над собой. Такое молча выглядит как «никто
 // ничего не менял», поэтому проверка обязана ловить.
 func TestCheckRejectsSubsectionWithoutSection(t *testing.T) {
-	text := `# Changelog — WEDRA
+	text := `# Changelog — Fidespipe
 
 ### Гейт в демоне больше не висит молча
 
@@ -54,7 +54,7 @@ func TestCheckRejectsSubsectionWithoutSection(t *testing.T) {
 // TestCheckRequiresUnreleased — без раздела Unreleased структура сломана:
 // непонятно, куда попадает новое.
 func TestCheckRequiresUnreleased(t *testing.T) {
-	text := `# Changelog — WEDRA
+	text := `# Changelog — Fidespipe
 
 ## 0.35.0 — в работе
 
@@ -73,7 +73,7 @@ func TestCheckRequiresUnreleased(t *testing.T) {
 
 // TestCheckRequiresAVersionSection — ченджлог без единой версии бессмыслен.
 func TestCheckRequiresAVersionSection(t *testing.T) {
-	text := `# Changelog — WEDRA
+	text := `# Changelog — Fidespipe
 
 ## Unreleased
 
@@ -90,7 +90,7 @@ func TestCheckRequiresAVersionSection(t *testing.T) {
 // TestCheckIgnoresHeadingsInsideCodeFence — в блоке кода строка `## пример`
 // это пример, а не раздел. Иначе пример в доке ломал бы ченджлог.
 func TestCheckIgnoresHeadingsInsideCodeFence(t *testing.T) {
-	text := "# Changelog — WEDRA\n\n## Unreleased\n\n### Секция\n\n```yaml\n## это не раздел\n### и это не подраздел\n```\n\n## 0.35.0 — в работе\n\n### Ок\n"
+	text := "# Changelog — Fidespipe\n\n## Unreleased\n\n### Секция\n\n```yaml\n## это не раздел\n### и это не подраздел\n```\n\n## 0.35.0 — в работе\n\n### Ок\n"
 	if _, err := Check(text); err != nil {
 		t.Fatalf("заголовки внутри блока кода были приняты за разделы: %v", err)
 	}

@@ -6,7 +6,7 @@ description: >
   в документах, которые домен отдаёт в выдаче поисковиков. Обёртка над CLI
   metafinder: гоняет дорк по Google/Bing/Baidu, скачивает найденные файлы,
   читает отчёт metadata_result.txt. Ставится отдельно: pip install metafinder.
-author: "community · wedra showcase (OSINT)"
+author: "community · fidespipe showcase (OSINT)"
 
 runtime:
   type: python

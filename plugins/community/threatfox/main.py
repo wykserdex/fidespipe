@@ -39,7 +39,7 @@ SNIPPET = (
     "                   'exact_match': True}).encode('utf-8')\n"
     "req = urllib.request.Request(API, data=body, method='POST',\n"
     "    headers={'Content-Type': 'application/json',\n"
-    "             'User-Agent': 'wedra-threatfox/0.1'})\n"
+    "             'User-Agent': 'fidespipe-threatfox/0.1'})\n"
     "key = os.environ.get('THREATFOX_AUTH_KEY', '').strip()\n"
     "if key:\n"
     "    req.add_header('Auth-Key', key)\n"
