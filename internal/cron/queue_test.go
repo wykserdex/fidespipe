@@ -110,7 +110,28 @@ func TestQueueTrimsOldClaims(t *testing.T) {
 	if _, err := q.Claim(key, "p.yaml"); err != nil {
 		t.Fatal(err)
 	}
-	if n := q.TrimClaims(time.Millisecond); n != 1 {
+	// Возраст задачи задаётся явно, а не «подождать миллисекунду»: порог в
+	// миллисекунды — это гонка с часами, и тест мигает (на CI проходил, локально
+	// нет).
+	age := func() {
+		q.mu.Lock()
+		for _, task := range q.state.Tasks {
+			task.Updated = time.Now().UTC().Add(-time.Hour)
+		}
+		q.mu.Unlock()
+	}
+	age()
+	// Работающий слот обрезаться НЕ должен: пока задача running, демон жив и
+	// слот занят. Это и есть та защита, ради которой TrimClaims смотрит на
+	// статус.
+	if n := q.TrimClaims(time.Minute); n != 0 {
+		t.Errorf("удалено %d claim'ов, ожидался 0: работающий слот трогать нельзя", n)
+	}
+	if err := q.Release(key, slotDone); err != nil {
+		t.Fatal(err)
+	}
+	age()
+	if n := q.TrimClaims(time.Minute); n != 1 {
 		t.Errorf("удалено %d claim'ов, ожидался 1", n)
 	}
 }

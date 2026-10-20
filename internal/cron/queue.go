@@ -262,7 +262,10 @@ func (q *queue) TrimClaims(keepClaimAge time.Duration) int {
 	removed := 0
 	for key, id := range q.state.Claims {
 		t := q.state.Tasks[id]
-		if t == nil || t.Updated.Before(cutoff) {
+		if t == nil || (t.Updated.Before(cutoff) && t.Status != slotRunning) {
+			// Работающую задачу не трогаем: пока она running, демон жив и
+			// слот занят. Застигнутую работу помечает interrupted — это делает
+			// Interrupted() при старте, и до неё задача ещё не running.
 			delete(q.state.Claims, key)
 			delete(q.state.Tasks, id)
 			removed++
