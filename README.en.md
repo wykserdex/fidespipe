@@ -2,13 +2,34 @@
 
 [Русский](README.md) | English
 
-WEDRA is a local, deterministic pipeline runner with a human approval gate.
-Agents can propose and inspect a plan, while a person remains the decision
-point for gated actions.
+WEDRA is a local execution layer over chains of local tools: a contract at the
+boundary, a run journal, and a human in the loop.
 
-The project is alive. 0.35.0 is in progress: plugin store and editor, import of
-an external project, automatic installation of declared dependencies, working
-schedule alerts, a ceiling on waiting for a gate, and run retention. See the
+WEDRA stopped being "a plugin connector" a long time ago. Running several CLIs
+in a row and gluing their output together by hand is what it does *inside*, and
+that is the smaller half of what it gives you. What matters is what a plain
+`bash` script cannot do:
+
+| | what WEDRA gives you |
+|---|---|
+| **A contract at the boundary** | plugin inputs and outputs are checked **before** the run; a broken manifest does not blow up halfway down a chain |
+| **A run journal** | every run stays on disk: events, context, artifacts; a broken run can be resumed where it stopped |
+| **A human in the loop** | `core/human_gate` waits for a **real** decision, with a ceiling on waiting and approval by a signed link from any device |
+| **Isolation** | untrusted code goes into a sandbox (bubblewrap on Linux); AppContainer on Windows is measured but not enabled |
+| **Trust by content hash** | "id@sha256:…": edit the file, lose the trust; the plugin's name earns nothing |
+| **A scheduler** | a local daemon with a **durable queue**: a slot that ran once never runs twice; interrupted work is not silently replayed |
+| **A catalog with donors** | 100 plugins, a store that installs them, and typed recipes for Go programs, binaries and scripts with a sha256 check |
+| **A writing tool** | a browser editor for plugins; reading an external Python project into a plugin exists as a library (`internal/importer`), but it has no command yet |
+| **Agents** | MCP: an agent may propose a plan and run a chain, while the decision stays with a person |
+| **Deployment** | Docker and systemd, for a server where chains run on a schedule |
+
+```text
+plugin A → plugin B → [a person decides] → plugin C → result
+```
+
+The project is alive. 0.35.0 is in progress: gate approval by a signed link, a
+durable slot queue, typed donor recipes, run retention, working schedule alerts, a
+ceiling on waiting for a gate, and Docker and systemd. See the
 [CHANGELOG](CHANGELOG.md) for what changed.
 
 ## Current contract
@@ -37,16 +58,35 @@ Building from source needs Go 1.26 or newer. That floor is the `go` directive in
 minimum is always the tested one.
 
 There are 100 plugins in the repository and in the registry: 5 `official` and 95
-`community`. Of those, 65 need nothing beyond a bare Python 3, while 35 declare a
-third-party donor through `runtime.requires`. WEDRA installs a donor only through `runtime.requires`, which
-means exactly `pip install package==version` and nothing more: it cannot install
-a Perl CLI, a Go program, or a git clone.
+`community`. Of those, 65 need nothing beyond a bare Python 3; another 35 declare
+a donor through `runtime.requires`, and `install` puts it in place by itself —
+exactly `pip install package==version`.
 
-`runtime.requires` is declared for 13 plugins. For 26 more the donor does exist on
-PyPI, so one manifest line each is all that stands between them and working out of
-the box — that is declared debt, not a reason to drop them. Only `recon-ng` and
-`spiderfoot` really have to be installed by hand: PyPI has no distribution for
-either.
+Five plugins have no donor on PyPI, and it is installed from a **typed recipe**
+in the manifest:
+
+```yaml
+runtime:
+  donor:
+    kind: go        # go | binary | script
+    name: gospider
+    version: v1.1.6
+    module: github.com/jaeles-project/gospider
+    bin_env: GOSPIDER_BIN
+```
+
+Three kinds: `go` (`go install module@version`, checksums verified by the Go
+proxy), `binary` (a ready-made file: `url` + `sha256`), `script` (`url` +
+`sha256` + an interpreter). **A sha256 is mandatory** for `binary` and `script`,
+and it is checked *before* unpacking: downloading executable code without
+verifying its hash is not an install, it is a backdoor. The address must be
+`https`.
+
+The donor is installed **outside the plugin directory**, in
+`<plugins>/.donors/<id>/`. That is not a matter of taste: trust is granted by
+the hash of the directory's contents, so installing a donor inside it would
+change the hash and the plugin would stop being trusted at the very moment it
+was installed.
 
 The numbers above are a property of the catalog. The state of any given machine is
 measured, not asserted: `wedra doctor` recomputes every plugin with the same Python
@@ -74,10 +114,13 @@ this list rather than from the feature set.
 
 - **The scheduler is local, not cloud.** `wedra schedule` shows the schedule of
   chains, `wedra daemon` ticks once a minute and starts whatever the cron says
-  is due. The daemon lives on your machine, is started explicitly, and holds a
+  is due, out of a **durable queue**: a slot is claimed before the run, so a
+  daemon restart does not run the same slot twice, and work caught in flight by
+  the daemon's death is marked interrupted and raises an alert rather than being
+  replayed. The daemon lives on your machine, is started explicitly, and holds a
   lock so a second one does not start; the decision to run still belongs to a
-  person (terminal, console, `wedra approve`) or to an agent call over MCP.
-  There are still no inbound triggers: scheduling is by time only.
+  person (terminal, console, a signed approval link) or to an agent call over
+  MCP. There are still no inbound triggers: scheduling is by time only.
 - **It will not become a cloud, and it is not a SaaS integration sold as a
   product.** No accounts, no telemetry, and no server that holds your data for
   you: it is a binary, a `plugins/` directory, and journals under `var/runs/`.
@@ -95,8 +138,9 @@ this list rather than from the feature set.
   the exact command for it.
 - **It does not build cloud orchestration for its own sake.** Orchestration here
   is a DAG inside a single process: steps, `when`, `foreach`, and
-  `parallel_group` with a barrier. No distributed scheduler, no queues, no
-  service discovery: everything WEDRA does happens on one machine, in one run.
+  `parallel_group` with a barrier. No distributed scheduler, no queues between
+  machines, no service discovery: everything WEDRA does happens on one machine,
+  in one run.
 
 **What WEDRA does:** a deterministic run of a chain described in YAML, where the
 decision to continue stays with a person. Steps and bindings are validated
@@ -218,8 +262,10 @@ network, filesystem, and secret permissions before installing a plugin.
 A network permission is either every host (`any_host: true`) or no network at
 all: there is no per-host egress filter on any platform (see
 [SECURITY.md](SECURITY.md#egress-filtering-proxy-built-kernel-enforcement-still-missing)).
-Isolation for untrusted external code exists only on Linux (bubblewrap); on
-Windows and macOS such code is refused.
+Isolation for untrusted external code works on Linux (bubblewrap). On Windows
+AppContainer is measured and proven, but **not enabled**: switching the security
+boundary needs its own hostile tests, not a "it works by measurement". On macOS
+such code is refused.
 
 A plugin may declare `sandbox: untrusted` in its manifest. Such a plugin only
 runs inside an OS sandbox and only with explicit operator consent via

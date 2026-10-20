@@ -41,10 +41,45 @@ wedra plugin test plugins/мой_плагин       # все тесты passed
   запрещает такие плагины запуском), `secrets: [ENV_KEY]` — каждый env-ключ,
   который читаешь. Валидатор сверяет с `secrets:` пайплайна, заявленная сеть —
   в аудите журнала. Не «декларация для галочки»: это контракт.
-- `runtime.requires` — декларация внешних зависимостей в формате
-  `package==version`; ядро не устанавливает пакеты и не доверяет описанию.
-  Рядом с manifest обязателен `requirements.lock` с теми же exact pins.
+- `runtime.requires` — декларация pip-зависимостей в формате
+  `package==version`. `install` ставит их сам, когда ставит плагин; рядом с
+  manifest обязателен `requirements.lock` с теми же exact pins.
   Для воспроизводимого plugin проверяй lock-файл и окружение contract-тестами.
+- `runtime.donor` — рецепт донора, которого нет на PyPI: Go-программа,
+  готовый бинарь или скрипт. Ставится вместе с плагином, а отдельная строка
+  «поставь руками» больше не нужна:
+
+  ```yaml
+  runtime:
+    type: python
+    entry: main.py
+    requires: []
+    donor:
+      kind: go          # go | binary | script
+      name: gospider    # как плагин будет звать донора
+      version: v1.1.6
+      module: github.com/jaeles-project/gospider
+      bin_env: GOSPIDER_BIN   # переменная, в которую ядро положит путь
+  ```
+
+  Три вида: `go` (`go install module@version`), `binary` (`url` + `sha256`),
+  `script` (`url` + `sha256` + `interpreter`). **Для `binary` и `script` sha256
+  обязателен** и сверяется до распаковки: качать исполняемый код из сети, не
+  сверив хеш, — это не установка, а закладка. Адрес — только `https`.
+
+  `bin_env` — имя переменной, которую плагин читает. Оно своё у каждого
+  плагина (`GOSPIDER_BIN`, `EXIFTOOL_BIN`), и ядро не может его угадать: путь
+  к донору кладётся именно в эту переменную. Плагин читает её так:
+
+  ```python
+  bin_env = os.environ.get("GOSPIDER_BIN", "gospider").strip()
+  bin_env = shutil.which(bin_env) or os.path.abspath(bin_env)
+  ```
+
+  Донор ставится **вне каталога плагина** — в `<plugins>/.donors/<id>/`. Это не
+  выбора вкуса: доверие выдаётся по хэшу содержимого каталога, и установка
+  донора внутрь изменила бы хэш, то есть плагин перестал бы быть доверенным
+  ровно в момент установки.
 
 ## 3. Своя логика
 
