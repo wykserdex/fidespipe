@@ -2,13 +2,28 @@
 
 [Русский](README.md) | English
 
-WEDRA is a local execution layer over chains of local tools: a contract at the
-boundary, a run journal, and a human in the loop.
+WEDRA is a local platform for running other people's tools: a contract, trust, a
+run journal, and a human in the loop.
 
-WEDRA stopped being "a plugin connector" a long time ago. Running several CLIs
-in a row and gluing their output together by hand is what it does *inside*, and
-that is the smaller half of what it gives you. What matters is what a plain
-`bash` script cannot do:
+Platform, not "another orchestrator". An orchestrator runs chains; a **platform
+sets the contract that chains can be run on top of**. WEDRA has one contract: a
+plugin is a separate process, JSON in, JSON out, with a declared protocol
+version that is versioned separately from the application. Everything else is
+built on top of it, and anyone can write it:
+
+- the chain runner — a DAG of steps, `parallel_group` with a barrier, `when`,
+  `foreach`;
+- the scheduler — a local daemon with a durable slot queue;
+- the store and the editor — a plugin catalog with donor installation, and a
+  browser editor;
+- MCP — agents get the same tools a person gets;
+- import — someone else's Python project becomes a plugin;
+- the registry and the protocol — a format version, a compatibility promise, and
+  a conformance gate in CI.
+
+Running several CLIs in a row and gluing their output together by hand is what
+the platform does *inside*, and that is the smaller half of what it gives you.
+What matters is what a plain `bash` script cannot do:
 
 | | what WEDRA gives you |
 |---|---|
