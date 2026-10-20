@@ -4,6 +4,7 @@ package appcontainer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -147,9 +148,17 @@ func profileSID(name string) (*windows.SID, error) {
 // её. Наследование не отключается, поэтому флаг PROTECTED здесь не
 // используется намеренно.
 //
-// Выдача идемпотентна: повторный вызов с тем же SID ничего не меняет, поэтому
-// её безопасно повторять на каждом запуске, хотя профиль на плагин и создаётся
-// один раз.
+// ВЫДАЧА ДОРОГА, и это измерено, а не предположено. Windows пересчитывает
+// наследование по всему дереву под каталогом, и на дереве интерпретатора
+// Python это 16-18 секунд (каталог в профиле пользователя: DCL из 41 записи,
+// под ним 2,6 ГБ в site-packages). Повторная выдача стоит столько же:
+// Windows пересчитывает наследование заново, даже если ничего не изменилось.
+// На свежем каталоге с простым DCL та же операция занимает 8 мс.
+//
+// Поэтому перед выдачей DCL читается и проверяется: если запись для этого SID
+// уже есть с нужными правами, ничего не делается. Иначе каждый запуск
+// плагина платил бы 16 секунд на пустом месте — плагин при этом отрабатывает
+// за десятки миллисекунд.
 func grant(path string, sid *windows.SID, perms windows.ACCESS_MASK) error {
 	abs, err := filepath.Abs(path)
 	if err != nil {
@@ -165,6 +174,9 @@ func grant(path string, sid *windows.SID, perms windows.ACCESS_MASK) error {
 	old, _, err := existing.DACL()
 	if err != nil {
 		return fmt.Errorf("DCL(%s): %w", abs, err)
+	}
+	if aclGrants(old, sid, perms) {
+		return nil
 	}
 	entry := windows.EXPLICIT_ACCESS{
 		AccessPermissions: perms,
@@ -185,6 +197,35 @@ func grant(path string, sid *windows.SID, perms windows.ACCESS_MASK) error {
 		return fmt.Errorf("выдача прав контейнеру(%s): %w", abs, err)
 	}
 	return nil
+}
+
+// aclGrants — есть ли в ACL запись для SID с нужными правами.
+//
+// Проверка по DCL каталога, а не по факту доступа: запись в DCL каталога с
+// флагом наследования означает, что она разошлась и по детям — Windows
+// разошёл её при предыдущей выдаче. Проверять каждый файл дерева было бы
+// ровно той дорогой операцией, ради которой эта проверка и добавлена.
+func aclGrants(acl *windows.ACL, sid *windows.SID, perms windows.ACCESS_MASK) bool {
+	if acl == nil {
+		return false
+	}
+	for i := uint32(0); i < uint32(acl.AceCount); i++ {
+		var ace *windows.ACCESS_ALLOWED_ACE
+		if err := windows.GetAce(acl, i, &ace); err != nil || ace == nil {
+			continue
+		}
+		// SID лежит в записи ACCESS_ALLOWED_ACE сразу за маской прав, и
+		// x/sys/windows не даёт готового доступа к нему — приходится брать
+		// указатель на начало поля.
+		aceSID := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
+		if !aceSID.Equals(sid) {
+			continue
+		}
+		if ace.Mask&perms == perms {
+			return true
+		}
+	}
+	return false
 }
 
 // longPath разворачивает путь до канонического вида: 8.3-имя разворачивается в
@@ -256,6 +297,33 @@ func Prepare(p Plan) error {
 			continue
 		}
 		if err := grant(path, sid, windows.GENERIC_READ|windows.GENERIC_EXECUTE); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// PrepareAccess — создаёт профиль контейнера и выдаёт права на перечисленные
+// пути. Без scratch.
+//
+// Отдельная функция для подготовки при УСТАНОВКЕ плагина: scratch живёт один
+// запуск, и выдавать на него права заранее нельзя, а вот каталог
+// интерпретатора выдаётся один раз на плагин — и выдача эта дорога (Windows
+// пересчитывает наследование по дереву каталога, а на дереве интерпретатора
+// Python это 16-18 секунд).
+func PrepareAccess(name string, reads []string) error {
+	if name == "" {
+		return errors.New("пустое имя профиля контейнера")
+	}
+	sid, err := profileSID(name)
+	if err != nil {
+		return err
+	}
+	for _, path := range reads {
+		if strings.TrimSpace(path) == "" {
+			continue
+		}
+		if err := grant(longPath(path), sid, windows.GENERIC_READ|windows.GENERIC_EXECUTE); err != nil {
 			return err
 		}
 	}

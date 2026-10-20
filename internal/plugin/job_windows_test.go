@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/wykserdex/wedra/internal/sandboxexec"
 	"github.com/wykserdex/wedra/internal/testjob"
 )
 
@@ -26,6 +27,17 @@ import (
 // ровно с той поломкой, ради устранения которой TestMain и нужен, и повис бы
 // так же, как без него.
 func TestMain(m *testing.M) {
+	// Перехват скрытой подкоманды помощника. Launcher песочницы на Windows —
+	// это os.Executable(), а в тестах это сам тестовый бинарь. Без перехвата
+	// он ушёл бы в обычный прогон тестов вместо запуска контейнера, и
+	// проверка песочницы молчала бы на таймауте.
+	//
+	// Перехват стоит ДО входа в job: помощнику job не нужен, а лишнее
+	// присоединение к job'у тестового бинаря ничего не даёт.
+	if len(os.Args) > 1 && os.Args[1] == sandboxexec.CommandName {
+		os.Exit(sandboxexec.Run(os.Args[2:]))
+	}
+
 	if err := testjob.Adopt(); err != nil {
 		fmt.Fprintf(os.Stderr, "testjob: %v — тесты оставили бы осиротевших детей\n", err)
 		os.Exit(1)

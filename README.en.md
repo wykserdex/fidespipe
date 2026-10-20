@@ -30,7 +30,7 @@ What matters is what a plain `bash` script cannot do:
 | **A contract at the boundary** | plugin inputs and outputs are checked **before** the run; a broken manifest does not blow up halfway down a chain |
 | **A run journal** | every run stays on disk: events, context, artifacts; a broken run can be resumed where it stopped |
 | **A human in the loop** | `core/human_gate` waits for a **real** decision, with a ceiling on waiting and approval by a signed link from any device |
-| **Isolation** | untrusted code goes into a sandbox (bubblewrap on Linux); AppContainer on Windows is measured but not enabled |
+| **Isolation** | untrusted code goes into a sandbox: bubblewrap on Linux, AppContainer on Windows (the plugin directory is read-only, the network is denied) |
 | **Trust by content hash** | "id@sha256:…": edit the file, lose the trust; the plugin's name earns nothing |
 | **A scheduler** | a local daemon with a **durable queue**: a slot that ran once never runs twice; interrupted work is not silently replayed |
 | **A catalog with donors** | 100 plugins, a store that installs them, and typed recipes for Go programs, binaries and scripts with a sha256 check |

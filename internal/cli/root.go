@@ -110,6 +110,12 @@ func Run() {
 			return
 		}
 		os.Exit(RunCheck(os.Args[2:]))
+	case "internal-sandbox-exec":
+		// Скрытый режим: запуск внешнего кода в контейнере AppContainer.
+		// Вызывается из internal/plugin/sandbox_windows.go, а не человеком:
+		// в справке он не значится, и его аргументы — контракт между ядром и
+		// помощником, а не интерфейс для пользователя.
+		handleSandboxExec(os.Args[2:])
 	default:
 		fmt.Printf("неизвестная команда %q\n", cmd)
 		printHelp()

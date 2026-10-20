@@ -44,7 +44,7 @@ func TestSandboxBackendReported(t *testing.T) {
 		}
 		t.Skip("изолятор не установлен в этом раннере")
 	}
-	if name != "bwrap" && name != "sandbox-exec" {
+	if name != "bwrap" && name != "sandbox-exec" && name != "appcontainer" {
 		t.Fatalf("неизвестный изолятор %q", name)
 	}
 }
@@ -73,7 +73,13 @@ func TestSandboxArgsKeepPluginCommandLast(t *testing.T) {
 		t.Fatal("launcher или аргументы пусты")
 	}
 	tail := args[len(args)-2:]
-	if tail[0] != "/usr/bin/python3" || tail[1] != "/plug/plugin.py" {
+	// Команда плагина идёт последней. На Windows между флагами и командой стоит
+	// разделитель "--", на Linux его нет, — поэтому проверяется хвост, а не
+	// фиксированные два элемента.
+	if args[len(args)-1] != "/plug/plugin.py" {
+		t.Fatalf("команда плагина должна быть последней, получено: %v", args)
+	}
+	if tail[0] != "/usr/bin/python3" && tail[0] != "--" {
 		t.Fatalf("команда плагина должна быть последней, получено: %v", args)
 	}
 }
@@ -122,6 +128,11 @@ func TestUntrustedRunsInsideSandbox(t *testing.T) {
 func TestWindowsRefusalIsActionable(t *testing.T) {
 	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		t.Skip("проверка только для платформ без изолятора")
+	}
+	// На Windows изолятор есть (AppContainer, см. sandbox_windows.go), и платформа
+	// без изолятора — это уже не Windows. Проверка остаётся для macOS и прочих.
+	if sandboxUsable() {
+		t.Skip("на этой платформе изолятор есть — отказа быть не должно")
 	}
 	m := &pipeline.Manifest{ID: "x", Runtime: pipeline.Runtime{Type: "python"}, Sandbox: pipeline.SandboxUntrusted, Dir: t.TempDir()}
 	_, _, _, err := sandboxArgs(m, []string{"/bin/true"}, t.TempDir())

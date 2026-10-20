@@ -233,9 +233,11 @@ the writable plugin directory. The archived test is the only behavioural
 verification of a real isolator on real hardware in this repository, so it is
 kept rather than deleted.
 
-An AppContainer backend for Windows is measured to work and is **not yet
-wired into the plugin runner**: no `sandbox_windows.go` exists, so untrusted
-code is still refused rather than isolated. This section previously blamed host
+An AppContainer backend for Windows is measured to work and is **now wired
+into the plugin runner**: `internal/plugin/sandbox_windows.go` exists, and
+untrusted plugins run inside a container instead of being refused. The
+measurements below are what the implementation was built on. This section
+previously blamed host
 ACL state. That diagnosis was wrong, and the
 measurements behind it probed the wrong operation. Corrected findings, all
 measured on a clean Windows 10 Enterprise 22H2 x64 VM from a non-elevated
@@ -441,6 +443,72 @@ A hand-rolled `NewLazySystemDLL(...).NewProc("InitializeProcThreadAttributeList"
 operation through `windows.NewProcThreadAttributeList` succeeds. Use the
 package's constructor; do not hand-roll this path.
 
+### The backend is wired into the plugin runner
+
+`internal/plugin/sandbox_windows.go` exists, and untrusted plugins run in an
+AppContainer on Windows. The model is not bubblewrap's: on Linux the whole
+filesystem is mounted read-only and the plugin's own directory is the only
+writable place, while an AppContainer has **no access at all** except what is
+explicitly granted. That is denser rather than weaker, but it forces an
+explicit list: the plugin directory, the interpreter directory, and the donor
+directory if the plugin declares one.
+
+The backend keeps the shape the Linux backend already had — a launcher plus
+arguments. The launcher is the WEDRA binary itself, started in a hidden mode
+(`internal-sandbox-exec`), because `os/exec` cannot express the attribute list
+and the container process has to be created by a direct `CreateProcessW`. The
+helper is silent: its stdout is the plugin's stdout, and the plugin contract is
+JSON on stdout.
+
+What the tests assert (`internal/plugin/sandbox_windows_test.go`):
+
+| property | asserted |
+|---|---|
+| the plugin's own directory is not writable | the plugin's write attempt fails |
+| the plugin's own directory IS readable | the listing is non-empty — otherwise "read-only" would be indistinguishable from "unreachable" |
+| a directory with no grant is unreachable | `PermissionError` |
+| the granted scratch IS writable | the write succeeds |
+| outbound network is refused | the connection to a real listener on the host does not succeed |
+
+The network check uses a **real listener** on the host, not a closed port: a
+refused connection and a forbidden one are indistinguishable from the outside.
+
+Two honest limitations:
+
+- **Network cannot be granted.** A container without a capability SID has no
+  network, so a plugin that declares `any_host` is **refused** on Windows
+  rather than silently run without one.
+- **The plugin's own directory is read-only**, where on Linux it is writable.
+  The stricter of the two, deliberately.
+
+**The 16-second grant — measured, not guessed.** The first run of a plugin on
+Windows took 16-18 seconds, and the cause was none of the obvious ones: not
+the interpreter, not the container, not Python. It was `SetNamedSecurityInfo` —
+Windows recomputes inheritance over the entire tree under a directory on every
+write, and the interpreter's directory holds 2.6 GB of `site-packages` under a
+DCL of 41 entries. The measurements:
+
+| operation | time |
+|---|---|
+| grant on the interpreter directory (first time) | 16-18 s |
+| the same grant, repeated | the same 16-18 s |
+| grant on a fresh directory with a simple DCL | 8 ms |
+| grant on a single file | 9 ms |
+| a plugin run in the container | ~1 s |
+
+So the grant is now **checked before it is made**: if the DCL already holds an
+entry for the container's SID with the required rights, nothing is written.
+Repeated grants dropped to 14 ms, and a plugin run went from 23.5 s to 1.09 s.
+
+The remaining one-off cost — the first grant for a plugin's own profile — is
+paid at **install** time (`plugin.PrepareSandbox`), not on the first run: the
+person is waiting for a plugin to run, not for it to be installed.
+
+**A note on the `realpath` warning.** CPython prints "Failed to find real
+location of ..." inside the container, because `GetFinalPathNameByHandle` is
+refused for the container token. It is cosmetic — the interpreter starts and
+works — and it was measured to be unrelated to the 16-second grant.
+
 ### What a Windows user can do today: trust their own code
 
 Fail-closed applies to code that is **not** in the allow-list. A plugin that is
@@ -449,8 +517,9 @@ included. That makes the editor, the importer and the store usable on Windows
 for the case they exist for — a person writing their own plugin:
 
 1. write the plugin (editor, importer, or a text editor);
-2. it is not trusted — its content hash differs from any allow-list entry, and
-   an isolator does not exist on this platform, so a run is refused;
+2. it is not trusted — its content hash differs from any allow-list entry, so
+   the run goes through the isolator (on Windows: an AppContainer; on Linux:
+   bubblewrap);
 3. read the new hash from `GET /api/plugins/<id>/source` (`content_sha256`);
 4. add `"<id>@<sha256:…>"` to `trusted_plugins` in `wedra-trust.yaml`;
 5. it runs.

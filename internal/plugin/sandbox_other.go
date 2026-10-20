@@ -1,4 +1,4 @@
-//go:build !linux
+//go:build !linux && !windows
 
 //lint:file-ignore U1000,SA4023 Платформенный файл: на этой платформе sandboxArgs
 // всегда отказывает, поэтому проверки «сравнение всегда истинно» и «функция не
@@ -15,21 +15,22 @@ import (
 	"github.com/wykserdex/wedra/internal/pipeline"
 )
 
-// Windows, macOS и прочие платформы: поддерживаемого изолятора нет.
+// macOS и прочие платформы, кроме Linux и Windows: поддерживаемого изолятора нет.
 // Fail-closed — untrusted-код на таких хостах не запускается, а не запускается
 // без песочницы.
 //
-// AppContainer на Windows исследован, но в дерево НЕ включён: бэкенда здесь
-// нет, поэтому статус на Windows — fail-closed. Результаты замеров (в том числе
-// исправленный диагноз о барьере целостности) описаны в SECURITY.md, раздел
-// «An AppContainer backend for Windows». Этот файл их не реализует и не
-// утверждает, что изоляция на Windows работает.
+// Windows вынесен в отдельный файл (sandbox_windows.go) с бэкендом AppContainer:
+// изоляция там задаётся правами самого процесса, а не обёрткой, и выражается
+// иначе — через скрытый режим того же бинаря. Описание модели и её отличие от
+// Linux — в SECURITY.md, раздел «An AppContainer backend for Windows».
 //
 // Job Objects — НЕ часть этой ступени и не граница безопасности:
 // JobObjectSecurityLimitInformation удалён начиная с Windows Vista,
 // JOB_OBJECT_SET_SECURITY_ATTRIBUTES не поддерживается. Job objects дают
 // лимиты CPU, памяти и числа процессов и гарантированное завершение дерева
-// процессов. Защиту от DoS и уборку — да, изоляцию — нет.
+// процессов. Защиту от DoS и уборку — да, изоляцию — нет. На Windows, где
+// изолятор есть, Job Objects работают вместе с ним: контейнеризованный ребёнок
+// наследует джобу родителя, и её закрытие гасит всё дерево.
 //
 // macOS попадает сюда намеренно. Реализация на sandbox-exec была, но
 // sandbox-exec не умеет read-only bind mount, поэтому каталог плагина приходилось
@@ -53,3 +54,9 @@ func sandboxArgs(m *pipeline.Manifest, argv []string, scratch string) (string, [
 		"на этой платформе запустить нельзя",
 		ErrSandboxUnsupported, runtime.GOOS)
 }
+
+// prepareSandbox — на платформах без изолятора делать нечего.
+//
+// Изолятора нет, и плагин без песочницы не запустится вовсе (fail-closed), —
+// готовить нечего.
+func prepareSandbox(m *pipeline.Manifest) error { return nil }
