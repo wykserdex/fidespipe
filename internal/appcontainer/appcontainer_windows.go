@@ -520,7 +520,10 @@ func Run(ctx context.Context, p Plan) (Result, error) {
 // SID нужен хэш имени и регистрация capability в системе, а well-known
 // система знает сама.
 func internetClientSID() (*windows.SID, error) {
-	authority := windows.SidIdentifierAuthority{[6]byte{0, 0, 0, 0, 0, 15}}
+	// Поле называется явно: безымянный литерал внешнего типа ловит
+	// проверка composites в go vet, и ловит не на всех версиях Go — на
+	// локальной 1.27 проверка молчит, а на CI с 1.26.9 падает.
+	authority := windows.SidIdentifierAuthority{Value: [6]byte{0, 0, 0, 0, 0, 15}}
 	var sid *windows.SID
 	// AllocateAndInitializeSid: authority, число под-авторитетов, затем сами
 	// под-авторитеты. У S-1-15-3-1 их два: базовый RID capability (3) и
