@@ -134,6 +134,8 @@ func printHelp() {
   wedra plugin test <dir> [--conformance] [--json]
   wedra plugin test --conformance [--json] [--fixtures=dir]
   wedra plugin create <dir> [--author --description --example]
+  wedra plugin import <проект> [<каталог>] [--id=ИМЯ] [--description=ТЕКСТ] [--plan]
+                                              # разобрать чужой Python-проект в плагин
   wedra plugin inspect <dir>
   wedra plugin search <query>              # поиск по official/community
   wedra plugin list                        # список всех плагинов
@@ -238,6 +240,8 @@ func handlePlugin(args []string) {
 		RunPluginTest(args[1:])
 	case "create":
 		RunPluginCreate(args[1:])
+	case "import":
+		RunPluginImport(args[1:])
 	case "inspect":
 		RunPluginInspect(args[1:])
 	case "install":

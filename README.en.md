@@ -19,7 +19,7 @@ that is the smaller half of what it gives you. What matters is what a plain
 | **Trust by content hash** | "id@sha256:…": edit the file, lose the trust; the plugin's name earns nothing |
 | **A scheduler** | a local daemon with a **durable queue**: a slot that ran once never runs twice; interrupted work is not silently replayed |
 | **A catalog with donors** | 100 plugins, a store that installs them, and typed recipes for Go programs, binaries and scripts with a sha256 check |
-| **A writing tool** | a browser editor for plugins; reading an external Python project into a plugin exists as a library (`internal/importer`), but it has no command yet |
+| **A writing tool** | a browser editor for plugins, and `wedra plugin import` — reading an external Python project into a ready plugin |
 | **Agents** | MCP: an agent may propose a plan and run a chain, while the decision stays with a person |
 | **Deployment** | Docker and systemd, for a server where chains run on a schedule |
 
