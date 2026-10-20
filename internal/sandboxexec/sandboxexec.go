@@ -75,6 +75,7 @@ func Run(args []string) int {
 	cwd := fs.String("cwd", "", "рабочий каталог ребёнка")
 	var reads stringList
 	fs.Var(&reads, "read", "каталог, выдаваемый контейнеру на чтение и исполнение")
+	allowNetwork := fs.Bool("network", false, "разрешить контейнеру выход в сеть (capability internetClient)")
 	if err := fs.Parse(args); err != nil {
 		fmt.Fprintf(os.Stderr, "%s: %v\n", CommandName, err)
 		return FailureCode
@@ -85,12 +86,13 @@ func Run(args []string) int {
 		return FailureCode
 	}
 	plan := appcontainer.Plan{
-		Name:    *profile,
-		Argv:    argv,
-		Read:    appcontainer.Readable(reads),
-		Scratch: *scratch,
-		WorkDir: *cwd,
-		Env:     env(*scratch),
+		Name:         *profile,
+		Argv:         argv,
+		Read:         appcontainer.Readable(reads),
+		Scratch:      *scratch,
+		WorkDir:      *cwd,
+		Env:          env(*scratch),
+		AllowNetwork: *allowNetwork,
 	}
 	res, err := appcontainer.Run(context.Background(), plan)
 	if err != nil {

@@ -37,6 +37,12 @@ func TestMain(m *testing.M) {
 	if len(os.Args) > 1 && os.Args[1] == sandboxexec.CommandName {
 		os.Exit(sandboxexec.Run(os.Args[2:]))
 	}
+	// Тот же перехват для самопроверки сети: проба хоста запускает её в
+	// контейнере, и без перехвата тестовый бинарь ушёл бы в обычный прогон
+	// тестов вместо создания сокета.
+	if len(os.Args) > 1 && os.Args[1] == sandboxexec.SelfCommandName {
+		os.Exit(sandboxexec.Self(os.Args[2]))
+	}
 
 	if err := testjob.Adopt(); err != nil {
 		fmt.Fprintf(os.Stderr, "testjob: %v — тесты оставили бы осиротевших детей\n", err)

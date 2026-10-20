@@ -108,6 +108,16 @@ func hresultFailed(hr uintptr) bool { return int32(hr) < 0 }
 // Профиль на плагин, а не на запуск, поэтому SID переиспользуется между
 // прогонами, а выданная однажды ACE остаётся рабочей.
 func profileSID(name string) (*windows.SID, error) {
+	return profileSIDCaps(name, nil)
+}
+
+// profileSIDCaps — профиль контейнера, создаваемый СРАЗУ с capability.
+//
+// У CreateAppContainerProfile есть параметр pCapabilities, и есть мнение, что
+// capability надо выдавать профилю, а не только процессу. Проверяется
+// измерением, а не мнением: если capability в профиле даёт сеть, а в
+// процессе — нет, разница будет видна сразу.
+func profileSIDCaps(name string, caps *windows.SIDAndAttributes) (*windows.SID, error) {
 	namePtr, err := windows.UTF16PtrFromString(name)
 	if err != nil {
 		return nil, fmt.Errorf("имя профиля %q: %w", name, err)
@@ -117,12 +127,18 @@ func profileSID(name string) (*windows.SID, error) {
 	display, _ := windows.UTF16PtrFromString("WEDRA plugin")
 	desc, _ := windows.UTF16PtrFromString("Изоляция плагина WEDRA")
 	var sid *windows.SID
+	var capPtr uintptr
+	capCount := uintptr(0)
+	if caps != nil {
+		capPtr = uintptr(unsafe.Pointer(caps))
+		capCount = 1
+	}
 	hr, _, _ := procCreateAppContainer.Call(
 		uintptr(unsafe.Pointer(namePtr)),
 		uintptr(unsafe.Pointer(display)),
 		uintptr(unsafe.Pointer(desc)),
-		0, // pCapabilities — у контейнера нет заявленных прав
-		0, // dwCapabilityCount
+		capPtr, // pCapabilities
+		capCount,
 		uintptr(unsafe.Pointer(&sid)),
 	)
 	if !hresultFailed(hr) && sid != nil {

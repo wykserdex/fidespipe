@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/wykserdex/wedra/internal/buildinfo"
+	"github.com/wykserdex/wedra/internal/sandboxexec"
 )
 
 func Run() {
@@ -110,6 +111,10 @@ func Run() {
 			return
 		}
 		os.Exit(RunCheck(os.Args[2:]))
+	case sandboxexec.SelfCommandName:
+		// Скрытый режим: самопроверка сети внутри контейнера. Вызывается из
+		// пробы хоста, а не человеком.
+		os.Exit(sandboxexec.Self(os.Args[2]))
 	case "internal-sandbox-exec":
 		// Скрытый режим: запуск внешнего кода в контейнере AppContainer.
 		// Вызывается из internal/plugin/sandbox_windows.go, а не человеком:

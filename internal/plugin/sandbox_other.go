@@ -60,3 +60,6 @@ func sandboxArgs(m *pipeline.Manifest, argv []string, scratch string) (string, [
 // Изолятора нет, и плагин без песочницы не запустится вовсе (fail-closed), —
 // готовить нечего.
 func PrepareSandbox(dir string) error { return nil }
+
+// SandboxNetworkNote — пустая строка: на этой платформе изолятора нет, и спрашивать про capability нечего.
+func SandboxNetworkNote() string { return "" }

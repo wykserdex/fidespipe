@@ -19,14 +19,17 @@
 package plugin
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/wykserdex/wedra/internal/appcontainer"
 	"github.com/wykserdex/wedra/internal/pipeline"
+	"github.com/wykserdex/wedra/internal/sandboxexec"
 )
 
 // winProbeOnce/winProbeOK — результат пробы хоста, один на процесс.
@@ -74,18 +77,37 @@ func sandboxArgs(m *pipeline.Manifest, argv []string, scratch string) (string, [
 			"создание профиля контейнера (проверьте политику AppContainer и право менять DACL)",
 			ErrSandboxUnsupported)
 	}
-	// Сеть контейнеру без capability SID не выдаётся, а объявленная сеть —
-	// это обещание плагину, которое нельзя выполнить молча. Отказ fail-closed:
-	// плагин, которому нужна сеть, на Windows не запускается.
+	// Сеть контейнеру выдаётся только через capability internetClient
+	// (S-1-15-3-1). Capability работает не везде: системе нужно знать, что
+	// такая capability за что отвечает, а на части машин таблицы capability
+	// нет вовсе, и тогда capability в токене не даёт ничего.
+	//
+	// Объявленная сеть — это обещание плагину, и выполнить его молча нельзя.
+	// Поэтому сперва ПРОБА: если capability на этой машине не действует, плагин
+	// с сетью не запускается вовсе, с внятным объяснением. Молчаливый запуск
+	// без сети выглядел бы как «плагин сломался», и чинить его стали бы в
+	// плагине, а не в песочнице.
 	if declaresNetwork(m) {
-		return "", nil, nil, fmt.Errorf("%w: плагин объявил сетевой доступ, а изолятор на Windows "+
-			"сеть контейнеру не выдаёт — запустить его здесь нельзя", ErrSandboxUnsupported)
+		ok, detail, err := networkCapabilityWorks()
+		if err != nil {
+			return "", nil, nil, fmt.Errorf("%w: плагин объявил сетевой доступ, а проверить "+
+				"capability не удалось: %v — запустить его здесь нельзя", ErrSandboxUnsupported, err)
+		}
+		if !ok {
+			return "", nil, nil, fmt.Errorf("%w: плагин объявил сетевой доступ, а capability "+
+				"internetClient на этой машине не действует (проба: %s) — недоверенный плагин "+
+				"с сетью на Windows запустить нельзя; запустите его как доверенный (по хэшу) "+
+				"или перенесите цепочку на Linux", ErrSandboxUnsupported, detail)
+		}
 	}
 	args := []string{
 		"internal-sandbox-exec",
 		"--profile=" + appcontainer.ProfileName(m.ID),
 		"--scratch=" + scratch,
 		"--cwd=" + m.Dir,
+	}
+	if declaresNetwork(m) {
+		args = append(args, "--network")
 	}
 	for _, p := range sandboxReadPaths(m, argv) {
 		args = append(args, "--read="+p)
@@ -217,5 +239,47 @@ func sandboxArgv(m *pipeline.Manifest) ([]string, error) {
 		return []string{filepath.Join(m.Dir, m.Runtime.Entry)}, nil
 	default:
 		return []string{filepath.Join(m.Dir, m.Runtime.Entry)}, nil
+	}
+}
+
+// networkCapabilityWorks — даёт ли capability internetClient сеть контейнеру.
+//
+// Проба выполняется один раз на процесс: она поднимает контейнер, а это
+// сотни миллисекунд, и ответ на вопрос «работает ли capability на этой
+// машине» не меняется.
+var (
+	netProbeOnce sync.Once
+	netProbeOK   bool
+	netProbeText string
+	netProbeErr  error
+)
+
+func networkCapabilityWorks() (bool, string, error) {
+	netProbeOnce.Do(func() {
+		exe, err := os.Executable()
+		if err != nil {
+			netProbeErr = fmt.Errorf("не найден исполняемый файл WEDRA: %w", err)
+			return
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
+		netProbeOK, netProbeText, netProbeErr = sandboxexec.ProbeNetwork(ctx, exe)
+	})
+	return netProbeOK, netProbeText, netProbeErr
+}
+
+// SandboxNetworkNote — строка о сети контейнера для отчёта doctor.
+//
+// На других платформах пустая: там сеть выдаётся иначе (на Linux — через
+// userspace-стек и прокси), и спрашивать про capability там нечего.
+func SandboxNetworkNote() string {
+	ok, detail, err := networkCapabilityWorks()
+	switch {
+	case err != nil:
+		return "сеть контейнеру: НЕ ПРОВЕРЕНА (" + err.Error() + ")"
+	case ok:
+		return "сеть контейнеру: ДОСТУПНА (capability internetClient действует)"
+	default:
+		return "сеть контейнеру: НЕДОСТУПНА (" + detail + ")"
 	}
 }

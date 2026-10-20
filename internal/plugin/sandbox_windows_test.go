@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -115,13 +116,16 @@ sys.stdout.write(json.dumps({"status": "ok", "output": out}))
 	}
 }
 
-// TestWindowsSandboxRefusesNetworkDeclaration — плагин с объявленной сетью на
-// Windows не запускается.
+// TestWindowsNetworkDependsOnCapability — сеть недоверенному плагину на
+// Windows выдаётся через capability internetClient, и только если она на
+// этой машине действует.
 //
-// Не «запускается без сети», а именно не запускается: сеть была обещана
-// плагину в манифесте, и выполнить обещание нечем. Молчаливый запуск без сети
-// выглядел бы как «плагин сломался», а отказ говорит прямо.
-func TestWindowsSandboxRefusesNetworkDeclaration(t *testing.T) {
+// Проверка двух ветвей, а не одной: capability работает не везде (системе
+// нужна таблица capability, а на части машин её нет), и обе ветви должны
+// быть честными. Ветка «действует» — плагин получает сеть; ветка «не
+// действует» — плагин с сетью НЕ запускается, с объяснением, а не молча
+// остаётся без сети.
+func TestWindowsNetworkDependsOnCapability(t *testing.T) {
 	if !sandboxUsable() {
 		t.Skip("песочница недоступна на этом хосте")
 	}
@@ -130,9 +134,25 @@ func TestWindowsSandboxRefusesNetworkDeclaration(t *testing.T) {
 	// any_host — единственный исполнимый вид объявленной сети: сеть по списку
 	// хостов отсекает runner, ещё до песочницы (см. sandbox.go).
 	m.Permissions = pipeline.Permissions{Network: []pipeline.NetworkPermission{{AnyHost: true}}}
-	_, _, _, err := sandboxArgs(m, []string{"python"}, t.TempDir())
-	if err == nil {
-		t.Fatal("плагин с объявленной сетью обязан быть отвергнут на Windows")
+
+	_, args, _, err := sandboxArgs(m, []string{"python"}, t.TempDir())
+	if err != nil {
+		// Отказ должен объяснять причину и предлагать выход, а не молчать.
+		if !strings.Contains(err.Error(), "сетью на Windows запустить нельзя") {
+			t.Fatalf("отказ должен объяснять, что с сетью нельзя: %v", err)
+		}
+		t.Logf("capability на этом хосте не действует, плагин с сетью отвергнут: %v", err)
+		return
+	}
+	// Capability действует: сеть должна быть запрошена у помощника.
+	found := false
+	for _, a := range args {
+		if a == "--network" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("плагин с объявленной сетью должен идти в контейнер с --network: %v", args)
 	}
 }
 

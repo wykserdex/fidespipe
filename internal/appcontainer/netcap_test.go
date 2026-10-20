@@ -66,27 +66,41 @@ func buildSocketProbe(t *testing.T) (string, func()) {
 	t.Helper()
 	dir := t.TempDir()
 	src := filepath.Join(dir, "main.go")
-	// Проба создаёт СОКЕТ и ничего больше. Соединение не нужно: без сети
-	// внутри контейнера не инициализируется Winsock, и падает именно создание
-	// сокета (WinError 10106). Соединение же отказало бы и при рабочей сети
-	// (порт закрыт), и разницы не дало бы.
+	// Проба соединяется с портом, который никто не слушает, и РАЗЛИЧАЕТ две
+	// неудачи:
+	//
+	//   - «connection refused» — сокет создан, стек сети работает, значит сеть
+	//     есть (порт закрыт — это не запрет);
+	//   - любая другая ошибка (WSAStartup не удался, провайдер услуг не
+	//     загрузился) — Winsock в контейнере не инициализируется, сети нет.
+	//
+	// Через net, а не через сырой syscall.Socket: сырой вызов требует
+	// предварительного WSAStartup, и без него падает с ошибкой
+	// «application has not called WSAStartup» — ошибкой САМОГО пробника,
+	// а не контейнера. На этом обманулись первые замеры.
 	body := `package main
 
 import (
+	"errors"
 	"fmt"
+	"net"
 	"os"
 	"syscall"
 )
 
 func main() {
-	fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_STREAM, 0)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "SOCKET_FAIL", err)
+	_, err := net.Dial("tcp", "127.0.0.1:1")
+	switch {
+	case err == nil:
+		os.WriteFile(os.Args[1], []byte("SOCKET_OK"), 0o600)
+	case errors.Is(err, syscall.ECONNREFUSED):
+		// Сокет создался и соединение дошло до сети: сеть есть.
+		os.WriteFile(os.Args[1], []byte("SOCKET_OK refused"), 0o600)
+	default:
 		os.WriteFile(os.Args[1], []byte("SOCKET_FAIL "+err.Error()), 0o600)
+		fmt.Fprintln(os.Stderr, "SOCKET_FAIL", err)
 		os.Exit(1)
 	}
-	syscall.Close(fd)
-	os.WriteFile(os.Args[1], []byte("SOCKET_OK"), 0o600)
 }
 `
 	if err := os.WriteFile(src, []byte(body), 0o600); err != nil {

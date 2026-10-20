@@ -5,6 +5,8 @@ import (
 	"io"
 	"sort"
 	"strings"
+
+	"github.com/wykserdex/wedra/internal/plugin"
 )
 
 // PrintHuman — отчёт человеческим языком в переданный writer.
@@ -23,6 +25,17 @@ func PrintHuman(w io.Writer, rep Report) {
 		fmt.Fprintf(w, "        %s\n", rep.Python.Path)
 	}
 	fmt.Fprintln(w)
+
+	// Изолятор и сеть контейнера — тоже про окружение, и оба отвечают на
+	// вопрос «почему мой плагин не запускается». На Windows строка про сеть
+	// непустая только там, где сеть действительно даётся через capability.
+	if backend := plugin.SandboxBackendName(); backend != "" {
+		fmt.Fprintf(w, "Изолятор: %s", backend)
+		if note := plugin.SandboxNetworkNote(); note != "" {
+			fmt.Fprintf(w, "; %s", note)
+		}
+		fmt.Fprintln(w)
+	}
 
 	if rep.Total == 0 {
 		fmt.Fprintln(w, "Плагины: не найдены в", rep.PluginsDir)

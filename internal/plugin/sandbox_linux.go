@@ -335,3 +335,6 @@ func waitTapReady(pid int, timeout time.Duration) error {
 // bubblewrap собирает песочницу на каждый запуск, и никаких прав на диске
 // выдавать не нужно: изоляция задаётся mount-пространством процесса.
 func PrepareSandbox(dir string) error { return nil }
+
+// SandboxNetworkNote — пустая строка: на Linux сеть выдаётся через userspace-стек и прокси, capability там не используется.
+func SandboxNetworkNote() string { return "" }
