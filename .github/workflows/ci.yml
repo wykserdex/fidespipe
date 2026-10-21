@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.9' # GO-2026-6617: net/http HPACK, чинится в 1.26.9
+          go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - name: version invariants
         run: |
           set -eu
@@ -429,7 +429,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.9' # GO-2026-6617: net/http HPACK, чинится в 1.26.9
+          go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - name: floor == go.mod directive
         run: |
           set -eu
@@ -462,7 +462,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.9' # GO-2026-6617: net/http HPACK, чинится в 1.26.9
+          go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       # Дедлайн есть у каждого шага: если шаг встанет, джоб отменится, а лог
       # отменённого джоба не отдаётся (BlobNotFound) — терять его незачем.
       - run: go vet ./...
@@ -535,7 +535,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.9' # GO-2026-6617: net/http HPACK, чинится в 1.26.9
+          go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - run: go vet ./...
       - run: go test ./... -count=1 -timeout 10m
       - name: sandbox isolation (verbose)
@@ -560,7 +560,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26.9' # GO-2026-6617: net/http HPACK, чинится в 1.26.9
+          go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - run: go build -o fidespipe ./cmd/fidespipe
       # Тот же список доноров, что и в джобе core, и по той же причине:
       # `registry validate` гоняет plugin.test.yaml КАЖДОЙ записи реестра
