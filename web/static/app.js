@@ -592,7 +592,7 @@ async function renderMenu() {
     <button class="mprimary" id="m-new-run">
       ${chainSVG(true)}
       <span>
-        <span class="mp-k">Начать новый запуск</span>
+        <span class="mp-k">Своя цепочка</span>
         <span class="mp-d">${state.pipelines.length
           ? `Выбрать пайплайн из ${state.pipelines.length} и запустить.`
           : 'Выбрать пайплайн и запустить.'} Гейт можно оставить человеку или принять автоматически.</span>
@@ -647,20 +647,21 @@ async function renderMenu() {
     <div class="wrap">
       <div class="mhead">
         ${chainSVG(false)}
-        <h2>Запустить цепочку</h2>
-        <span class="mh-sub">Строка ниже — готовая цепочка шагов с человеком в гейте.</span>
-      </div>
-      ${primary}
-
-      <div class="mgroup">
-        <h3 class="gh">Недавние прогоны <span class="gc">${recent.length ? recent.length : ''}</span></h3>
-        ${runsBlock}
+        <h2>Проверки</h2>
+        <span class="mh-sub">Почта, телефоны, IBAN, дубликаты, утечки в коде. Каждая — готовая цепочка шагов, где спорное решает человек.</span>
       </div>
 
       <div class="mgroup">
         <h3 class="gh">Рабочие задачи</h3>
         <p class="gn">Почта, телефоны, IBAN, дубликаты — то, что человек делает руками.</p>
         ${presets.available ? block(human) : ''}
+      </div>
+
+      ${primary}
+
+      <div class="mgroup">
+        <h3 class="gh">Недавние прогоны <span class="gc">${recent.length ? recent.length : ''}</span></h3>
+        ${runsBlock}
       </div>
 
       <div class="mgroup">
