@@ -200,15 +200,16 @@ func gateMaterialize(form []pipeline.FormField, ctx *runctx.Ctx, edits map[strin
 func (s *Service) Run(st *pipeline.Step, ctx *runctx.Ctx, j *journal.Journal, opts GateOptions) string {
 	if !opts.Quiet {
 		fmt.Printf("\n══ human_gate · %s ══\n", st.ID)
+		labels := formLabels(st.Form)
 		for _, f := range st.Form {
 			mark := " "
 			if f.Editable {
 				mark = "*"
 			}
 			if v, ok := ctx.Get(f.Field); ok {
-				fmt.Printf("  %s %s: %s\n", mark, fieldLabel(f.Field), common.Truncate(fieldValue(v), 500))
+				fmt.Printf("  %s %s: %s\n", mark, labels[f.Field], common.Truncate(fieldValue(v), 500))
 			} else {
-				fmt.Printf("  %s %s: <нет данных>\n", mark, fieldLabel(f.Field))
+				fmt.Printf("  %s %s: <нет данных>\n", mark, labels[f.Field])
 			}
 		}
 	}
@@ -504,4 +505,36 @@ func fieldValue(v interface{}) string {
 	}
 	b, _ := json.Marshal(v)
 	return string(b)
+}
+
+// formLabels — подписи полей формы, посчитанные для всей формы сразу.
+//
+// Когда все поля формы из одного шага, шаг в подписи не нужен: он и так
+// напечатан заголовком, и «machine» читается лучше, чем «parse.machine».
+//
+// Когда шагов несколько — а так бывает в комбинированном разборе файла, где
+// и PE-разбор, и поиск секретов, — шаг возвращается. Иначе «count» не скажет,
+// что именно считалось, и две несвязанные величины окажутся рядом.
+func formLabels(form []pipeline.FormField) map[string]string {
+	steps := map[string]bool{}
+	for _, f := range form {
+		if p := strings.Split(f.Field, "."); len(p) >= 3 && p[0] == "steps" {
+			steps[p[1]] = true
+		}
+	}
+	multi := len(steps) > 1
+	out := make(map[string]string, len(form))
+	for _, f := range form {
+		p := strings.Split(f.Field, ".")
+		if len(p) >= 3 && p[0] == "steps" {
+			if multi {
+				out[f.Field] = p[1] + "." + strings.Join(p[2:], ".")
+			} else {
+				out[f.Field] = strings.Join(p[2:], ".")
+			}
+			continue
+		}
+		out[f.Field] = f.Field
+	}
+	return out
 }

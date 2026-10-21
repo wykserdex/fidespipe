@@ -116,6 +116,10 @@ func RunPipelineRun(args []string) {
 	denyUntrusted := false
 	allowUntrusted := false
 	trustCfg := ""
+	// inputOverrides — значения входов, вписанные человеком: «--input key=value».
+	// Это то, чем «принёс файл» обходится без правки YAML: путь к своему
+	// файлу человек знает, а формат пайплайна — нет.
+	inputOverrides := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		a := args[i]
 		switch {
@@ -127,6 +131,25 @@ func RunPipelineRun(args []string) {
 			denyUntrusted = true
 		case a == "--allow-untrusted-plugins":
 			allowUntrusted = true
+		case strings.HasPrefix(a, "--input="):
+			k, v, ok := strings.Cut(strings.TrimPrefix(a, "--input="), "=")
+			if !ok || strings.TrimSpace(k) == "" {
+				fmt.Println("флагу --input нужно значение вида key=value")
+				os.Exit(2)
+			}
+			inputOverrides[k] = v
+		case a == "--input":
+			if i+1 >= len(args) {
+				fmt.Println("флагу --input нужно значение вида key=value")
+				os.Exit(2)
+			}
+			i++
+			k, v, ok := strings.Cut(args[i], "=")
+			if !ok || strings.TrimSpace(k) == "" {
+				fmt.Println("флагу --input нужно значение вида key=value")
+				os.Exit(2)
+			}
+			inputOverrides[k] = v
 		case strings.HasPrefix(a, "--trust-config="):
 			trustCfg = strings.TrimPrefix(a, "--trust-config=")
 		case a == "--trust-config":
@@ -196,6 +219,12 @@ func RunPipelineRun(args []string) {
 		fmt.Println("ошибка загрузки пайплайна:", err)
 		os.Exit(2)
 	}
+	if len(inputOverrides) > 0 {
+		if err := applyInputOverrides(pf, inputOverrides); err != nil {
+			fmt.Println("входы:", err)
+			os.Exit(2)
+		}
+	}
 	trusted, err := plugin.EffectiveAllowList(trustConfigPath(trustCfg))
 	if err != nil {
 		fmt.Println("ошибка конфига доверия:", err)
@@ -252,4 +281,39 @@ func runExitCode(foreach string, stats execution.RunStats) int {
 		return 1
 	}
 	return 0
+}
+
+// applyInputOverrides — подставляет входы, вписанные человеком в CLI.
+//
+// Переопределяются только объявленные пресетом входы: неизвестный ключ —
+// ошибка, а не тихое «проверилось и ничего не нашлось».
+//
+// Поле, которое пресет перебирает (foreach), получает список: значение
+// режется по строкам, чтобы «--input file=a.txt» не превратилось в один
+// элемент списка из нескольких путей.
+func applyInputOverrides(pf *core.PipelineFile, values map[string]string) error {
+	// Перебираемое поле в пресете одно (foreach — строка), и именно оно
+	// список: значение режется по строкам.
+	listFields := map[string]bool{}
+	if ref := pf.Pipeline.Foreach; strings.HasPrefix(ref, "input.") {
+		listFields[strings.TrimPrefix(ref, "input.")] = true
+	}
+	for k, v := range values {
+		if _, ok := pf.Pipeline.Input[k]; !ok {
+			return fmt.Errorf("вход %q у пресета не объявлен", k)
+		}
+		if listFields[k] {
+			items := []string{}
+			for _, line := range strings.Split(v, "\n") {
+				line = strings.TrimSpace(line)
+				if line != "" {
+					items = append(items, line)
+				}
+			}
+			pf.Pipeline.Input[k] = items
+			continue
+		}
+		pf.Pipeline.Input[k] = v
+	}
+	return nil
 }

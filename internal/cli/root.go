@@ -133,7 +133,7 @@ func printHelp() {
 	fmt.Printf(`Fidespipe — готовые проверки из чужих инструментов: домен, почта, телефон, утечки в коде (v%s)
 
 Команды (мясо, не косметика):
-  fidespipe pipeline run <file.yaml> [--yes] [--resume=<run_id>] [--runs-dir=var/runs] [--store=fs|json] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins]
+  fidespipe pipeline run <file.yaml> [--yes] [--resume=<run_id>] [--runs-dir=var/runs] [--store=fs|json] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins] [--input=key=value]
   fidespipe schedule [--pipelines=<dir>] [--runs-dir=<dir>]      # показать next_run для всех cron
   fidespipe daemon [--pipelines=<dir>] [--runs-dir=<dir>]        # демон: тикает каждую минуту, запускает due пайплайны (solo vs scheduled)
   fidespipe pipeline install <name|file.yaml|url> [--registry=<url|path>]  # пресет + автоустановка плагинов

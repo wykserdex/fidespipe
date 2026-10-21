@@ -776,6 +776,12 @@ presets:
     version: v0.33
     commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
     description: "Поиск секретов в коде (detect-secrets) + human_gate на показ; network: deny, только локальные файлы."
+  file_report:
+    source: https://github.com/wykserdex/fidespipe
+    path: examples/file_report.yaml
+    version: v0.33
+    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
+    description: "Разбор файла: архитектура PE и поиск секретов, обе проверки параллельно, один отчёт на гейте"
   pe_triage:
     source: https://github.com/wykserdex/fidespipe
     path: examples/pe_triage.yaml

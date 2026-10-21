@@ -1,0 +1,71 @@
+format_version: "0.2"
+
+# Разбор файла целиком: что это за файл и есть ли в нём секреты.
+#
+# Два независимых разбора одного файла идут ПАРАЛЛЕЛЬНО (parallel_group), а
+# барьер ждёт оба перед гейтом: аналитику нужен один отчёт по файлу, а не две
+# проверки, которые надо соединять самому. Гейт в группе запрещён, поэтому он
+# стоит после барьера.
+#
+# Что внутри:
+#   - plugins/community/pefile — архитектура образа, число секций и сколько DLL
+#     он тянет (разбор PE);
+#   - plugins/community/detect_secrets — есть ли в файле строки, похожие на
+#     секреты (ключи, токены, пароли).
+#
+# Оба плагина работают с локальным файлом и сети не трогают, поэтому
+# network: deny — и это же заявление проверяется запуском настоящих доноров с
+# заблокированными socket.connect/connect_ex/create_connection/getaddrinfo/
+# gethostbyname (см. манифесты плагинов).
+#
+# ПУТЬ К ФАЙЛУ: file_ref ищется от каталога ПЛАГИНА (PROTOCOL §1), поэтому
+# путь, который виден обоим плагинам, — абсолютный. Ниже — пример: подставь
+# свой файл. Для относительного пути от корня проекта валидатор скажет
+# предупреждением (файл найден от корня, но не от каталога плагина).
+#
+# Запуск со своим файлом (путь вписывается, YAML не правится):
+#   ./fidespipe pipeline run examples/file_report.yaml --yes --input file=C:\путь\к\файлу
+# В консоли то же самое делается форой: вписал путь — пошла проверка.
+#
+# Запуск без --input берёт пример из пресета (файл из репозитория):
+#   ./fidespipe pipeline run examples/file_report.yaml --yes
+# Плагины из локальной правки не входят во встроенный allow-list (доверие — по
+# хэшу содержимого), поэтому ран откажет и назовёт ожидаемые записи вида
+# pefile@sha256:... и detect_secrets@sha256:... — их и вносят в конфиг
+# оператора (FIDESPIPE_TRUST_CONFIG).
+
+pipeline:
+  name: file_report
+  network: deny
+  input:
+    # Пример: PE-файл из репозитория. Подставь свой.
+    file: "plugins/community/pefile/fixtures/sample.dll"
+
+  steps:
+    - id: parse
+      plugin: plugins/community/pefile
+      bind: { file: input.file }
+      parallel_group: inspect
+      on_error: stop
+      timeout: 60s            # холодный старт донора (импорт pefile) — секунды
+
+    - id: scan
+      plugin: plugins/community/detect_secrets
+      bind: { path: input.file }
+      parallel_group: inspect
+      on_error: stop
+      timeout: 60s            # холодный старт донора (импорт detect_secrets) — секунды
+
+    # Один отчёт по файлу. Шаги в подписи остаются: «count» из поиска
+    # секретов и «machine» из разбора PE — разные величины, и без шага их
+    # не отличить.
+    - id: review
+      plugin: core/human_gate
+      form:
+        - { field: steps.parse.machine, editable: false }
+        - { field: steps.parse.section_count, editable: false }
+        - { field: steps.parse.import_dll_count, editable: false }
+        - { field: steps.scan.count, editable: false }
+        - { field: steps.scan.secrets, editable: false }
+      actions: [accept, reject]
+      on_reject: stop
