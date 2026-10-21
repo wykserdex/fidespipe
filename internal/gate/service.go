@@ -206,10 +206,9 @@ func (s *Service) Run(st *pipeline.Step, ctx *runctx.Ctx, j *journal.Journal, op
 				mark = "*"
 			}
 			if v, ok := ctx.Get(f.Field); ok {
-				b, _ := json.Marshal(v)
-				fmt.Printf("  %s %s = %s\n", mark, f.Field, common.Truncate(string(b), 500))
+				fmt.Printf("  %s %s: %s\n", mark, fieldLabel(f.Field), common.Truncate(fieldValue(v), 500))
 			} else {
-				fmt.Printf("  %s %s = <нет данных>\n", mark, f.Field)
+				fmt.Printf("  %s %s: <нет данных>\n", mark, fieldLabel(f.Field))
 			}
 		}
 	}
@@ -482,4 +481,27 @@ func decisionKV(d Decision, kv map[string]interface{}) map[string]interface{} {
 		kv["session"] = d.Session
 	}
 	return kv
+}
+
+func fieldLabel(path string) string {
+	parts := strings.Split(path, ".")
+	// steps.<шаг>.<поле> — шаг известен (он напечатан заголовком), в отчёте
+	// остаётся поле.
+	if len(parts) >= 3 && parts[0] == "steps" {
+		return strings.Join(parts[2:], ".")
+	}
+	return path
+}
+
+// fieldValue — значение поля в виде, который читается.
+//
+// Строки печатаются как есть, без JSON-кавычек: кавычки в отчёте перед
+// человеком — шум, а не точность. Остальные значения остаются JSON: там
+// структура важнее читаемости.
+func fieldValue(v interface{}) string {
+	if s, ok := v.(string); ok {
+		return s
+	}
+	b, _ := json.Marshal(v)
+	return string(b)
 }

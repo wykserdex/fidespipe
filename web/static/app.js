@@ -736,6 +736,18 @@ async function renderMenu() {
   if (gotoPl) gotoPl.onclick = () => { setTab('plugins'); loadPluginsTab(); };
 }
 
+// fieldLabel — как поле называется в отчёте перед человеком.
+//
+// Полный путь `steps.parse.machine` отвечает на вопрос «откуда взялось», но
+// не на вопрос «что это»: шаг и так известен, он напечатан заголовком. В
+// отчёте остаётся последняя часть пути; полный путь не теряется — он в
+// журнале рана и в API.
+function fieldLabel(path) {
+  const s = String(path || '');
+  const m = /^steps\.[^.]+\.(.+)$/.exec(s);
+  return m ? m[1] : s;
+}
+
 // verifyPreset — запуск пресета с введёнными человеком значениями.
 //
 // Значения собираются из формы и уходят в запуск как input. Ключи, которых
@@ -1617,10 +1629,10 @@ function updateGateCard(id) {
   const fields = (gw.form || []).map(f => {
     const val = String(f.value == null ? '' : f.value);
     if (f.editable) {
-      return `<div class="gfield"><label>* ${esc(f.field)}${f.type ? ' · ' + esc(f.type) : ''} (JSON, пусто — оставить)</label>
+      return `<div class="gfield"><label>* ${esc(fieldLabel(f.field))}${f.type ? ' · ' + esc(f.type) : ''} (JSON, пусто — оставить)</label>
         <input data-field="${esc(f.field)}" value="${esc(val)}" spellcheck="false"/></div>`;
     }
-    return `<div class="gfield"><label>${esc(f.field)}</label>
+    return `<div class="gfield"><label>${esc(fieldLabel(f.field))}</label>
       <input readonly value="${esc(val)}"/></div>`;
   }).join('');
   const actions = Array.isArray(gw.actions) ? gw.actions : ['accept', 'reject'];

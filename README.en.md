@@ -10,6 +10,12 @@ other. Fidespipe brings them to a common shape — JSON in, JSON out — keeps a
 journal of every run, and hands the debatable cases to a person instead of
 deciding for them.
 
+**Who this is for.** People who open other people's stuff and worry about what
+it does to them: an analyst opening an email with an attachment; an engineer
+checking a domain for leaks; a pentester running scanners hundreds of times a
+day. The tools are other people's, and Fidespipe is what keeps them off your
+machine and out of it.
+
 ```bash
 fidespipe pipeline install email_check    # install the check and its plugins
 fidespipe pipeline run email_check.yaml   # run it; the inputs live in the YAML
@@ -270,6 +276,19 @@ and are not to be reorganized without a public proposal and migration plan.
 | **Editor** — build the chain by dragging, round-trip through the core | |
 | ![Settings: standard density](docs/screenshots/prefs-standard.png) | ![Settings: compact density](docs/screenshots/prefs-compact.png) |
 | **Settings, standard** — density, accent, node roles, rail width | **Settings, compact** — the same screen at a smaller type size and tighter padding |
+
+## License
+
+**Business Source License 1.1** — the source is always public, but you may not
+sell a hosted service on it or bundle it into a paid product; using it inside
+your own organisation is free, production use included. On 21 October 2028 the
+license becomes Apache-2.0 automatically.
+
+Releases up to and including 0.35.0 were published under the MIT License, and
+those stay under MIT forever.
+
+For a commercial license (white-labeling, paid services on top, hosting for
+third parties) — through the repository issues.
 
 ## Maintainers and safety
 
