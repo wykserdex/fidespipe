@@ -130,7 +130,7 @@ func Run() {
 
 func printHelp() {
 	ver := buildinfo.Resolve()
-	fmt.Printf(`Fidespipe — контрактный исполнитель цепочек с человеком в петле (v%s)
+	fmt.Printf(`Fidespipe — готовые проверки из чужих инструментов: домен, почта, телефон, утечки в коде (v%s)
 
 Команды (мясо, не косметика):
   fidespipe pipeline run <file.yaml> [--yes] [--resume=<run_id>] [--runs-dir=var/runs] [--store=fs|json] [--no-auto-approve] [--deny-untrusted-plugins] [--allow-untrusted-plugins]

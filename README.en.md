@@ -2,50 +2,73 @@
 
 [Русский](README.md) | English
 
-Fidespipe is a local platform for running other people's tools: a contract, trust, a
-run journal, and a human in the loop.
+**Checks put together out of other people's tools: a domain, an email address, a
+phone number, a leak in code, a PE file — one command, a verdict at the end.**
 
-Platform, not "another orchestrator". An orchestrator runs chains; a **platform
-sets the contract that chains can be run on top of**. Fidespipe has one contract: a
-plugin is a separate process, JSON in, JSON out, with a declared protocol
-version that is versioned separately from the application. Everything else is
-built on top of it, and anyone can write it:
+The tools are other people's: written and fixed by people who don't know each
+other. Fidespipe brings them to a common shape — JSON in, JSON out — keeps a
+journal of every run, and hands the debatable cases to a person instead of
+deciding for them.
 
-- the chain runner — a DAG of steps, `parallel_group` with a barrier, `when`,
-  `foreach`;
-- the scheduler — a local daemon with a durable slot queue;
-- the store and the editor — a plugin catalog with donor installation, and a
-  browser editor;
-- MCP — agents get the same tools a person gets;
-- import — someone else's Python project becomes a plugin;
-- the registry and the protocol — a format version, a compatibility promise, and
-  a conformance gate in CI.
+```bash
+fidespipe pipeline install email_check    # install the check and its plugins
+fidespipe pipeline run email_check.yaml   # run it; the inputs live in the YAML
+```
 
-Running several CLIs in a row and gluing their output together by hand is what
-the platform does *inside*, and that is the smaller half of what it gives you.
-What matters is what a plain `bash` script cannot do:
+## Checks that are already put together
 
-| | what Fidespipe gives you |
+| check | what it does | what it shows |
+|---|---|---|
+| `email_check` | syntax, disposable domain, MX records | the address's MX records, and whether it is disposable |
+| `phones_audit` | a batch of phone numbers in E.164 | how many are valid, how many are not, and the invalid ones |
+| `iban_check` | the IBAN check digits | whether the account is valid, the formatted number, the bank code |
+| `secrets_scan` | secrets in code | how many findings, the detector version, the findings themselves |
+| `pe_triage` | a PE file: architecture, sections, imports | bitness, section count, imported DLL count |
+| `near_dupe_check` | two strings for near-duplicate | distance, similarity, and whether they count as similar |
+| `email_triage_chain` | email → triage → a person decides | risk and verdict, which a person edits by hand |
+| `csv_load` | CSV → load → gate | row count, headers, the rows themselves |
+
+What comes out are fields and values, not a finished report: the "is this fine or
+not" decision belongs to a person, and in `email_triage_chain` they edit the
+verdict by hand.
+
+There are also mechanics examples — `parallel_demo`, `foreach_step_demo`,
+`when_demo`, `gate_demo`, `csv_foreach`, `csv_foreach_summary`,
+`dir_snapshots`, `llm_text_chain`. They show branches, loops, conditions and the
+gate, not a task; you do not need them to work.
+
+**An agent is not the point, it is one of the ways in.** The same checks and the
+same gate are available from the terminal, from a browser, and over MCP.
+
+## Why this works
+
+The one thing you cannot get for free is an agreement between other people's
+tools. Everything else is built on top of it:
+
+| | what this gives you |
 |---|---|
 | **A contract at the boundary** | plugin inputs and outputs are checked **before** the run; a broken manifest does not blow up halfway down a chain |
 | **A run journal** | every run stays on disk: events, context, artifacts; a broken run can be resumed where it stopped |
 | **A human in the loop** | `core/human_gate` waits for a **real** decision, with a ceiling on waiting and approval by a signed link from any device |
-| **Isolation** | untrusted code goes into a sandbox: bubblewrap on Linux, AppContainer on Windows (the plugin directory is read-only, the network is denied) |
 | **Trust by content hash** | "id@sha256:…": edit the file, lose the trust; the plugin's name earns nothing |
-| **A scheduler** | a local daemon with a **durable queue**: a slot that ran once never runs twice; interrupted work is not silently replayed |
+| **Isolation** | untrusted code goes into a sandbox: bubblewrap on Linux, AppContainer on Windows (the plugin directory is read-only, the network is denied) |
 | **A catalog with donors** | 100 plugins, a store that installs them, and typed recipes for Go programs, binaries and scripts with a sha256 check |
 | **A writing tool** | a browser editor for plugins, and `fidespipe plugin import` — reading an external Python project into a ready plugin |
-| **Agents** | MCP: an agent may propose a plan and run a chain, while the decision stays with a person |
-| **Deployment** | Docker and systemd, for a server where chains run on a schedule |
+| **A scheduler** | a local daemon with a **durable queue**: a slot that ran once never runs twice; interrupted work is not silently replayed |
+| **Deployment** | Docker and systemd, for a server where checks run on a schedule |
 
 ```text
 plugin A → plugin B → [a person decides] → plugin C → result
 ```
 
-The project is alive. 0.35.0 is in progress: gate approval by a signed link, a
-durable slot queue, typed donor recipes, run retention, working schedule alerts, a
-ceiling on waiting for a gate, and Docker and systemd. See the
-[CHANGELOG](CHANGELOG.md) for what changed.
+The points Fidespipe can be extended through:
+
+| Surface | Tools |
+|---|---|
+| Agents (MCP) | 8 tools: `list_plugins`, `describe_plugin`, `validate_pipeline`, `plan_pipeline`, `run_pipeline`, `get_run`, `cancel_run`, `exec_plugin` (off by default) |
+| Plugins | your own process with JSON in and out; the contract is in [PROTOCOL.md](protocol/v0.2/PROTOCOL.md), the version in [protocol/VERSION](protocol/VERSION) |
+| The registry | a plugin record passes the conformance gate and lands in `registry.yaml`; the `registry` step in CI checks it |
+| Import | someone else's Python project becomes a plugin via `fidespipe plugin import` |
 
 ## Current contract
 
@@ -122,45 +145,28 @@ The primary CLI supports pipeline validation and execution, plugin registry
 operations, resume, the local GUI, and an MCP stdio adapter. Plugin manifests
 declare their own component version and protocol compatibility separately.
 
-## What Fidespipe does not do
+## Boundaries
 
-The positioning is written plainly, because the disappointment usually comes from
-this list rather than from the feature set.
+Honest limits, so you don't have to guess.
 
-- **The scheduler is local, not cloud.** `fidespipe schedule` shows the schedule of
-  chains, `fidespipe daemon` ticks once a minute and starts whatever the cron says
-  is due, out of a **durable queue**: a slot is claimed before the run, so a
-  daemon restart does not run the same slot twice, and work caught in flight by
-  the daemon's death is marked interrupted and raises an alert rather than being
-  replayed. The daemon lives on your machine, is started explicitly, and holds a
-  lock so a second one does not start; the decision to run still belongs to a
-  person (terminal, console, a signed approval link) or to an agent call over
-  MCP. There are still no inbound triggers: scheduling is by time only.
-- **It will not become a cloud, and it is not a SaaS integration sold as a
-  product.** No accounts, no telemetry, and no server that holds your data for
-  you: it is a binary, a `plugins/` directory, and journals under `var/runs/`.
-  The console listens on `127.0.0.1` by default; exposing it is an explicit
-  operator flag (`--listen`, `--allow-remote`), not a mode of operation.
-  External services are not "Fidespipe integrations" but ordinary plugins that read
-  your key from the environment.
-- **It does not chase plugin count.** The 100 plugins in the registry are not a
-  showcase: 65 run on a bare Python 3, and 35 declare an external donor, which
-  `install` now pulls by itself; 13 more name an installation that `fidespipe doctor`
-  deliberately refuses to vouch for.
-  A plugin enters the registry because it passes the conformance gate and
-  declares `permissions` honestly, not because it was written.
-  `fidespipe doctor --json` lists every plugin that needs something installed and
-  the exact command for it.
-- **It does not build cloud orchestration for its own sake.** Orchestration here
-  is a DAG inside a single process: steps, `when`, `foreach`, and
-  `parallel_group` with a barrier. No distributed scheduler, no queues between
-  machines, no service discovery: everything Fidespipe does happens on one machine,
-  in one run.
-
-**What Fidespipe does:** a deterministic run of a chain described in YAML, where the
-decision to continue stays with a person. Steps and bindings are validated
-before the run, and the human is in the loop on `core/human_gate` rather than
-reviewing after the fact.
+- **Everything happens on one machine.** Orchestration is a DAG inside a single
+  process: steps, `when`, `foreach`, `parallel_group` with a barrier. There is no
+  distributed scheduler, no queues between machines, no service discovery.
+- **The scheduler is local.** `fidespipe daemon` ticks once a minute and starts
+  whatever the cron says is due, out of a **durable queue**: a slot is claimed
+  before the run, so a daemon restart does not run the same slot twice, and work
+  caught in flight by the daemon's death is marked interrupted rather than
+  replayed. There are still no inbound triggers: scheduling is by time only.
+- **It is a binary, not a cloud.** No accounts, no telemetry, and no server that
+  holds your data for you: a `plugins/` directory and journals in `var/runs/`.
+  The console listens on `127.0.0.1` by default; exposing it is a deliberate
+  operator flag (`--listen`, `--allow-remote`). External services connect as
+  ordinary plugins with your key from an environment variable, not as
+  "Fidespipe integrations".
+- **A plugin lands in the registry because it passes the conformance gate**, not
+  because it was written: it has to declare its `permissions` honestly. The 100
+  plugins are not a showcase — 65 run on a bare Python 3, 35 declare a donor, and
+  `install` puts the donor in place itself.
 
 ## Pipeline format stability
 
