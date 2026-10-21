@@ -195,6 +195,12 @@ func (s *Server) handleRunStart(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		File string `json:"file"`
 		Yes  bool   `json:"yes"`
+		// Input — значения входов, которые человек вписал в форме. Без них
+		// запуск идёт с тем, что лежит в YAML пресета, — то есть «проверить
+		// свою почту» требовало правки YAML. Значения переопределяют входы
+		// пресета, а не добавляют новые: неизвестный ключ — ошибка, чтобы
+		// опечатка в форме не выглядела как «проверилось и ничего не нашлось».
+		Input map[string]interface{} `json:"input"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "json: "+err.Error(), 400)
@@ -209,6 +215,12 @@ func (s *Server) handleRunStart(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "pipeline: "+err.Error(), 400)
 		return
+	}
+	if len(req.Input) > 0 {
+		if err := applyInputOverride(pf, req.Input); err != nil {
+			writeJSON(w, 400, map[string]interface{}{"ok": false, "error": err.Error()})
+			return
+		}
 	}
 	// v0.9: валидация и secrets — синхронно, ДО 202. Раньше 202 выдавался
 	// сразу, а отказ валидации печатался только в stdout сервера: клиент
@@ -568,4 +580,18 @@ func (s *Server) approveLink(r *http.Request, runID string, wait map[string]inte
 	}
 	base := scheme + "://" + r.Host
 	return s.approve.Register(runID, stepID, base, ui, form, actions)
+}
+
+// applyInputOverride — подставляет значения входов, вписанных человеком.
+//
+// Переопределяются только те ключи, что объявлены в пресете: неизвестный ключ
+// — ошибка, а не тихое «проверилось и ничего не нашлось».
+func applyInputOverride(pf *pipeline.PipelineFile, values map[string]interface{}) error {
+	for k, v := range values {
+		if _, ok := pf.Pipeline.Input[k]; !ok {
+			return fmt.Errorf("вход %q у пресета не объявлен", k)
+		}
+		pf.Pipeline.Input[k] = v
+	}
+	return nil
 }

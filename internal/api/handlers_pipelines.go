@@ -63,12 +63,19 @@ func (s *Server) handlePresets(w http.ResponseWriter, r *http.Request) {
 		// installed — лежит ли пресет рядом, в каталоге пайплайнов. Иначе
 		// меню предлагает «установить», а не «открыть».
 		_, localErr := os.Stat(filepath.Join(s.PipelinesDir, file))
-		list = append(list, map[string]interface{}{
+		item := map[string]interface{}{
 			"name": name, "description": entry.Description,
 			"file": file, "path": entry.Path,
 			"version": entry.Version, "commit": entry.Commit,
 			"installed": localErr == nil,
-		})
+		}
+		// Входы пресета: что человек должен вписать, чтобы проверка имела
+		// смысл. Без них «проверить» означало «отредактировать YAML» — и
+		// человек, который не пишет YAML, до проверки не добирался.
+		if localErr == nil {
+			item["inputs"] = s.presetInputs(file)
+		}
+		list = append(list, item)
 	}
 	sort.Slice(list, func(i, j int) bool {
 		return list[i]["name"].(string) < list[j]["name"].(string)
@@ -270,4 +277,38 @@ func runSummary(dir string) map[string]interface{} {
 		return acc.summary(dir, res.Total, true)
 	}
 	return acc.summary(dir, res.Total, res.Truncated)
+}
+
+// presetInputs — что пресет просит ввести.
+//
+// Описание входов читается из самого пресета: имя входа, вид (список или
+// одно значение) и формат элемента («email», «номер», «путь»). Формат в
+// пресете уже объявлен (item_format) — он и становится подписью поля.
+func (s *Server) presetInputs(file string) []map[string]interface{} {
+	path := filepath.Join(s.PipelinesDir, file)
+	pf, err := pipeline.LoadPipelineFile(path)
+	if err != nil {
+		return nil
+	}
+	out := make([]map[string]interface{}, 0, len(pf.Pipeline.Input))
+	for name, value := range pf.Pipeline.Input {
+		item := map[string]interface{}{"name": name, "kind": "value"}
+		if list, ok := value.([]interface{}); ok {
+			item["kind"] = "list"
+			if len(list) > 0 {
+				item["example"] = list[0]
+			}
+			item["count"] = len(list)
+		} else {
+			item["example"] = value
+		}
+		if pf.Pipeline.ItemFormat != "" {
+			item["format"] = pf.Pipeline.ItemFormat
+		}
+		out = append(out, item)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i]["name"].(string) < out[j]["name"].(string)
+	})
+	return out
 }

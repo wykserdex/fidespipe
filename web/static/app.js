@@ -618,19 +618,43 @@ async function renderMenu() {
   const nameOf = p => (p.file || p.name || '').replace(/\.ya?ml$/i, '');
   // МАССИВ строк, а не склеенная строка: ниже он фильтруется по группам, и
   // обращение rows[i] к строке молча отдало бы символ вместо разметки.
-  const rows = state.presets.map(p => `
+  const rows = state.presets.map(p => {
+    const ins = Array.isArray(p.inputs) ? p.inputs : [];
+    // Форма входа — только если пресет что-то просит. Без неё «проверить» и
+    // «запустить» — одно и то же.
+    const form = ins.length ? `
+      <div class="tform" data-form="${esc(p.file)}" hidden>
+        ${ins.map(i => `
+          <label class="tfl">
+            <span class="tfn">${esc(i.format || i.name)}</span>
+            ${i.kind === 'list'
+              ? `<textarea rows="3" spellcheck="false" placeholder="${esc(i.example === undefined ? '' : String(i.example))}"
+                   data-inp="${esc(i.name)}" data-kind="list"></textarea>
+                 <span class="tfnote">по одному в строке</span>`
+              : `<input type="text" value="${esc(i.example === undefined ? '' : String(i.example))}"
+                   data-inp="${esc(i.name)}" data-kind="value">`}
+          </label>`).join('')}
+        <div class="tfrow">
+          <button class="mini go" data-preset-verify="${esc(p.file)}">проверить</button>
+          <span class="tfmsg" data-msg="${esc(p.file)}"></span>
+        </div>
+      </div>` : '';
+    return `
     <div class="trow">
       ${chainSVG(false)}
       <span>
         <span class="tk" data-preset-open="${esc(p.file)}">${esc(nameOf(p))}</span>
         <span class="td">${esc(p.description || 'без описания')}</span>
+        ${form}
       </span>
       <span class="tacts">
+        ${ins.length ? `<button class="mini" data-preset-check="${esc(p.file)}">проверить</button>` : ''}
         <button class="mini" data-preset-open="${esc(p.file)}">открыть</button>
         <button class="mini go" data-preset-run="${esc(p.file)}"
           ${p.installed ? '' : 'disabled title="файла нет в examples/"'}>запустить</button>
       </span>
-    </div>`);
+    </div>`;
+  });
 
   const isTech = p => TECHNICAL_PRESETS.has(nameOf(p));
   const human = state.presets.filter(p => !isTech(p));
@@ -689,11 +713,65 @@ async function renderMenu() {
   $('#menu').querySelectorAll('[data-preset-run]').forEach(b => {
     b.onclick = () => runPreset(b.dataset.presetRun);
   });
+  // «проверить» разворачивает форму входа: человек вписывает значение и не
+  // знает, что такое YAML.
+  $('#menu').querySelectorAll('[data-preset-check]').forEach(b => {
+    b.onclick = () => {
+      const form = $(`#menu [data-form="${CSS.escape(b.dataset.presetCheck)}"]`);
+      if (!form) return;
+      form.hidden = !form.hidden;
+      if (!form.hidden) {
+        const ta = form.querySelector('textarea, input');
+        if (ta) ta.focus();
+      }
+    };
+  });
+  $('#menu').querySelectorAll('[data-preset-verify]').forEach(b => {
+    b.onclick = () => verifyPreset(b);
+  });
   $('#menu').querySelectorAll('[data-preset-open]').forEach(el => {
     el.onclick = () => { setTab('pipelines'); openPipeline(el.dataset.presetOpen); };
   });
   const gotoPl = $('#goto-plugins');
   if (gotoPl) gotoPl.onclick = () => { setTab('plugins'); loadPluginsTab(); };
+}
+
+// verifyPreset — запуск пресета с введёнными человеком значениями.
+//
+// Значения собираются из формы и уходят в запуск как input. Ключи, которых
+// нет в пресете, сервер не примет - это проверка на его стороне.
+async function verifyPreset(btn) {
+  const file = btn.dataset.presetVerify;
+  const form = $(`#menu [data-form="${CSS.escape(file)}"]`);
+  const msg = $(`#menu [data-msg="${CSS.escape(file)}"]`);
+  if (!form) return;
+  const input = {};
+  form.querySelectorAll('[data-inp]').forEach(el => {
+    const name = el.dataset.inp;
+    if (el.dataset.kind === 'list') {
+      const vals = el.value.split('\n').map(v => v.trim()).filter(v => v.length);
+      input[name] = vals.length ? vals : [el.value.trim()].filter(Boolean);
+    } else {
+      input[name] = el.value;
+    }
+  });
+  btn.disabled = true;
+  if (msg) msg.textContent = 'запускаю…';
+  try {
+    const res = await api('/api/run', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({file, input})
+    });
+    if (res && res.run) {
+      if (msg) msg.textContent = 'пошло';
+      setTimeout(() => openRunDetail(res.run, true), 400);
+    } else if (msg) {
+      msg.textContent = 'не запустилось';
+    }
+  } catch (e) {
+    if (msg) msg.innerHTML = '<span style="color:var(--err)">' + esc(e.message) + '</span>';
+  }
+  btn.disabled = false;
 }
 
 // Запуск пресета из меню: тот же путь, что у кнопки «Запустить» на вкладке
