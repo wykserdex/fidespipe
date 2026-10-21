@@ -50,6 +50,17 @@ jobs:
           test -z "$(gofmt -l $(find cmd internal -name '*.go' -type f))"
       - name: tests
         run: go test ./... -count=1
+      # Тот же список доноров, что и в джобе core, и по той же причине:
+      # `registry validate` гоняет plugin.test.yaml КАЖДОЙ записи реестра
+      # (internal/cli/registry.go, RunPluginTests вызывается безусловно — не
+      # только для --local-source), а живые кейсы этих восьми плагинов
+      # запускают настоящего донора. Без установки доноров проверка падает на
+      # них, и релиз не собирается.
+      - name: install donor packages for plugin tests
+        run: |
+          for p in ssl_info detect_secrets dirsearch pefile altdns pyelftools lief msoffcrypto_tool oletools; do
+            python3 -m pip install --disable-pip-version-check -r "plugins/community/$p/requirements.lock"
+          done
       - name: registry pin validation
         run: go run ./cmd/fidespipe registry validate --registry=registry.yaml
       - name: conformance
