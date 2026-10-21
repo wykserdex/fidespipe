@@ -52,7 +52,7 @@
 ### 1. Скачать и проверить сам `SHA256SUMS`
 
 ```bash
-VER=0.34.0
+VER=0.35.0
 gh release download "v$VER" -p 'SHA256SUMS*' -p 'sbom.spdx.json*' -D fidespipe-$VER
 cd fidespipe-$VER
 ```

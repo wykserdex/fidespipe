@@ -311,9 +311,9 @@ conformance-пакет, `SHA256SUMS`, SBOM (`sbom.spdx.json`) и build provenanc
 репозитории) и проверяет подпись до публикации. Первый прогон этой схемы
 ещё не состоялся — что уже проверено и что ждёт CI, написано честно в
 [цепочке поставки](docs/supply-chain.md).
-Тег релиза (`vX.Y.Z`) совпадает с [`VERSION`](VERSION) — сейчас `0.34.0`;
+Тег релиза (`vX.Y.Z`) совпадает с [`VERSION`](VERSION) — сейчас `0.35.0`;
 protocol version — [`protocol/VERSION`](protocol/VERSION) (`0.2`), версии независимы.
-Текущий релиз — `0.34.0`; бинарники для своей системы лежат на странице [Releases](https://github.com/wykserdex/fidespipe/releases). Состав изменений — в [CHANGELOG](CHANGELOG.md).
+Текущий релиз — `0.35.0`; бинарники для своей системы лежат на странице [Releases](https://github.com/wykserdex/fidespipe/releases). Состав изменений — в [CHANGELOG](CHANGELOG.md).
 
 ## Безопасность и статус
 

@@ -4,7 +4,7 @@
 
 | Ось | Источник | Текущее значение | Правило |
 |---|---|---|---|
-| Product / application | `VERSION` | `0.34.0` | SemVer; тег `vX.Y.Z` совпадает с `VERSION` |
+| Product / application | `VERSION` | `0.35.0` | SemVer; тег `vX.Y.Z` совпадает с `VERSION` |
 | Pipeline и plugin protocol | `protocol/VERSION` | `0.2` | меняется только при изменении контракта |
 | Registry schema | `registry.yaml` | `0.1` | формат записи реестра |
 | Plugin component | `plugin.yaml:version` | semver плагина | версия конкретного компонента |

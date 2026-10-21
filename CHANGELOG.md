@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.35.0 - 2026-10-21
+
 ### Баннер: новая версия, авторская
 
 Баннер заменён на авторскую версию (2132x738). Кодирование PNG оптимизировано
@@ -571,8 +573,6 @@ GUI и MCP. Значит `POST /api/runs/<id>/gate` отдавал 409, и ге�
 - **переименование**: `internal/execution/scheduler.go` → `internal/execution/graph.go`.
 - **scheduler daemon**: `internal/cron/daemon.go` lock `runsDir/.daemon.lock` (opt-in, второй демон не стартует) + state `<runsDir>/.state/*.json` (`NextRun/LastRun`) для GUI и `catchUp`; `overlap` `skip|queue|allow` через `runsDir/.running.*.lock`, `catchUp` догоняет пропущенные слоты, `humanGate` `autoApprove|wait`, `alerts` `webhook` hook `fireAlert` (MVP без сети — локально, без внешних зависимостей).
 - **сеть**: `internal/pipeline/network_doc.go` — структурные `host:port` без `any_host` (13/41) — лишь намерение, не фильтр; `any_host` only исполнимо, остальное `network_not_enforceable`; `importer` `TODO(человек)` в `genshell.go` — намеренно: импортёр генерит скелет без вызова донора (сигнатуру нельзя угадать), человек дописывает вызов.
-
-## 0.35.0 — в работе
 
 ### Диагностика окружения
 
