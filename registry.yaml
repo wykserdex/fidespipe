@@ -779,8 +779,8 @@ presets:
   file_report:
     source: https://github.com/wykserdex/fidespipe
     path: examples/file_report.yaml
-    version: v0.33
-    commit: 6cda59ac39e1b94453d63d1681eb1865946b6e61
+    version: v0.34
+    commit: e79eb682016bf52bc7a269ca07afd50ebc8d3f99
     description: "Разбор файла: архитектура PE и поиск секретов, обе проверки параллельно, один отчёт на гейте"
   pe_triage:
     source: https://github.com/wykserdex/fidespipe
