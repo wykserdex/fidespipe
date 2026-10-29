@@ -101,6 +101,25 @@ Building from source needs Go 1.26 or newer. That floor is the `go` directive in
 `go.mod`, and the `go-floor` CI job builds on exactly it, so the documented
 minimum is always the tested one.
 
+### The same engine, in a browser tab
+
+Live demo: <https://wykserdex.github.io/fidespipe/> — this same page, published
+by GitHub Pages. To run it locally:
+The core compiles to WebAssembly, and `web/demo` is a page that runs the
+**real engine** in the tab: not a simulation and not a JS re-implementation,
+but the same `core.Validate` and `core.Run` the CLI calls. A run writes a real
+`journal.jsonl` to an in-memory filesystem, the engine's stdout is shown
+verbatim, and the human gate parks the run until a person clicks — there is
+no `--yes` behind the page.
+
+```bash
+cd web/demo && ./build.sh          # GOOS=js GOARCH=wasm go build + wasm_exec.js from $GOROOT
+python -m http.server 8099         # any static server
+```
+
+Open http://127.0.0.1:8099/. Building needs Go; running needs only a browser.
+Python plugins do not execute in the tab — the page states its own limits.
+
 There are 100 plugins in the repository and in the registry: 5 `official` and 95
 `community`. Of those, 65 need nothing beyond a bare Python 3; another 35 declare
 a donor through `runtime.requires`, and `install` puts it in place by itself —

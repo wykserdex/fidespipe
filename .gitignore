@@ -36,3 +36,9 @@ assets/
 # Черновики аудита: их содержание уже в CHANGELOG.md, а сам файл —
 # рабочий заметка, которая не должна ездить в репозитории.
 CHANGELOG_AUDIT_*.md
+
+# Демо в браузере: fidespipe.wasm и wasm_exec.js — продукты web/demo/build.sh.
+# wasm_exec.js берётся из $GOROOT, wasm пересобирается одной командой:
+# в репозитории им не место (15 МБ бинарники никто не ревьюит).
+/web/demo/fidespipe.wasm
+/web/demo/wasm_exec.js

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fidespipe — an orchestrator for other people's tools</title>
+<meta name="description" content="Fidespipe runs untrusted plugins behind a contract, journals every step to disk, and stops for a human when the verdict matters. This page runs the shipped Go engine, compiled to WebAssembly.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="wordmark" href="#top">fidespipe<span class="wm-ver" id="nav-version">v—</span></a>
+  <nav>
+    <a href="#demo">demo</a>
+    <a href="#what">what it is</a>
+    <a href="#limits">limits</a>
+    <a href="https://github.com/wykserdex/fidespipe" rel="noopener">source</a>
+    <a href="https://github.com/wykserdex/fidespipe/releases" rel="noopener">releases</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <h1>An orchestrator for<br>other people&rsquo;s tools.</h1>
+  <p class="lede">
+    Fidespipe runs plugins written by strangers behind a declared contract, journals
+    every step to disk, and stops for a human when the verdict is the point.
+  </p>
+  <p class="lede accent">
+    The demo below is not a simulation and not a re-implementation. It is the shipped
+    Go engine compiled to WebAssembly, running in this tab: the same
+    <code>core.Validate</code> and <code>core.Run</code> the CLI calls, writing a real
+    <code>journal.jsonl</code> to a real filesystem.
+  </p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#demo">Run it</a>
+    <a class="btn" href="https://github.com/wykserdex/fidespipe" rel="noopener">Read the source</a>
+  </div>
+  <dl class="facts" id="facts">
+    <div><dt>71,631</dt><dd>lines of Go</dd></div>
+    <div><dt>24,645</dt><dd>lines of plugin Python</dd></div>
+    <div><dt>100</dt><dd>plugins in the registry</dd></div>
+    <div><dt>6</dt><dd>release platforms</dd></div>
+  </dl>
+</section>
+
+<section class="workspace" id="demo">
+  <div class="ws-head">
+    <h2>Live engine</h2>
+    <div class="ws-status" id="engine-status"><span class="dot"></span>loading module…</div>
+  </div>
+
+  <div class="ws-grid">
+    <aside class="ws-left">
+      <div class="panel">
+        <div class="panel-title">Pipelines</div>
+        <ul class="presets" id="presets"></ul>
+      </div>
+      <div class="panel">
+        <div class="panel-title">
+          <span id="yaml-name">pipeline.yaml</span>
+          <button class="mini" id="validate-btn" type="button" disabled>validate</button>
+        </div>
+        <pre class="yaml" id="yaml"><code>loading…</code></pre>
+        <div class="verdict" id="verdict" hidden></div>
+      </div>
+    </aside>
+
+    <div class="ws-right">
+      <div class="panel terminal-panel">
+        <div class="panel-title">
+          engine stdout
+          <span class="hint">verbatim, untranslated &mdash; the project&rsquo;s primary language is Russian</span>
+        </div>
+        <pre class="terminal" id="terminal" aria-live="polite"></pre>
+      </div>
+
+      <div class="panel gate-panel" id="gate-panel" hidden>
+        <div class="panel-title">
+          human_gate &middot; <span id="gate-step"></span>
+          <span class="hint">the run is parked until you decide</span>
+        </div>
+        <div class="gate-body">
+          <table class="gate-form" id="gate-form"></table>
+          <div class="gate-actions" id="gate-actions"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="journal-panel" hidden>
+        <div class="panel-title">
+          journal.jsonl
+          <span class="hint" id="journal-meta"></span>
+        </div>
+        <div class="journal" id="journal"></div>
+        <div class="files" id="files"></div>
+      </div>
+
+      <div class="runbar">
+        <button class="btn btn-primary" id="run-btn" type="button" disabled>Run pipeline</button>
+        <button class="btn" id="reset-btn" type="button" disabled>Reset</button>
+        <span class="runbar-note" id="run-note"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <h2>What it actually is</h2>
+  <p class="section-lede">
+    The tools are other people&rsquo;s. They are written and patched by people who will
+    never meet each other. Fidespipe does not try to make them agree &mdash; it puts a
+    boundary between them and keeps a record of what crossed it.
+  </p>
+  <table class="matrix">
+    <tbody>
+      <tr>
+        <th>Contract at the boundary</th>
+        <td>Every plugin declares typed input and output ports. They are checked
+        <em>before</em> the run, so a broken chain fails at validation instead of
+        halfway through step four. Try the <code>broken</code> preset above.</td>
+      </tr>
+      <tr>
+        <th>Run journal</th>
+        <td>Each run is a directory on disk: <code>journal.jsonl</code>, a context
+        snapshot, artifacts. A killed run can be resumed from where it stopped rather
+        than silently restarted.</td>
+      </tr>
+      <tr>
+        <th>Human in the loop</th>
+        <td><code>core/human_gate</code> parks the run and waits for an actual
+        decision, with a wait ceiling and approval via signed link from any device.
+        <code>--yes</code> exists for CI; it never applies to a gate marked
+        <code>approval: human</code>.</td>
+      </tr>
+      <tr>
+        <th>Trust by hash</th>
+        <td>Plugins are addressed as <code>id@sha256:…</code>. Edit the file and the
+        trust is gone. A plugin&rsquo;s name is not evidence of anything.</td>
+      </tr>
+      <tr>
+        <th>Isolation</th>
+        <td>Untrusted code goes into a sandbox: bubblewrap on Linux, AppContainer on
+        Windows. The plugin directory is mounted read-only and the network is denied
+        unless a capability says otherwise.</td>
+      </tr>
+      <tr>
+        <th>Supply chain</th>
+        <td>Releases carry an SPDX SBOM and SHA256SUMS, both signed with sigstore.
+        Donor packages are pinned and hash-checked.</td>
+      </tr>
+      <tr>
+        <th>Three ways in</th>
+        <td>The same pipelines and the same gate are reachable from the terminal, from
+        a browser console, and over MCP (8 tools, <code>exec_plugin</code> off by
+        default). An agent is a client, not the product.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="limits">
+  <h2>What this page cannot show</h2>
+  <ul class="limits">
+    <li>
+      <strong>Only builtin plugins run here.</strong> The registry holds 100 plugins;
+      98 of them are Python subprocesses, and a browser cannot start a process. This
+      demo runs <code>core/text_stats</code> and <code>core/human_gate</code>, which
+      execute in-process. Everything else needs the real binary.
+    </li>
+    <li>
+      <strong>No sandbox to demonstrate.</strong> Isolation is the reason the
+      untrusted plugins are safe to run at all, and bubblewrap and AppContainer do not
+      exist in a tab. The demo has nothing to isolate.
+    </li>
+    <li>
+      <strong>The filesystem is in memory.</strong> <code>journal.jsonl</code> is real
+      and is written by the real <code>journal.Journal</code>, but it lands in a
+      Node-<code>fs</code>-shaped shim over a JS Map, so it disappears on reload.
+    </li>
+    <li>
+      <strong>Version 0.x, honestly.</strong> The protocol is versioned and there is a
+      compatibility document, but the API is not frozen and the author says so.
+    </li>
+  </ul>
+  <p class="section-lede">
+    To see the rest, build it &mdash; it needs Go 1.26+ and nothing else for the demo
+    path:
+  </p>
+  <pre class="install"><code>go build -o fidespipe ./cmd/fidespipe
+./fidespipe demo          # no git, no Python, no network
+./fidespipe doctor        # what is missing in your environment
+./fidespipe plugin list   # all 100</code></pre>
+</section>
+
+</main>
+
+<footer>
+  <div>
+    <span id="foot-version">fidespipe</span> &middot; protocol v0.2 &middot; BSL 1.1
+  </div>
+  <div class="foot-links">
+    <a href="https://github.com/wykserdex/fidespipe" rel="noopener">GitHub</a>
+    <a href="https://github.com/wykserdex/fidespipe/blob/main/protocol/v0.2/PROTOCOL.md" rel="noopener">Protocol</a>
+    <a href="https://github.com/wykserdex/fidespipe/blob/main/docs/architecture.md" rel="noopener">Architecture</a>
+    <a href="https://github.com/wykserdex/fidespipe/blob/main/SECURITY.md" rel="noopener">Security</a>
+  </div>
+</footer>
+
+<script src="vfs.js"></script>
+<script src="wasm_exec.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

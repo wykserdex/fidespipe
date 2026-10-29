@@ -16,6 +16,7 @@
 *.html text eol=lf
 # Бинарники не трогать
 *.png binary
+*.webp binary
 *.jpg binary
 *.jpeg binary
 *.exe binary

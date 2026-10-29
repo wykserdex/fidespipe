@@ -1,0 +1,29 @@
+format_version: "0.2"
+
+# foreach at step level: `scan` runs once per element of input.texts and
+# input.text is rebound to the current element each iteration. The per-item
+# outputs aggregate into steps.scan_all; the gate reviews the aggregate.
+
+pipeline:
+  name: foreach_stats
+  network: deny
+
+  input:
+    texts:
+      - "invoice attached to an unsolicited email"
+      - "wire transfer request from a vendor nobody has paid before"
+      - "ok"
+
+  steps:
+    - id: scan
+      plugin: core/text_stats
+      foreach: input.texts
+      foreach_item: text
+      on_error: stop
+
+    - id: triage
+      plugin: core/human_gate
+      form:
+        - { field: steps.scan_all, editable: false }
+      actions: [accept, reject]
+      on_reject: stop

@@ -1,0 +1,30 @@
+format_version: "0.2"
+
+# Conditional step. `deep` only runs when the first pass counted at least ten
+# words; the input here is three words, so it is skipped and the journal
+# records step_skipped with reason=when. Edit input.text to cross the
+# threshold and watch the same pipeline take the other branch.
+
+pipeline:
+  name: conditional
+  network: deny
+
+  input:
+    text: "a short note"
+
+  steps:
+    - id: first
+      plugin: core/text_stats
+      on_error: stop
+
+    - id: deep
+      plugin: core/text_stats
+      when: { path: steps.first.words, op: gte, value: 10 }
+      on_error: skip
+
+    - id: review
+      plugin: core/human_gate
+      form:
+        - { field: steps.first.words, editable: false, type: number }
+        - { field: steps.first.longest_word, editable: false, type: string }
+      actions: [accept]

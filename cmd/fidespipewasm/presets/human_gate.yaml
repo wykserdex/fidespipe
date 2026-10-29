@@ -1,0 +1,31 @@
+format_version: "0.2"
+
+# The headline demo: a builtin metric step, then a gate that stops the run
+# until a human decides. `longest_word` is editable, so the human can
+# overwrite what the engine computed — that override lands in the journal as
+# part of the decision, not as a silent edit.
+
+pipeline:
+  name: human_gate
+  network: deny
+
+  input:
+    text: |
+      Fidespipe runs tools written by strangers.
+      Every step is journalled to disk.
+      The verdict stays with a human.
+
+  steps:
+    - id: stats
+      plugin: core/text_stats
+      on_error: stop
+
+    - id: review
+      plugin: core/human_gate
+      form:
+        - { field: steps.stats.lines, editable: false, type: number }
+        - { field: steps.stats.words, editable: false, type: number }
+        - { field: steps.stats.unique_words, editable: false, type: number }
+        - { field: steps.stats.longest_word, editable: true, type: string }
+      actions: [accept, reject]
+      on_reject: stop
