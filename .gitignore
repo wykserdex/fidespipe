@@ -42,3 +42,13 @@ CHANGELOG_AUDIT_*.md
 # в репозитории им не место (15 МБ бинарники никто не ревьюит).
 /web/demo/fidespipe.wasm
 /web/demo/wasm_exec.js
+
+# Продуктовый бот: конфиг с токенами Telegram/Crypto Bot — только локально.
+# В репозитории — product/bot.config.example.json с заглушками.
+/product/bot.config.json
+/var/bot/
+
+# Артефакт `fidespipe plugin install sherlock`: установленная копия лежит в
+# plugins/<id>/, исходник — в plugins/community/. В git установленной копии
+# не место: она пересоздаётся одной командой и содержит lock донора.
+/plugins/sherlock/

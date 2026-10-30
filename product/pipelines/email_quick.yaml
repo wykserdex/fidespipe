@@ -1,0 +1,19 @@
+format_version: "0.2"
+pipeline:
+  name: email_quick
+  # Бесплатная проверка адреса: синтаксис, MX домена, одноразовый домен.
+  # Быстро и без внешних сервисов, кроме DNS.
+  network: allow
+  input:
+    target: "test@yandex.ru"  # бот подставляет через --input=target=...
+  steps:
+    - id: syntax
+      plugin: plugins/official/syntax_mx_checker
+      bind: { email: input.target }
+      on_error: stop
+      timeout: 30s
+    - id: disposable
+      plugin: plugins/official/disposable_checker
+      bind: { email: input.target }
+      on_error: skip
+      timeout: 15s

@@ -1,0 +1,28 @@
+format_version: "0.2"
+pipeline:
+  name: email_full
+  # Платное досье по адресу: то же, что в бесплатной проверке, плюс holehe —
+  # на каких сайтах адрес реально используется (формы восстановления пароля).
+  # holehe принимает именно email (или телефон): голое имя пользователя он
+  # отвергает и CSV не пишет, поэтому он в этом пайплайне, а не в username_full.
+  network: allow
+  input:
+    target: "test@yandex.ru"  # бот подставляет через --input=target=...
+  steps:
+    - id: syntax
+      plugin: plugins/official/syntax_mx_checker
+      bind: { email: input.target }
+      on_error: skip
+      timeout: 30s
+    - id: disposable
+      plugin: plugins/official/disposable_checker
+      bind: { email: input.target }
+      on_error: skip
+      timeout: 15s
+    - id: holehe
+      plugin: plugins/community/holehe
+      # Здесь target совпадает с привязкой по умолчанию, bind оставлен явно:
+      # отчёт читает steps.holehe, и пусть связь видна в одном файле.
+      bind: { target: input.target }
+      on_error: skip
+      timeout: 400s

@@ -1,0 +1,36 @@
+format_version: "0.2"
+pipeline:
+  name: username_quick
+  # Бесплатный скан: короткий список популярных сайтов, чтобы ответ в Telegram
+  # приходил за десятки секунд, а не за минуты. Полный прогон — username_full.
+  network: allow
+  input:
+    username: "example"     # бот подставляет через --input=username=...
+    # Имена сайтов — из базы sherlock 0.16.2 (--site), сверены с её data.json:
+    # Facebook/Steam/Tumblr в таком написании там отсутствуют, а неизвестное
+    # имя sherlock молча не проверяет — счётчик checked это и показал.
+    sites:
+      - GitHub
+      - GitLab
+      - Instagram
+      - Twitter
+      - LinkedIn
+      - TikTok
+      - Reddit
+      - YouTube
+      - Twitch
+      - Steam Community (User)
+      - Pinterest
+      - Medium
+      - Telegram
+      - SoundCloud
+      - Spotify
+      - tumblr
+      - VK
+      - habr
+      - pikabu
+  steps:
+    - id: sherlock
+      plugin: plugins/community/sherlock
+      on_error: stop        # бесплатный скан один: если он упал, честно говорим «не вышло»
+      timeout: 240s

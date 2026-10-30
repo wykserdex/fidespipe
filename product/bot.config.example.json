@@ -1,0 +1,14 @@
+{
+  "telegram_token": "123456:REPLACE_ME_токен_от_BotFather",
+  "cryptobot_token": "REPLACE_ME_токен_от_CryptoBot_CryptoPayAPI",
+  "admin_tg_id": 0,
+  "fidespipe_bin": "fidespipe.exe",
+  "repo_root": ".",
+  "data_dir": "var/bot",
+  "python_bin": "python",
+  "price_usdt": "3.00",
+  "free_cooldown_seconds": 600,
+  "quick_timeout_seconds": 300,
+  "full_timeout_seconds": 900,
+  "max_concurrent_runs": 2
+}
