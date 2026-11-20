@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - name: version invariants
@@ -427,7 +427,7 @@ jobs:
           # их нет («not a tree object»). Ослаблять проверку скипом нельзя: тогда
           # она начнёт молча ничего не проверять.
           fetch-depth: 0
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - name: floor == go.mod directive
@@ -460,7 +460,7 @@ jobs:
           # их нет («not a tree object»). Ослаблять проверку скипом нельзя: тогда
           # она начнёт молча ничего не проверять.
           fetch-depth: 0
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       # Дедлайн есть у каждого шага: если шаг встанет, джоб отменится, а лог
@@ -533,7 +533,7 @@ jobs:
           # их нет («not a tree object»). Ослаблять проверку скипом нельзя: тогда
           # она начнёт молча ничего не проверять.
           fetch-depth: 0
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - run: go vet ./...
@@ -558,7 +558,7 @@ jobs:
           # их нет («not a tree object»). Ослаблять проверку скипом нельзя: тогда
           # она начнёт молча ничего не проверять.
           fetch-depth: 0
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version: '1.26.10' # GO-2026-6809: crypto/x509, чинится в 1.26.10
       - run: go build -o fidespipe ./cmd/fidespipe
