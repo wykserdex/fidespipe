@@ -23,7 +23,7 @@ jobs:
           # («not a tree object»). Проверено локальным клоном --depth 1.
           # Ослаблять проверку скипом нельзя — пропуск неотличим от успеха.
           fetch-depth: 0
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           # См. обоснование в ci.yml: GO-2026-6809 (crypto/x509) чинится в
           # go1.26.10, а сборка релиза обязана быть без известных уязвимостей.
