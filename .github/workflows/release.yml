@@ -92,7 +92,7 @@ jobs:
           ./dist/fidespipe-linux-amd64 plugin test --conformance --fixtures="$smoke_dir/conformance/fixtures/v0.2" --json
           rm -rf "$smoke_dir" dist/conformance-package
       - name: generate SBOM
-        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        uses: anchore/sbom-action@dfcb83b97731532d72be422cbc51ee64adb6fd56 # v0.24.4
         with:
           path: .
           format: spdx-json
